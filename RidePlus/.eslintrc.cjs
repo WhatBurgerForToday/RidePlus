@@ -1,11 +1,19 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
+  root: true,
   extends: [
+    "eslint:recommended",
     "@react-native-community",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier",
   ],
+  plugins: ["@typescript-eslint"],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: ["./tsconfig.json"],
+    tsconfigRootDir: __dirname,
+  },
   rules: {
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -20,7 +28,7 @@ const config = {
       { prefer: "type-imports", fixStyle: "separate-type-imports" },
     ],
   },
-  ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
+  ignorePatterns: ["**/*.config.js", "**/*.config.cjs", ".eslintrc.cjs"],
   reportUnusedDisableDirectives: true,
 };
 

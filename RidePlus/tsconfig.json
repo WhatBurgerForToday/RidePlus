@@ -7,5 +7,6 @@
     },
     "strict": true,
     "types": ["nativewind/types", "webpack-env"]
-  }
+  },
+  "include": ["src", "**/*.cjs", "index.tsx"]
 }
