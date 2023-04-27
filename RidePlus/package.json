@@ -9,7 +9,10 @@
     "dev:ios": "expo start --ios",
     "dev:web": "expo start --web",
     "dev:tunnel": "expo start --tunnel",
-    "type-check": "tsc --noEmit"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@types/react": "~18.0.27",
