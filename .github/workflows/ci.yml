@@ -7,7 +7,7 @@ on:
     branches: ["*"]
 
 jobs:
-  lint-fe:
+  eslint:
     runs-on: ubuntu-latest
     name: Lint Frontend
 
@@ -29,7 +29,7 @@ jobs:
         working-directory: ./RidePlus
         run: npm run lint
 
-  format-fe:
+  prettier:
     runs-on: ubuntu-latest
     name: Check Frontend Format
 
@@ -51,7 +51,7 @@ jobs:
         working-directory: ./RidePlus
         run: npm run format:check
 
-  typecheck-fe:
+  typecheck:
     runs-on: ubuntu-latest
     name: Typecheck Frontend
 
@@ -73,7 +73,7 @@ jobs:
         working-directory: ./RidePlus
         run: npm run typecheck
 
-  lint-be:
+  golangci:
     runs-on: ubuntu-latest
     name: Lint Backend
 
@@ -85,7 +85,7 @@ jobs:
       - name: Install Golang
         uses: actions/setup-go@v4
         with:
-          go-version: 1.20
+          go-version: "1.20"
           cache: false
 
       - name: Install golangci-lint
@@ -94,7 +94,7 @@ jobs:
           version: v1.52.2
           working-directory: server
 
-  format-be:
+  gofmt:
     runs-on: ubuntu-latest
     name: Check Backend Format
 
@@ -106,7 +106,7 @@ jobs:
       - name: Install Golang
         uses: actions/setup-go@v4
         with:
-          go-version: 1.20
+          go-version: "1.20"
 
       - name: Check gofmt
         run: if [ gofmt -l -s . | wc -l -gt 0 ]; then exit 1; fi
