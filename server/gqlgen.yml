@@ -1,0 +1,18 @@
+schema:
+  - ../graphql/schema.graphql
+
+exec:
+  filename: internal/gql/generated.go
+  package: gql
+
+model:
+  filename: internal/gql/models/models_gen.go
+  package: models
+
+resolver:
+  layout: follow-schema
+  dir: internal/gql/resolvers
+  package: resolvers
+  filename_template: "{name}.resolvers.go"
+
+autobind: []
