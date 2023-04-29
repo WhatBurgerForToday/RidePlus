@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint-fe:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Lint Frontend
 
     steps:
@@ -30,7 +30,7 @@ jobs:
         run: npm run lint
 
   format-fe:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Check Frontend Format
 
     steps:
@@ -52,7 +52,7 @@ jobs:
         run: npm run format:check
 
   typecheck-fe:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Typecheck Frontend
 
     steps:
@@ -74,7 +74,7 @@ jobs:
         run: npm run typecheck
 
   lint-be:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Lint Backend
 
     steps:
@@ -95,7 +95,7 @@ jobs:
           working-directory: ./server
 
   format-be:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     name: Check Backend Format
 
     steps:
