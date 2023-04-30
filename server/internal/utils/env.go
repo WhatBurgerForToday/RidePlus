@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"reflect"
 	"strconv"
@@ -18,9 +18,9 @@ func init() {
 func LoadEnv[T any]() T {
 	env := new(T)
 	elem := reflect.TypeOf(env).Elem()
-	num_fields := elem.NumField()
+	errors := []error{}
 
-	for i := 0; i < num_fields; i++ {
+	for i := 0; i < elem.NumField(); i++ {
 		field := elem.Field(i)
 		key := field.Tag.Get("env")
 		if key == "" {
@@ -28,49 +28,79 @@ func LoadEnv[T any]() T {
 		}
 
 		valueField := reflect.ValueOf(env).Elem().Field(i)
-		value := mustGet(key)
-
-		switch field.Type.Kind() {
-		case reflect.String:
-			valueField.SetString(value)
-		case reflect.Bool:
-			v, err := strconv.ParseBool(value)
-			panicOnConversionError(key, err)
-			valueField.SetBool(v)
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v, err := strconv.Atoi(value)
-			panicOnConversionError(key, err)
-			valueField.SetInt(int64(v))
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v, err := strconv.ParseUint(value, 10, 64)
-			panicOnConversionError(key, err)
-			valueField.SetUint(v)
-		case reflect.Float32:
-			v, err := strconv.ParseFloat(value, 32)
-			panicOnConversionError(key, err)
-			valueField.SetFloat(v)
-		case reflect.Float64:
-			v, err := strconv.ParseFloat(value, 64)
-			panicOnConversionError(key, err)
-			valueField.SetFloat(v)
-		default:
-			log.Panicf("Unsupported type for %s: %s", key, field.Type)
+		defaultValue, isSet := field.Tag.Lookup("default")
+		value, err := getOrDefault(key, defaultValue, isSet)
+		if err != nil {
+			errors = append(errors, err)
+			continue
 		}
+
+		v, err := convert(*value, valueField.Type())
+		if err != nil {
+			errors = append(errors, err)
+			continue
+		}
+		valueField.Set(reflect.ValueOf(v).Convert(valueField.Type()))
+	}
+
+	if len(errors) > 0 {
+		fmt.Println("Errors while loading environment variables:")
+		for _, err := range errors {
+			fmt.Printf("❌ %+v\n", err)
+		}
+		os.Exit(1)
 	}
 
 	return *env
 }
 
-func mustGet(k string) string {
+func getOrDefault(k string, defaultValue string, isDefaultValueSet bool) (*string, error) {
 	v, isSet := os.LookupEnv(k)
-	if !isSet {
-		log.Panicf("Environment variable '%s' is not set", k)
+	if isSet {
+		return &v, nil
 	}
-	return v
+	if isDefaultValueSet {
+		os.Setenv(k, defaultValue)
+		return &defaultValue, nil
+	}
+	return nil, fmt.Errorf("Environment variable '%s' is not set", k)
 }
 
-func panicOnConversionError(k string, err error) {
-	if err != nil {
-		log.Panicf("Error parsing value for %s: %s", k, err.Error())
+func convert(s string, t reflect.Type) (interface{}, error) {
+	switch t.Kind() {
+	case reflect.String:
+		return s, nil
+	case reflect.Bool:
+		v, err := strconv.ParseBool(s)
+		if err != nil {
+			return nil, err
+		}
+		return v, nil
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			return nil, err
+		}
+		return v, nil
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		v, err := strconv.ParseUint(s, 10, 0)
+		if err != nil {
+			return nil, err
+		}
+		return v, nil
+	case reflect.Float32:
+		v, err := strconv.ParseFloat(s, 32)
+		if err != nil {
+			return nil, err
+		}
+		return v, nil
+	case reflect.Float64:
+		v, err := strconv.ParseFloat(s, 64)
+		if err != nil {
+			return nil, err
+		}
+		return v, nil
+	default:
+		return nil, fmt.Errorf("Unsupported type %s", t)
 	}
 }
