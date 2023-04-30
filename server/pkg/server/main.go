@@ -41,7 +41,7 @@ func Run() {
 func debugRun(r *gin.Engine, env Env) {
 	addr := fmt.Sprintf("%s:%d", env.Host, env.Port)
 
-	for true {
+	for {
 		err := r.Run(addr)
 		if err == nil {
 			break

@@ -5,6 +5,5 @@
     "source.organizeImports": true
   },
   "eslint.workingDirectories": ["./RidePlus"],
-  "go.lintTool": "golangci-lint",
-  "go.lintFlags": ["--fast"]
+  "go.lintTool": "golangci-lint"
 }
