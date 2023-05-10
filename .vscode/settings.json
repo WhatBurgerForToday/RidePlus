@@ -5,5 +5,7 @@
     "source.organizeImports": true
   },
   "eslint.workingDirectories": ["./RidePlus"],
-  "go.lintTool": "golangci-lint"
+  "go.lintTool": "golangci-lint",
+  "relay.autoStartCompiler": true,
+  "relay.rootDirectory": "./RidePlus"
 }

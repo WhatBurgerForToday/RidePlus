@@ -7,6 +7,7 @@ function config(api) {
   return {
     presets: ["babel-preset-expo"],
     plugins: [
+      "relay",
       "nativewind/babel",
       "@babel/plugin-proposal-export-namespace-from",
       "react-native-reanimated/plugin",

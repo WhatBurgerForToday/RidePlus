@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 export type HelloProps = {
   name: string;
@@ -7,5 +7,9 @@ export type HelloProps = {
 
 export const Hello = (props: HelloProps) => {
   const { name } = props;
-  return <Text>Hello {name}</Text>;
+  return (
+    <View>
+      <Text>Hello {name}</Text>
+    </View>
+  );
 };
