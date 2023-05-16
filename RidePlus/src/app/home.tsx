@@ -1,10 +1,13 @@
 // eslint-disable-next-line prettier/prettier
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
 // eslint-disable-next-line prettier/prettier
 import { ScrollView } from "react-native-gesture-handler";
+
+import { Favorite } from "../components/Favorite";
+import { Recent } from "../components/Recent";
 
 const Home = () => {
   return (
@@ -33,77 +36,13 @@ const Home = () => {
 
         <View className="mx-7 mt-5 pb-3">
           <Text className="py-2 text-xl font-bold">Recent</Text>
-
-          <View className="mx-5 my-2 rounded-lg bg-amber-400 px-2 py-5">
-            <Link
-              href={{
-                pathname: "/test",
-              }}
-              asChild
-            >
-              <Pressable>
-                <View className="flex flex-row">
-                  <View className="justify-center px-5">
-                    <AntDesign name="clockcircle" size={24} color="white" />
-                  </View>
-                  <View className=" px-2">
-                    <Text className="py-1 font-bold text-black">
-                      新竹火車站
-                    </Text>
-                    <Text className="py-1 text-white">Depart at PM 7:00</Text>
-                  </View>
-                </View>
-              </Pressable>
-            </Link>
-          </View>
-
-          <View className="mx-5 my-2 rounded-lg bg-amber-400 px-2 py-5">
-            <Link
-              href={{
-                pathname: "/test",
-              }}
-              asChild
-            >
-              <Pressable>
-                <View className="flex flex-row">
-                  <View className="justify-center px-5">
-                    <AntDesign name="clockcircle" size={24} color="white" />
-                  </View>
-                  <View className=" px-2">
-                    <Text className="py-1 font-bold text-black">
-                      陽明交通大學
-                    </Text>
-                    <Text className="py-1 text-white">Depart at PM 5:00</Text>
-                  </View>
-                </View>
-              </Pressable>
-            </Link>
-          </View>
+          <Recent location="新竹火車站" departTime="PM 7:00" />
+          <Recent location="陽明交通大學" departTime="PM 5:00" />
         </View>
 
         <View className="mx-7 mb-5 mt-3 pb-3">
           <Text className="py-2 text-xl font-bold">Favorite</Text>
-
-          <View className="mx-5 my-2 rounded-lg bg-amber-400 px-2 py-5">
-            <Link
-              href={{
-                pathname: "/test",
-              }}
-              asChild
-            >
-              <Pressable>
-                <View className="flex flex-row">
-                  <View className="justify-center px-5">
-                    <FontAwesome name="heart" size={24} color="white" />
-                  </View>
-                  <View className=" px-2">
-                    <Text className="py-1 font-bold text-black">TSMC</Text>
-                    <Text className="py-1 text-white">Depart at AM 9:00</Text>
-                  </View>
-                </View>
-              </Pressable>
-            </Link>
-          </View>
+          <Favorite location="TSMC" departTime="AM 9:00" />
         </View>
 
         <View className="mb-10 flex items-center rounded-lg">
