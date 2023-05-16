@@ -1,5 +1,5 @@
 // eslint-disable-next-line prettier/prettier
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { Image, Pressable, SafeAreaView, Text, View } from "react-native";
