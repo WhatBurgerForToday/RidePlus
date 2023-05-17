@@ -1,5 +1,3 @@
-/* eslint-disable no-void */
-
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { maybeCompleteAuthSession } from "expo-web-browser";
@@ -12,7 +10,9 @@ maybeCompleteAuthSession();
 const SignInWithOAuth = () => {
   useWarmUpBrowser();
 
-  const { startOAuthFlow: startOAuthFlow_google } = useOAuth({ strategy: "oauth_google" });
+  const { startOAuthFlow: startOAuthFlow_google } = useOAuth({
+    strategy: "oauth_google",
+  });
   const { startOAuthFlow: startOAuthFlow_facebook } = useOAuth({
     strategy: "oauth_facebook",
   });
@@ -22,28 +22,28 @@ const SignInWithOAuth = () => {
       const { createdSessionId, setActive } = await startOAuthFlow_google({});
 
       if (createdSessionId) {
-        setActive?.({ session: createdSessionId });
+        void setActive?.({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
     } catch (err) {
       console.error("OAuth error", err);
     }
-  }, []);
+  }, [startOAuthFlow_google]);
 
   const onPressFacebook = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow_facebook({});
 
       if (createdSessionId) {
-        setActive?.({ session: createdSessionId });
+        void setActive?.({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
     } catch (err) {
       console.error("OAuth error", err);
     }
-  }, []);
+  }, [startOAuthFlow_facebook]);
 
   return (
     <View className="flex h-full w-full items-center justify-center bg-amber-400">

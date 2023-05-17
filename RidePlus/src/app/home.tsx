@@ -73,6 +73,7 @@ const Home = () => {
 
         <View className="mb-10 flex items-center rounded-lg">
           <Image
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             source={require("../images/simon_cat_drive.jpg")}
             resizeMode="contain"
             className="rounded-lg"
