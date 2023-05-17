@@ -1,8 +1,6 @@
-// eslint-disable-next-line prettier/prettier
-import { Redirect } from "expo-router";
 import type { FC } from "react";
-// eslint-disable-next-line prettier/prettier
 import React from "react";
+import { Redirect } from "expo-router";
 
 const OAuthNativeCallback: FC = () => {
   return <Redirect href="/home" />;

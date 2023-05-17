@@ -15,6 +15,9 @@ const config = {
     tsconfigRootDir: __dirname,
   },
   rules: {
+    "no-void": [
+      "ignore"
+    ],
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

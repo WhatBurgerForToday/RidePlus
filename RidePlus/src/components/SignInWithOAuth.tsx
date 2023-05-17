@@ -1,9 +1,9 @@
 /* eslint-disable no-void */
-/* eslint-disable prettier/prettier */
-import { useOAuth } from "@clerk/clerk-expo";
-import { maybeCompleteAuthSession } from "expo-web-browser";
+
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { maybeCompleteAuthSession } from "expo-web-browser";
+import { useOAuth } from "@clerk/clerk-expo";
 
 import { useWarmUpBrowser } from "../hooks/useWarmUpBrowser";
 
@@ -12,27 +12,23 @@ maybeCompleteAuthSession();
 const SignInWithOAuth = () => {
   useWarmUpBrowser();
 
-  const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { startOAuthFlow: startOAuthFlow_google } = useOAuth({ strategy: "oauth_google" });
   const { startOAuthFlow: startOAuthFlow_facebook } = useOAuth({
     strategy: "oauth_facebook",
   });
 
   const onPressGoogle = React.useCallback(async () => {
     try {
-      const { createdSessionId, setActive } =
-        // await startOAuthFlow();
-        // await startOAuthFlow({ redirectUrl: "/" });
-        await startOAuthFlow({}); // /oauth-native-callback
+      const { createdSessionId, setActive } = await startOAuthFlow_google({});
 
       if (createdSessionId) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         setActive?.({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
     } catch (err) {
       console.error("OAuth error", err);
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
   }, []);
 
   const onPressFacebook = React.useCallback(async () => {
@@ -40,14 +36,13 @@ const SignInWithOAuth = () => {
       const { createdSessionId, setActive } = await startOAuthFlow_facebook({});
 
       if (createdSessionId) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         setActive?.({ session: createdSessionId });
       } else {
         // Use signIn or signUp for next steps such as MFA
       }
     } catch (err) {
       console.error("OAuth error", err);
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
   }, []);
 
   return (

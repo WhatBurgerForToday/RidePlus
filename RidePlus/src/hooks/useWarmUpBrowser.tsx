@@ -1,7 +1,5 @@
-/* eslint-disable no-void */
-// eslint-disable-next-line prettier/prettier
-import * as WebBrowser from "expo-web-browser";
 import React from "react";
+import * as WebBrowser from "expo-web-browser";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {

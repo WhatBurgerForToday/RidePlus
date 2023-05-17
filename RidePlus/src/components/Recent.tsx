@@ -1,9 +1,7 @@
-// eslint-disable-next-line prettier/prettier
-import { AntDesign } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import React from "react";
-// eslint-disable-next-line prettier/prettier
 import { Pressable, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
 export type RecentProps = {
   location: string;

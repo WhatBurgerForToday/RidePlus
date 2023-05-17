@@ -1,9 +1,7 @@
-// eslint-disable-next-line prettier/prettier
-import { FontAwesome } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import React from "react";
-// eslint-disable-next-line prettier/prettier
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
 
 import { Favorite } from "../components/Favorite";
 import { Recent } from "../components/Recent";
@@ -75,7 +73,6 @@ const Home = () => {
 
         <View className="mb-10 flex items-center rounded-lg">
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             source={require("../images/simon_cat_drive.jpg")}
             resizeMode="contain"
             className="rounded-lg"
