@@ -21,7 +21,7 @@ const SignInWithOAuth = () => {
     try {
       const { createdSessionId, setActive } =
         // await startOAuthFlow();
-        // await startOAuthFlow({ redirectUrl: "/home" });
+        // await startOAuthFlow({ redirectUrl: "/" });
         await startOAuthFlow({}); // /oauth-native-callback
 
       if (createdSessionId) {

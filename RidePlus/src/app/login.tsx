@@ -3,6 +3,7 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import React from "react";
 // eslint-disable-next-line prettier/prettier
 import { SafeAreaView, View } from "react-native";
+
 import SignInWithOAuth from "../components/SignInWithOAuth";
 import Home from "./home";
 
