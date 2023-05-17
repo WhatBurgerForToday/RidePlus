@@ -2,7 +2,6 @@
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-    "source.organizeImports": true
   },
   "eslint.workingDirectories": ["./RidePlus"],
   "go.lintTool": "golangci-lint",
