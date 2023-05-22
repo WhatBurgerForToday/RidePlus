@@ -13,6 +13,14 @@ function config(api) {
       "react-native-reanimated/plugin",
       "expo-router/babel",
       ["module-resolver", { alias: { "~": "./src" } }],
+      [
+        "module:react-native-dotenv",
+        {
+          envName: "APP_ENV",
+          moduleName: "@env",
+          path: ".env",
+        },
+      ],
     ],
   };
 }
