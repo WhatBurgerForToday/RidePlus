@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { Link } from "expo-router";
+import { useSession } from "@clerk/clerk-expo";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { Favorite } from "../components/Favorite";
@@ -24,6 +25,10 @@ const FAVORITE = [
 ];
 
 const Home = () => {
+  const { session } = useSession();
+  const token = session?.lastActiveToken?.getRawString();
+  console.log(token);
+
   return (
     <>
       <View className="mb-5">
