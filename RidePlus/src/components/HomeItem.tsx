@@ -1,34 +1,41 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Link } from "expo-router";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
-export type RecentProps = {
+export type HomeItemProps = {
+  id: number;
+  type: string;
   location: string;
   departTime: string;
 };
 
-export const Recent = (props: RecentProps) => {
-  const { location, departTime } = props;
+export const HomeItem = (props: HomeItemProps) => {
+  const { type, location, departTime } = props;
   return (
     <View className="mx-5 my-2 rounded-lg bg-amber-400 px-2 py-5">
       <Link
         href={{
-          pathname: "/test",
+          pathname: "/",
         }}
         asChild
       >
-        <Pressable>
+        <TouchableOpacity>
           <View className="flex flex-row">
             <View className="justify-center px-5">
-              <AntDesign name="clockcircle" size={24} color="white" />
+              {type === "Recent" && (
+                <AntDesign name="clockcircle" size={24} color="white" />
+              )}
+              {type === "Favorite" && (
+                <FontAwesome name="heart" size={24} color="white" />
+              )}
             </View>
             <View className=" px-2">
               <Text className="py-1 font-bold text-black">{location}</Text>
               <Text className="py-1 text-white">Depart at {departTime}</Text>
             </View>
           </View>
-        </Pressable>
+        </TouchableOpacity>
       </Link>
     </View>
   );

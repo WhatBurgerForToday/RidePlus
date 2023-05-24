@@ -4,24 +4,23 @@ import { Link } from "expo-router";
 import { useSession } from "@clerk/clerk-expo";
 import { FontAwesome } from "@expo/vector-icons";
 
-import { Favorite } from "../components/Favorite";
-import { Recent } from "../components/Recent";
+import { HomeItem } from "~/components/HomeItem";
 
 const RECENT = [
-  { location: "新竹火車站", departTime: "PM 7:00" },
-  { location: "陽明交通大學", departTime: "PM 5:00" },
-  { location: "陽明交通大學1", departTime: "PM 5:00" },
-  { location: "陽明交通大學2", departTime: "PM 5:00" },
-  { location: "陽明交通大學3", departTime: "PM 5:00" },
-  { location: "陽明交通大學4", departTime: "PM 5:00" },
-  { location: "陽明交通大學5", departTime: "PM 5:00" },
-  { location: "陽明交通大學6", departTime: "PM 5:00" },
-  { location: "陽明交通大學7", departTime: "PM 5:00" },
+  { id: 1, location: "新竹火車站", departTime: "PM 7:00" },
+  { id: 2, location: "陽明交通大學", departTime: "PM 5:00" },
+  { id: 3, location: "陽明交通大學1", departTime: "PM 5:00" },
+  { id: 4, location: "陽明交通大學2", departTime: "PM 5:00" },
+  { id: 5, location: "陽明交通大學3", departTime: "PM 5:00" },
+  { id: 6, location: "陽明交通大學4", departTime: "PM 5:00" },
+  { id: 7, location: "陽明交通大學5", departTime: "PM 5:00" },
+  { id: 8, location: "陽明交通大學6", departTime: "PM 5:00" },
+  { id: 9, location: "陽明交通大學7", departTime: "PM 5:00" },
 ];
 
 const FAVORITE = [
-  { location: "TSMC", departTime: "AM 9:00" },
-  { location: "TSMC2", departTime: "AM 8:30" },
+  { id: 1, location: "TSMC", departTime: "AM 9:00" },
+  { id: 2, location: "TSMC2", departTime: "AM 8:30" },
 ];
 
 const Home = () => {
@@ -38,7 +37,7 @@ const Home = () => {
 
         <Link
           href={{
-            pathname: "/test",
+            pathname: "/",
           }}
           asChild
         >
@@ -56,9 +55,11 @@ const Home = () => {
       <ScrollView className="relative">
         <View className="mx-7 pb-3">
           <Text className="sticky top-0 py-2 text-xl font-bold">Recent</Text>
-          {RECENT.map(({ location, departTime }) => (
-            <Recent
-              key={location}
+          {RECENT.map(({ id, location, departTime }) => (
+            <HomeItem
+              key={id}
+              id={id}
+              type="Recent"
               location={location}
               departTime={departTime}
             />
@@ -67,9 +68,11 @@ const Home = () => {
 
         <View className="mx-7 mb-5 mt-3 pb-3">
           <Text className="py-2 text-xl font-bold">Favorite</Text>
-          {FAVORITE.map(({ location, departTime }) => (
-            <Favorite
-              key={location}
+          {FAVORITE.map(({ id, location, departTime }) => (
+            <HomeItem
+              key={id}
+              id={id}
+              type="Favorite"
               location={location}
               departTime={departTime}
             />
