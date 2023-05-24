@@ -21,28 +21,29 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { Nav } from "~/components/Nav";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const CatImage: number = require("../cat.png");
+// const CatImage: number = require("../cat.png");
 
 type TravelItem = {
-  id: number;
+  id: string;
   time: string;
   src: string;
   dest: string;
   money: number;
-  seat: string;
-  img: number;
+  capacity: number;
+  occupy: number;
+  img: string;
   star: number;
 };
 
-const StarIcon: FC = () => {
+type StarIconProps = {
+  isActive: boolean;
+};
+
+const StarIcon: FC<StarIconProps> = (props) => {
+  const { isActive } = props;
+  const c = isActive ? "#FEC20C" : "#CCCCCC";
   return (
-    <AntDesign
-      name="star"
-      size={16}
-      backgroundColor="#FFFFFF"
-      color="#FEC20C"
-    />
+    <AntDesign name="star" size={16} backgroundColor="#FFFFFF" color={c} />
   );
 };
 
@@ -56,14 +57,15 @@ const Travel: FC<Props> = (props) => {
     <View className="h-40 flex-row">
       <View className="h-full w-32 items-center justify-center">
         <View>
-          <Image className="h-20 w-20 rounded-full" source={travel.img} />
+          <Image
+            className="h-20 w-20 rounded-full"
+            source={{ uri: travel.img }}
+          />
         </View>
         <View className="mt-1 flex-row">
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
-          <StarIcon />
+          {new Array(5).fill(null).map((_, i) => (
+            <StarIcon isActive={i < Math.round(travel.star)} />
+          ))}
         </View>
       </View>
 
@@ -100,7 +102,9 @@ const Travel: FC<Props> = (props) => {
         <Text className="text-sm">$ {travel.money}</Text>
       </View>
       <View className="ml-2 mt-28">
-        <Text className="text-sm font-bold text-green-600">2/5</Text>
+        <Text className="text-sm font-bold text-green-600">
+          {travel.occupy}/{travel.capacity}
+        </Text>
       </View>
     </View>
   );
@@ -108,53 +112,58 @@ const Travel: FC<Props> = (props) => {
 
 const TRAVELS: TravelItem[] = [
   {
-    id: 1,
+    id: "1",
     time: "Thu Apr 20 11:07 PM",
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    seat: "2/5",
-    img: CatImage,
+    capacity: 4,
+    occupy: 3,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
+    star: 4,
+  },
+  {
+    id: "2",
+    time: "Thu Apr 20 11:07 PM",
+    src: "TSMC Fab 7",
+    dest: "新竹城隍廟",
+    money: 120,
+    capacity: 5,
+    occupy: 2,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
+    star: 4.5,
+  },
+  {
+    id: "3",
+    time: "Thu Apr 20 11:07 PM",
+    src: "TSMC Fab 7",
+    dest: "新竹城隍廟",
+    money: 120,
+    capacity: 5,
+    occupy: 2,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
+    star: 4.4,
+  },
+  {
+    id: "4",
+    time: "Thu Apr 20 11:07 PM",
+    src: "TSMC Fab 7",
+    dest: "新竹城隍廟",
+    money: 120,
+    capacity: 5,
+    occupy: 2,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     star: 5,
   },
   {
-    id: 2,
+    id: "5",
     time: "Thu Apr 20 11:07 PM",
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    seat: "2/5",
-    img: CatImage,
-    star: 5,
-  },
-  {
-    id: 3,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    seat: "2/5",
-    img: CatImage,
-    star: 5,
-  },
-  {
-    id: 4,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    seat: "2/5",
-    img: CatImage,
-    star: 5,
-  },
-  {
-    id: 5,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    seat: "2/5",
-    img: CatImage,
+    capacity: 5,
+    occupy: 2,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     star: 5,
   },
 ];
@@ -163,6 +172,8 @@ const MILLIS_PER_DAY = 1000 * 86400;
 
 const SearchPage = () => {
   const [date, setDate] = useState(new Date(Date.now() + MILLIS_PER_DAY));
+  const [src, setSrc] = useState("");
+  const [dest, setDest] = useState("");
 
   const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
     if (selectedDate == null) return;
@@ -221,6 +232,8 @@ const SearchPage = () => {
               className="pla ml-3 text-sm"
               placeholder="From"
               placeholderTextColor="#333"
+              value={src}
+              onChangeText={(newSrc) => setSrc(newSrc)}
             />
           </View>
           <View className="h-10 w-56 justify-center rounded-xl border border-gray-400 bg-white">
@@ -228,6 +241,8 @@ const SearchPage = () => {
               className="ml-3 text-sm"
               placeholder="To"
               placeholderTextColor="#333"
+              value={dest}
+              onChangeText={(newDest) => setDest(newDest)}
             />
           </View>
         </View>
@@ -237,6 +252,10 @@ const SearchPage = () => {
             size={32}
             backgroundColor="#FBBF24"
             color="#000000"
+            onPress={() => {
+              setSrc(dest);
+              setDest(src);
+            }}
           />
         </View>
       </View>
