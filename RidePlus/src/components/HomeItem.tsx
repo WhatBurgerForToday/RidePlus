@@ -5,7 +5,7 @@ import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 export type HomeItemProps = {
   id: number;
-  type: string;
+  type: "Recent" | "Favorite";
   location: string;
   departTime: string;
 };
