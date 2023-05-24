@@ -5,6 +5,15 @@
       "bundler": "metro"
     },
     "name": "RidePlus",
-    "slug": "RidePlus"
+    "slug": "RidePlus",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "isAndroidBackgroundLocationEnabled": "true"
+        }
+      ]
+    ]
   }
 }
