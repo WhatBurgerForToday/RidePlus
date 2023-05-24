@@ -21,6 +21,7 @@
     "@clerk/clerk-react": "^4.16.0",
     "@expo/ngrok": "^4.1.1",
     "babel-plugin-macros": "^3.1.0",
+    "@react-native-community/datetimepicker": "^7.1.0",
     "expo": "^48.0.7",
     "expo-constants": "~14.2.1",
     "expo-linking": "~4.0.1",
