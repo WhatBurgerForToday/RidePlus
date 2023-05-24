@@ -5,8 +5,6 @@ import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 import SignInWithOAuth from "../components/SignInWithOAuth";
 import Home from "./home";
 
-// const CLERK_PUBLISHABLE_KEY =
-//   "pk_test_dG9wcy1tYWxhbXV0ZS02MC5jbGVyay5hY2NvdW50cy5kZXYk";
 export default function Login() {
   return (
     <SafeAreaView>
