@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@clerk/fastify": "^0.4.4",
-    "@rideplus/api": "workspace:*",
+    "@rideplus/api": "0.1.0",
     "@t3-oss/env-core": "^0.3.1",
     "@trpc/server": "^10.27.1",
     "fastify": "^4.17.0",
