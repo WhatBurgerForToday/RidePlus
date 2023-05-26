@@ -3,13 +3,28 @@
   "version": "0.1.0",
   "main": "src/index.tsx",
   "private": true,
+  "scripts": {
+    "dev": "pnpm with-env tsx watch src/index.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "with-env": "dotenv -e ../../.env"
+  },
   "dependencies": {
     "@clerk/fastify": "^0.4.4",
     "@rideplus/api": "0.1.0",
     "@t3-oss/env-core": "^0.3.1",
     "@trpc/server": "^10.27.1",
     "fastify": "^4.17.0",
+    "fastify-plugin": "^4.5.0",
     "superjson": "1.9.1",
     "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@rideplus/eslint-config": "^0.1.0",
+    "dotenv-cli": "^7.2.1",
+    "eslint": "^8.40.0",
+    "pino-pretty": "^10.0.0",
+    "tsx": "^3.12.7"
   }
 }

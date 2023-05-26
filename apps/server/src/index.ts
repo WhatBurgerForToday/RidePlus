@@ -1,11 +1,32 @@
 import { clerkPlugin } from "@clerk/fastify";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import fastify from "fastify";
+import type { PinoLoggerOptions } from "fastify/types/logger";
 
 import { appRouter, createTRPCContext } from "@rideplus/api";
 
+import { env } from "./env";
+
+const envToLogger = {
+  development: {
+    transport: {
+      target: "pino-pretty",
+      options: {
+        translateTime: true,
+        ignore: "pid,hostname,reqId,req,res",
+        messageFormat: "{msg} [id={reqId} {req.method} {req.url}]",
+      },
+    },
+  } satisfies PinoLoggerOptions,
+  production: true,
+  test: false,
+};
+
 const startServer = async () => {
-  const server = fastify({ logger: true });
+  const server = fastify({
+    logger: envToLogger[env.NODE_ENV] ?? true,
+  });
+
   try {
     await server.register(fastifyTRPCPlugin, {
       prefix: "/api/trpc",
@@ -14,7 +35,9 @@ const startServer = async () => {
 
     await server.register(clerkPlugin);
 
-    await server.listen({ port: 3000, host: "::" });
+    server.get("/", () => ({ hello: "world" }));
+
+    await server.listen({ host: "0.0.0.0", port: 3000 });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
