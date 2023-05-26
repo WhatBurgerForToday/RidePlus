@@ -12,6 +12,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^0.17.6",
     "@expo/metro-config": "^0.7.1",
     "@shopify/flash-list": "1.4.3",
     "@tanstack/react-query": "^4.29.5",
@@ -22,8 +23,10 @@
     "expo-constants": "~14.2.1",
     "expo-linking": "~4.0.1",
     "expo-router": "^1.5.3",
+    "expo-secure-store": "^12.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
+    "expo-web-browser": "^12.1.1",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -33,13 +36,13 @@
     "superjson": "1.9.1"
   },
   "devDependencies": {
-    "@rideplus/api": "workspace:*",
-    "@rideplus/eslint-config": "workspace:*",
-    "@rideplus/tailwind-config": "workspace:*",
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@babel/runtime": "^7.21.5",
     "@expo/config-plugins": "^6.0.1",
+    "@rideplus/api": "workspace:*",
+    "@rideplus/eslint-config": "workspace:*",
+    "@rideplus/tailwind-config": "workspace:*",
     "@types/babel__core": "^7.20.0",
     "@types/react": "^18.2.6",
     "@types/webpack-env": "^1.18.0",

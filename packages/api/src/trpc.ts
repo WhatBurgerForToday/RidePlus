@@ -7,11 +7,11 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { getServerSession, type Session } from "@rideplus/auth";
+import { getAuth, type AuthObject } from "@rideplus/auth";
 import { prisma } from "@rideplus/db";
 
 /**
@@ -24,7 +24,7 @@ import { prisma } from "@rideplus/db";
  *
  */
 type CreateContextOptions = {
-  session: Session | null;
+  auth: AuthObject;
 };
 
 /**
@@ -38,7 +38,7 @@ type CreateContextOptions = {
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
+    auth: opts.auth,
     prisma,
   };
 };
@@ -48,14 +48,11 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerSession({ req, res });
-
+export const createTRPCContext = (opts: CreateFastifyContextOptions) => {
+  // get the user session from the request
+  const auth = getAuth(opts.req);
   return createInnerTRPCContext({
-    session,
+    auth,
   });
 };
 
@@ -106,13 +103,13 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user) {
+  if (!ctx.auth.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
   return next({
     ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      auth: ctx.auth,
     },
   });
 });

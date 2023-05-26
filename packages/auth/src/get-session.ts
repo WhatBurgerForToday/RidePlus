@@ -1,18 +1,8 @@
-import type {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
-import { getServerSession as $getServerSession } from "next-auth";
+import { getAuth as $getAuth } from "@clerk/fastify";
 
-import { authOptions } from "./auth-options";
+export type GetAuth = typeof $getAuth;
+export type AuthObject = ReturnType<GetAuth>;
 
-type GetServerSessionContext =
-  | {
-      req: GetServerSidePropsContext["req"];
-      res: GetServerSidePropsContext["res"];
-    }
-  | { req: NextApiRequest; res: NextApiResponse };
-export const getServerSession = (ctx: GetServerSessionContext) => {
-  return $getServerSession(ctx.req, ctx.res, authOptions);
+export const getAuth: GetAuth = (request) => {
+  return $getAuth(request);
 };
