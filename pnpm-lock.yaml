@@ -4,7 +4,7 @@ importers:
 
   .:
     dependencies:
-      '@acme/eslint-config':
+      '@rideplus/eslint-config':
         specifier: ^0.1.0
         version: link:packages/config/eslint
       '@ianvs/prettier-plugin-sort-imports':
@@ -92,13 +92,13 @@ importers:
         specifier: 1.9.1
         version: 1.9.1
     devDependencies:
-      '@acme/api':
+      '@rideplus/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@acme/eslint-config':
+      '@rideplus/eslint-config':
         specifier: ^0.1.0
         version: link:../../packages/config/eslint
-      '@acme/tailwind-config':
+      '@rideplus/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
       '@babel/core':
@@ -140,13 +140,13 @@ importers:
 
   apps/nextjs:
     dependencies:
-      '@acme/api':
+      '@rideplus/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@acme/auth':
+      '@rideplus/auth':
         specifier: ^0.1.0
         version: link:../../packages/auth
-      '@acme/db':
+      '@rideplus/db':
         specifier: ^0.1.0
         version: link:../../packages/db
       '@t3-oss/env-nextjs':
@@ -186,10 +186,10 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@acme/eslint-config':
+      '@rideplus/eslint-config':
         specifier: ^0.1.0
         version: link:../../packages/config/eslint
-      '@acme/tailwind-config':
+      '@rideplus/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
       '@types/node':
@@ -222,10 +222,10 @@ importers:
 
   packages/api:
     dependencies:
-      '@acme/auth':
+      '@rideplus/auth':
         specifier: ^0.1.0
         version: link:../auth
-      '@acme/db':
+      '@rideplus/db':
         specifier: ^0.1.0
         version: link:../db
       '@trpc/client':
@@ -241,7 +241,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@acme/eslint-config':
+      '@rideplus/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:
@@ -253,7 +253,7 @@ importers:
 
   packages/auth:
     dependencies:
-      '@acme/db':
+      '@rideplus/db':
         specifier: ^0.1.0
         version: link:../db
       '@next-auth/prisma-adapter':
@@ -278,7 +278,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@acme/eslint-config':
+      '@rideplus/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:

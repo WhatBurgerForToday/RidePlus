@@ -1,5 +1,5 @@
 {
-  "name": "@acme/expo",
+  "name": "@rideplus/expo",
   "version": "0.1.0",
   "main": "index.tsx",
   "scripts": {
@@ -33,9 +33,9 @@
     "superjson": "1.9.1"
   },
   "devDependencies": {
-    "@acme/api": "^0.1.0",
-    "@acme/eslint-config": "^0.1.0",
-    "@acme/tailwind-config": "^0.1.0",
+    "@rideplus/api": "^0.1.0",
+    "@rideplus/eslint-config": "^0.1.0",
+    "@rideplus/tailwind-config": "^0.1.0",
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@babel/runtime": "^7.21.5",
