@@ -2,10 +2,8 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "dsznajder.es7-react-js-snippets",
     "bradlc.vscode-tailwindcss",
-    "golang.go",
-    "meta.relay",
+    "Prisma.prisma",
     "yoavbls.pretty-ts-errors"
   ]
 }

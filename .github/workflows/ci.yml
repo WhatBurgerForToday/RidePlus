@@ -1,112 +1,59 @@
 name: CI
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
     branches: ["*"]
+  push:
+    branches: ["main"]
+  merge_group:
+
+# You can leverage Vercel Remote Caching with Turbo to speed up your builds
+# @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
 jobs:
-  eslint:
+  build-lint:
+    env:
+      DATABASE_URL: file:./db.sqlite
     runs-on: ubuntu-latest
-    name: Lint Frontend
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+
+      - name: Setup Node 18
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
-      - name: Install dependencies
-        working-directory: ./RidePlus
-        run: npm ci
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "pnpm_cache_dir=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-      - name: Run ESLint
-        working-directory: ./RidePlus
-        run: npm run lint
-
-  prettier:
-    runs-on: ubuntu-latest
-    name: Check Frontend Format
-
-    steps:
-      - uses: actions/checkout@v3
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
         with:
-          fetch-depth: 0
+          path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+      - name: Install deps (with cache)
+        run: pnpm install
 
-      - name: Install dependencies
-        working-directory: ./RidePlus
-        run: npm ci
+      # Normally, this would be done as part of the turbo pipeline - however since the Expo app doesn't depend on `@acme/db` it doesn't care.
+      # TODO: Free for all to find a better solution here.
+      - name: Generate Prisma Client
+        run: pnpm turbo db:generate
 
-      - name: Run Prettier
-        working-directory: ./RidePlus
-        run: npm run format:check
+      - name: Build, lint and type-check
+        run: pnpm turbo build lint type-check
 
-  typecheck:
-    runs-on: ubuntu-latest
-    name: Typecheck Frontend
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        working-directory: ./RidePlus
-        run: npm ci
-
-      - name: Run TypeScript
-        working-directory: ./RidePlus
-        run: npm run typecheck
-
-  golangci:
-    runs-on: ubuntu-latest
-    name: Lint Backend
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install Golang
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.20"
-          cache: false
-
-      - name: Install golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.52.2
-          working-directory: server
-
-  gofmt:
-    runs-on: ubuntu-latest
-    name: Check Backend Format
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install Golang
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.20"
-
-      - name: Check gofmt
-        run: if [ gofmt -l -s . | wc -l -gt 0 ]; then exit 1; fi
+      - name: Check workspaces
+        run: pnpm manypkg check
