@@ -5,6 +5,7 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
+    "postinstall": "pnpm db:generate",
     "clean": "rm -rf .turbo node_modules",
     "db:generate": "pnpm with-env prisma generate",
     "db:push": "pnpm with-env prisma db push --skip-generate",

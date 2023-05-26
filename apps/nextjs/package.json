@@ -13,9 +13,9 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@rideplus/api": "^0.1.0",
-    "@rideplus/auth": "^0.1.0",
-    "@rideplus/db": "^0.1.0",
+    "@rideplus/api": "workspace:*",
+    "@rideplus/auth": "workspace:*",
+    "@rideplus/db": "workspace:*",
     "@t3-oss/env-nextjs": "^0.3.1",
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "^10.27.1",
@@ -30,8 +30,8 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@rideplus/eslint-config": "^0.1.0",
-    "@rideplus/tailwind-config": "^0.1.0",
+    "@rideplus/eslint-config": "workspace:*",
+    "@rideplus/tailwind-config": "workspace:*",
     "@types/node": "^18.16.5",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",

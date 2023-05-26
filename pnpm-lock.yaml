@@ -4,15 +4,15 @@ importers:
 
   .:
     dependencies:
-      '@rideplus/eslint-config':
-        specifier: ^0.1.0
-        version: link:packages/config/eslint
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^3.7.2
         version: 3.7.2(prettier@2.8.8)
       '@manypkg/cli':
         specifier: ^0.20.0
         version: 0.20.0
+      '@rideplus/eslint-config':
+        specifier: workspace:*
+        version: link:packages/config/eslint
       '@types/prettier':
         specifier: ^2.7.2
         version: 2.7.2
@@ -92,15 +92,6 @@ importers:
         specifier: 1.9.1
         version: 1.9.1
     devDependencies:
-      '@rideplus/api':
-        specifier: ^0.1.0
-        version: link:../../packages/api
-      '@rideplus/eslint-config':
-        specifier: ^0.1.0
-        version: link:../../packages/config/eslint
-      '@rideplus/tailwind-config':
-        specifier: ^0.1.0
-        version: link:../../packages/config/tailwind
       '@babel/core':
         specifier: ^7.21.8
         version: 7.21.8
@@ -113,6 +104,15 @@ importers:
       '@expo/config-plugins':
         specifier: ^6.0.1
         version: 6.0.1
+      '@rideplus/api':
+        specifier: workspace:*
+        version: link:../../packages/api
+      '@rideplus/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/config/eslint
+      '@rideplus/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/config/tailwind
       '@types/babel__core':
         specifier: ^7.20.0
         version: 7.20.0
@@ -141,13 +141,13 @@ importers:
   apps/nextjs:
     dependencies:
       '@rideplus/api':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/api
       '@rideplus/auth':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/auth
       '@rideplus/db':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/db
       '@t3-oss/env-nextjs':
         specifier: ^0.3.1
@@ -187,10 +187,10 @@ importers:
         version: 3.21.4
     devDependencies:
       '@rideplus/eslint-config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config/eslint
       '@rideplus/tailwind-config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../../packages/config/tailwind
       '@types/node':
         specifier: ^18.16.5
@@ -223,10 +223,10 @@ importers:
   packages/api:
     dependencies:
       '@rideplus/auth':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../auth
       '@rideplus/db':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../db
       '@trpc/client':
         specifier: ^10.27.1
@@ -242,7 +242,7 @@ importers:
         version: 3.21.4
     devDependencies:
       '@rideplus/eslint-config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../config/eslint
       eslint:
         specifier: ^8.40.0
@@ -253,12 +253,12 @@ importers:
 
   packages/auth:
     dependencies:
-      '@rideplus/db':
-        specifier: ^0.1.0
-        version: link:../db
       '@next-auth/prisma-adapter':
         specifier: ^1.0.6
         version: 1.0.6(@prisma/client@4.14.1)(next-auth@4.22.1)
+      '@rideplus/db':
+        specifier: workspace:*
+        version: link:../db
       '@t3-oss/env-nextjs':
         specifier: ^0.3.1
         version: 0.3.1(typescript@5.0.4)(zod@3.21.4)
@@ -279,7 +279,7 @@ importers:
         version: 3.21.4
     devDependencies:
       '@rideplus/eslint-config':
-        specifier: ^0.1.0
+        specifier: workspace:*
         version: link:../config/eslint
       eslint:
         specifier: ^8.40.0

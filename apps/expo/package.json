@@ -4,7 +4,7 @@
   "main": "index.tsx",
   "scripts": {
     "clean": "git clean -xdf .expo .turbo node_modules",
-    "dev": "expo start --ios",
+    "dev": "expo start",
     "dev:android": "expo start --android",
     "dev:ios": "expo start --ios",
     "lint": "eslint .",
@@ -33,9 +33,9 @@
     "superjson": "1.9.1"
   },
   "devDependencies": {
-    "@rideplus/api": "^0.1.0",
-    "@rideplus/eslint-config": "^0.1.0",
-    "@rideplus/tailwind-config": "^0.1.0",
+    "@rideplus/api": "workspace:*",
+    "@rideplus/eslint-config": "workspace:*",
+    "@rideplus/tailwind-config": "workspace:*",
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@babel/runtime": "^7.21.5",

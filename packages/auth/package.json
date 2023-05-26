@@ -11,8 +11,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@rideplus/db": "^0.1.0",
     "@next-auth/prisma-adapter": "^1.0.6",
+    "@rideplus/db": "workspace:*",
     "@t3-oss/env-nextjs": "^0.3.1",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",
@@ -21,7 +21,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@rideplus/eslint-config": "^0.1.0",
+    "@rideplus/eslint-config": "workspace:*",
     "eslint": "^8.40.0",
     "typescript": "^5.0.4"
   }
