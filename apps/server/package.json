@@ -4,11 +4,11 @@
   "main": "src/index.tsx",
   "private": true,
   "scripts": {
-    "dev": "pnpm with-env tsx watch src/index.ts",
+    "dev": "pnpm with-env tsx watch --clear-screen=false src/index.ts",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
-    "with-env": "dotenv -e ../../.env"
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@clerk/fastify": "^0.4.4",
