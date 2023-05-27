@@ -58,6 +58,9 @@ importers:
       expo:
         specifier: ^48.0.17
         version: 48.0.17(@babel/core@7.21.8)
+      expo-auth-session:
+        specifier: ^4.0.3
+        version: 4.0.3(expo@48.0.17)
       expo-constants:
         specifier: ~14.2.1
         version: 14.2.1(expo@48.0.17)
