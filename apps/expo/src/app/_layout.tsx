@@ -14,7 +14,7 @@ const RootLayout = () => {
   return (
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
-      tokenCache={tokenCache}
+      // tokenCache={tokenCache}
     >
       <SignedIn>
         <TRPCProvider>
