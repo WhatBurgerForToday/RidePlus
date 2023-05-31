@@ -3,11 +3,16 @@ import { type PrismaClient } from "@prisma/client";
 import { type DriverRideRepository } from "~/core/ports/driverRideRepository";
 
 export const createPrismaDriverRideRepo = (
-  _prisma: PrismaClient,
+  prisma: PrismaClient,
 ): DriverRideRepository => {
   return {
-    create: (_ride) => {
-      throw new Error("Not implemented yet");
+    create: async (input) => {
+      await prisma.ride.create({
+        data: {
+          driverId: input.driverId,
+          locations: JSON.stringify(input.locations),
+        },
+      });
     },
   };
 };

@@ -1,5 +1,7 @@
 import { type PassengerRide } from "~/core/domain/passengerRide";
 
+export type CreatePassengerRideInput = Omit<PassengerRide, "id">;
+
 export type PassengerRideRepository = {
-  create: (ride: PassengerRide) => void;
+  create: (input: CreatePassengerRideInput) => Promise<void>;
 };
