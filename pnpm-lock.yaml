@@ -319,6 +319,13 @@ importers:
         version: 5.0.4
 
   packages/internal:
+    dependencies:
+      '@prisma/client':
+        specifier: ^4.14.1
+        version: 4.14.1(prisma@4.14.1)
+      '@rideplus/db':
+        specifier: ^0.1.0
+        version: link:../db
     devDependencies:
       '@rideplus/eslint-config':
         specifier: ^0.1.0
