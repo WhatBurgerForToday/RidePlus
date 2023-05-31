@@ -1,3 +1,22 @@
+# Ride Plus
+
+## Run Locally
+
+```shell
+# Install dependencies
+pnpm i
+
+# Generate Prisma Client
+pnpm db:generate
+
+# Configure Environment Variables
+# You'll need to set the empty ones manually
+cp .env.example .env
+
+# Start the Development Servers at once
+pnpm dev
+```
+
 # create-t3-turbo
 
 <img width="1758" alt="turbo2" src="https://user-images.githubusercontent.com/51714798/213819392-33e50db9-3e38-4c51-9a22-03abe5e48f3d.png">
@@ -5,6 +24,7 @@
 ## Installation
 
 There are two ways of initializing an app using `create-t3-turbo` starter. You can either use this repository as a template or use Turbo's CLI to init your project:
+
 ```bash
 npx create-turbo@latest -e https://github.com/t3-oss/create-t3-turbo
 ```
