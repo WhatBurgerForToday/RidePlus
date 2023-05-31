@@ -318,6 +318,18 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
 
+  packages/internal:
+    devDependencies:
+      '@rideplus/eslint-config':
+        specifier: ^0.1.0
+        version: link:../config/eslint
+      eslint:
+        specifier: ^8.40.0
+        version: 8.40.0
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
+
 packages:
 
   /@alloc/quick-lru@5.2.0:
