@@ -1,5 +1,5 @@
 {
-  "name": "create-t3-turbo",
+  "name": "rideplus",
   "private": true,
   "engines": {
     "node": ">=v18.14.0"
@@ -22,7 +22,10 @@
     "@manypkg/cli": "^0.20.0",
     "@rideplus/eslint-config": "0.1.0",
     "@types/prettier": "^2.7.2",
-    "eslint": "^8.41.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.2",
+    "@typescript-eslint/parser": "^5.59.2",
+    "eslint": "^8.40.0",
+    "eslint-plugin-turbo": "^1.10.0",
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.8",
     "turbo": "^1.9.9",

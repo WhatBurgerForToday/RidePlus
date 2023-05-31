@@ -12,11 +12,7 @@ const config = {
       "./packages/*/tsconfig.json",
     ],
   },
-  settings: {
-    next: {
-      rootDir: ["apps/nextjs"],
-    },
-  },
+  settings: {},
 };
 
 module.exports = config;
