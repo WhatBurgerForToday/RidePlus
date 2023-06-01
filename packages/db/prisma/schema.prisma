@@ -15,13 +15,20 @@ model Post {
     content String
 }
 
+enum RideStatus {
+    PENDING
+    APPROVED
+    CANCELLED
+}
+
 model Ride {
     id String @id @default(cuid())
 
     driverId   String
     passengers Passenger[]
 
-    locations String @db.Text
+    locations String     @db.Text
+    status    RideStatus
 }
 
 model Passenger {
