@@ -9,33 +9,65 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
+enum DriverRideStatus {
+    OPEN
+    CLOSED
 }
 
-enum RideStatus {
+enum PassengerRideStatus {
     PENDING
     APPROVED
     CANCELLED
 }
 
-model Ride {
-    id String @id @default(cuid())
-
-    driverId   String
-    passengers Passenger[]
-
-    locations String     @db.Text
-    status    RideStatus
+model Driver {
+    id    String       @id @default(cuid())
+    rides DriverRide[]
 }
 
 model Passenger {
-    id     String @id @default(cuid())
-    ride   Ride   @relation(fields: [rideId], references: [id])
-    rideId String
+    id    String          @id @default(cuid())
+    rides PassengerRide[]
+}
 
-    @@unique([rideId, id])
-    @@index([rideId])
+model Location {
+    id            String          @id @default(cuid())
+    latitude      Float
+    longitude     Float
+    name          String
+    driverRide    DriverRide[]
+    passengerRide PassengerRide[]
+
+    @@unique([latitude, longitude])
+}
+
+model DriverRide {
+    id       String @id @default(cuid())
+    driverId String
+
+    locations Location[]
+    status    DriverRideStatus @default(OPEN)
+
+    passengerRides PassengerRide[]
+    driver         Driver          @relation(fields: [driverId], references: [id])
+
+    @@index([driverId])
+}
+
+model PassengerRide {
+    id        String              @id @default(cuid())
+    driverId  String
+    status    PassengerRideStatus @default(PENDING)
+    locations Location[]
+
+    passenger   Passenger @relation(fields: [passengerId], references: [id])
+    passengerId String
+
+    isFavorite Boolean @default(false)
+
+    driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
+    @@index([passengerId])
+    @@index([driverRideId])
 }
