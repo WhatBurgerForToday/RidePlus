@@ -1,11 +1,7 @@
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { Link } from "expo-router";
-import { useAuth } from "@clerk/clerk-expo";
-
-import { api } from "~/utils/api";
 
 const IndexPage = () => {
   return (
