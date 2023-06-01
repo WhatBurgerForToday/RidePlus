@@ -2,6 +2,7 @@ import React from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
+import { Nav } from "~/components/Nav";
 import { RegisterItem } from "~/components/RegisterItem";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
@@ -103,6 +104,7 @@ const Register = () => {
           ))}
         </View>
       </ScrollView>
+      <Nav />
     </>
   );
 };

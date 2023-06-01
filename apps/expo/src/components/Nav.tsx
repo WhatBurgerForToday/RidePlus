@@ -34,7 +34,7 @@ const PAGES: Page[] = [
     ),
   },
   {
-    href: "/search",
+    href: "/register-rider",
     icon: ({ color, backgroundColor }) => (
       <AntDesign
         name="clockcircle"
