@@ -2,6 +2,7 @@ import { type PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
 import { type PassengerRideRepository } from "~/core/ports/passengerRideRepository";
+import { locationsToConnectOrCreate } from "./locationToConnectOrCreate";
 
 export const locationsSchema = z.array(
   z.object({
@@ -15,29 +16,31 @@ export const createPrismaPassengerRideRepo = (
 ): PassengerRideRepository => {
   return {
     save: async (input) => {
-      const ride = await prisma.ride.upsert({
+      const ride = await prisma.passengerRide.upsert({
         where: {
           id: input.id,
         },
-        update: {
-          locations: JSON.stringify(input.locations),
-          status: input.status,
+        select: {
+          id: true,
+          driverId: true,
+          passengerId: true,
+          driverRideId: true,
+          status: true,
+          locations: true,
         },
+        // TODO: finish the update
+        update: {},
         create: {
-          id: input.id,
           driverId: input.driverId,
-          locations: JSON.stringify(input.locations),
-          status: input.status,
+          locations: {
+            connectOrCreate: locationsToConnectOrCreate(input.locations),
+          },
+          passengerId: input.passengerId,
+          driverRideId: input.driverRideId,
         },
       });
 
-      const locations = JSON.parse(ride.locations) as unknown;
-      const parsedLocations = await locationsSchema.parseAsync(locations);
-
-      return {
-        ...ride,
-        locations: parsedLocations,
-      };
+      return ride;
     },
   };
 };
