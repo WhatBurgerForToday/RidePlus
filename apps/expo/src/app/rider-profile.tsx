@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   Feather,
@@ -7,6 +7,7 @@ import {
 } from "@expo/vector-icons";
 
 import { Nav } from "~/components/Nav";
+import { RiderHistory } from "~/components/RiderHistory";
 import SignOut from "~/screens/SignOut";
 
 const PROFILEINFO = {
@@ -17,13 +18,13 @@ const PROFILEINFO = {
 };
 
 const RiderProfile = () => {
+  const [showHistory, setShowHistory] = useState(false);
   return (
     <>
+      <View className="pb-5 pl-7 pt-20">
+        <Text className="text-2xl font-bold text-amber-400">Profile</Text>
+      </View>
       <ScrollView className="mb-5">
-        <View className="pb-5 pl-7 pt-20">
-          <Text className=" text-2xl font-bold text-amber-400">Profile</Text>
-        </View>
-
         <View className="mx-2 flex-row">
           <View className="justify-center px-5 py-5">
             <Image
@@ -45,40 +46,44 @@ const RiderProfile = () => {
 
         <View className="mx-5 mb-10 mt-5 border border-amber-400" />
 
-        <View className="w-11/12 self-center rounded-xl bg-amber-100">
-          <TouchableOpacity>
-            <View className="h-14 flex-row items-center border border-white">
-              <View className="pl-4 pr-6">
-                <Feather name="edit" size={24} color="black" />
-              </View>
-              <Text className="font-bold">Edit bio</Text>
-            </View>
-          </TouchableOpacity>
+        {showHistory && <RiderHistory setShowHistory={setShowHistory} />}
 
-          <TouchableOpacity>
-            <View className="h-14 flex-row items-center border border-white">
-              <View className="pl-4 pr-6">
-                <FontAwesome5 name="history" size={24} color="black" />
+        {!showHistory && (
+          <View className="w-11/12 self-center rounded-xl bg-amber-100">
+            <TouchableOpacity>
+              <View className="h-14 flex-row items-center border border-white">
+                <View className="pl-4 pr-6">
+                  <Feather name="edit" size={24} color="black" />
+                </View>
+                <Text className="font-bold">Edit bio</Text>
               </View>
-              <Text className="font-bold">View History Rides</Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
-          <TouchableOpacity>
-            <View className="h-14 flex-row items-center border border-white">
-              <View className="pl-4 pr-6">
-                <MaterialCommunityIcons
-                  name="account-switch-outline"
-                  size={24}
-                  color="black"
-                />
+            <TouchableOpacity onPress={() => setShowHistory(true)}>
+              <View className="h-14 flex-row items-center border border-white">
+                <View className="pl-4 pr-6">
+                  <FontAwesome5 name="history" size={24} color="black" />
+                </View>
+                <Text className="font-bold">View History Rides</Text>
               </View>
-              <Text className="font-bold">Switch to Driver's Account</Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
-          <SignOut />
-        </View>
+            <TouchableOpacity>
+              <View className="h-14 flex-row items-center border border-white">
+                <View className="pl-4 pr-6">
+                  <MaterialCommunityIcons
+                    name="account-switch-outline"
+                    size={24}
+                    color="black"
+                  />
+                </View>
+                <Text className="font-bold">Switch to Driver's Account</Text>
+              </View>
+            </TouchableOpacity>
+
+            <SignOut />
+          </View>
+        )}
       </ScrollView>
       <Nav />
     </>
