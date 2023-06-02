@@ -29,7 +29,12 @@ export const createPrismaPassengerRideRepo = (
           locations: true,
         },
         // TODO: finish the update
-        update: {},
+        update: {
+          status: input.status,
+          locations: {
+            connectOrCreate: locationsToConnectOrCreate(input.locations),
+          },
+        },
         create: {
           driverId: input.driverId,
           locations: {
