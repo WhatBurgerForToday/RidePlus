@@ -1,13 +1,37 @@
 import { type PrismaClient } from "@prisma/client";
 
 import { type DriverRideRepository } from "~/core/ports/driverRideRepository";
+import { locationsToConnectOrCreate } from "./locationToConnectOrCreate";
 
 export const createPrismaDriverRideRepo = (
-  _prisma: PrismaClient,
+  prisma: PrismaClient,
 ): DriverRideRepository => {
   return {
-    create: (_input) => {
-      throw new Error("Not implemented");
+    save: async (input) => {
+      const ride = await prisma.driverRide.upsert({
+        where: {
+          id: input.id,
+        },
+        select: {
+          id: true,
+          driverId: true,
+          locations: true,
+          status: true,
+        },
+        update: {
+          locations: {
+            connectOrCreate: locationsToConnectOrCreate(input.locations),
+          },
+          status: input.status,
+        },
+        create: {
+          driverId: input.driverId,
+          locations: {
+            connectOrCreate: locationsToConnectOrCreate(input.locations),
+          },
+        },
+      });
+      return ride;
     },
   };
 };
