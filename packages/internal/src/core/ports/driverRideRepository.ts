@@ -1,7 +1,8 @@
 import { type DriverRide } from "~/core/domain/driverRide";
+import { type SaveInput } from "./passengerRideRepository";
 
-export type CreateDriverRideInput = Omit<DriverRide, "id">;
+export type CreateDriverRideInput = SaveInput<DriverRide>;
 
 export type DriverRideRepository = {
-  create: (input: CreateDriverRideInput) => Promise<void>;
+  save: (input: CreateDriverRideInput) => Promise<DriverRide>;
 };
