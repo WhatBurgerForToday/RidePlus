@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider        = "prisma-client-js"
     previewFeatures = ["jsonProtocol"]
@@ -12,59 +9,65 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
+enum DriverRideStatus {
+    OPEN
+    CLOSED
 }
 
-// NextAuth.js Models
-// NOTE: When using postgresql, mysql or sqlserver, 
-// uncomment the @db.Text annotations below
-// @see https://next-auth.js.org/schemas/models
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-    @@index([userId])
+enum PassengerRideStatus {
+    PENDING
+    APPROVED
+    CANCELLED
 }
 
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@index([userId])
+model Driver {
+    id    String       @id @default(cuid())
+    rides DriverRide[]
 }
 
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+model Passenger {
+    id    String          @id @default(cuid())
+    rides PassengerRide[]
 }
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+model Location {
+    id            String          @id @default(cuid())
+    latitude      Float
+    longitude     Float
+    name          String
+    driverRide    DriverRide[]
+    passengerRide PassengerRide[]
 
-    @@unique([identifier, token])
+    @@unique([latitude, longitude])
+}
+
+model DriverRide {
+    id       String @id @default(cuid())
+    driverId String
+
+    locations Location[]
+    status    DriverRideStatus @default(OPEN)
+
+    passengerRides PassengerRide[]
+    driver         Driver          @relation(fields: [driverId], references: [id])
+
+    @@index([driverId])
+}
+
+model PassengerRide {
+    id        String              @id @default(cuid())
+    driverId  String
+    status    PassengerRideStatus @default(PENDING)
+    locations Location[]
+
+    passenger   Passenger @relation(fields: [passengerId], references: [id])
+    passengerId String
+
+    isFavorite Boolean @default(false)
+
+    driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
+    @@index([passengerId])
+    @@index([driverRideId])
 }

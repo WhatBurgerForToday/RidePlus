@@ -124,3 +124,17 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+const enforceIsDriver = t.middleware(({ ctx, next }) => {
+  if (false) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  return next({
+    ctx: {
+      auth: ctx.auth,
+    },
+  });
+});
+
+export const driverProcedure = t.procedure.use(enforceIsDriver);
