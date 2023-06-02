@@ -5,9 +5,6 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Nav } from "~/components/Nav";
 import { RegisterItem } from "~/components/RegisterItem";
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const CatImage: number = require("../images/Simon_cat.webp");
-
 const PESSENGERITEMS = [
   {
     id: 1,
@@ -15,7 +12,7 @@ const PESSENGERITEMS = [
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
 ];
@@ -27,7 +24,7 @@ const PENDITEMS = [
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
   {
@@ -36,7 +33,7 @@ const PENDITEMS = [
     src: "TSMC Fab 7",
     dest: "NYCU",
     money: 100,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
 ];
