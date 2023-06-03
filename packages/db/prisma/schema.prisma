@@ -21,12 +21,12 @@ enum PassengerRideStatus {
 }
 
 model Driver {
-    id    String       @id @default(cuid())
+    id    String       @id
     rides DriverRide[]
 }
 
 model Passenger {
-    id    String          @id @default(cuid())
+    id    String          @id
     rides PassengerRide[]
 }
 
@@ -50,6 +50,8 @@ model DriverRide {
 
     passengerRides PassengerRide[]
     driver         Driver          @relation(fields: [driverId], references: [id])
+
+    departAt DateTime
 
     @@index([driverId])
 }
