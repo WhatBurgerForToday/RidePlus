@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { location } from "../schema/location";
 import { createTRPCRouter, driverProcedure } from "../trpc";
 
 export const driverRouter = createTRPCRouter({
@@ -83,12 +84,7 @@ export const driverRouter = createTRPCRouter({
   create: driverProcedure
     .input(
       z.object({
-        locations: z.array(
-          z.object({
-            latitude: z.number(),
-            longitude: z.number(),
-          }),
-        ),
+        locations: z.array(location()),
         departAt: z.date(),
       }),
     )

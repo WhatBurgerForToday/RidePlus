@@ -1,13 +1,7 @@
 import { z } from "zod";
 
+import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-
-const location = () => {
-  return z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-  });
-};
 
 export const riderRouter = createTRPCRouter({
   profile: protectedProcedure.query(() => {
