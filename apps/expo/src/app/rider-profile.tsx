@@ -1,6 +1,15 @@
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
+  Image,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  AntDesign,
   Feather,
   FontAwesome5,
   MaterialCommunityIcons,
@@ -18,9 +27,67 @@ const PROFILEINFO = {
 };
 
 const RiderProfile = () => {
+  const [text, onChangeText] = useState(PROFILEINFO.bio);
+  const [modalVisible, setModalVisible] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+
   return (
     <>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View className="justify-top mt-44 h-full rounded-t-3xl bg-amber-500 px-5 py-5">
+          <Text className="px-2 py-2 text-xl font-bold">Edit Your Bio</Text>
+
+          <TextInput
+            editable
+            multiline
+            numberOfLines={10}
+            onChangeText={onChangeText}
+            value={text}
+            className="text-md mx-2 rounded-lg bg-white px-5"
+            placeholder={text}
+          />
+
+          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+            <View className=" mx-2 my-4 w-28 flex-row items-center self-end rounded-lg bg-white px-6 py-2">
+              <View className="pr-4">
+                <AntDesign name="checkcircle" size={24} color="green" />
+              </View>
+              <Text className="font-bold">Edit</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View className="justify-top mt-80 h-full rounded-t-3xl  px-5 py-5">
+          <Text className="px-2 py-2 text-xl font-bold">Edit Your Bio</Text>
+
+          <TextInput
+            editable
+            multiline
+            numberOfLines={10}
+            onChangeText={onChangeText}
+            value={text}
+            className="text-md mx-2 rounded-lg bg-white px-5"
+            placeholder={text}
+          />
+
+          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+            <View className=" mx-2 my-4 w-28 flex-row items-center self-end rounded-lg bg-white px-6 py-2">
+              <View className="pr-4">
+                <AntDesign name="checkcircle" size={24} color="green" />
+              </View>
+              <Text className="font-bold">Edit</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <View className="pb-5 pl-7 pt-20">
         <Text className="text-2xl font-bold text-amber-400">Profile</Text>
       </View>
@@ -41,7 +108,7 @@ const RiderProfile = () => {
         </View>
 
         <View className="px-10">
-          <Text>{PROFILEINFO.bio}</Text>
+          <Text>{text}</Text>
         </View>
 
         <View className="mx-5 mb-10 mt-5 border border-amber-400" />
@@ -50,7 +117,7 @@ const RiderProfile = () => {
 
         {!showHistory && (
           <View className="w-11/12 self-center rounded-xl bg-amber-100">
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
               <View className="h-14 flex-row items-center border border-white">
                 <View className="pl-4 pr-6">
                   <Feather name="edit" size={24} color="black" />

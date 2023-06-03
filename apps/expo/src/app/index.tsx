@@ -31,17 +31,6 @@ const IndexPage = () => {
 
         <Link
           href={{
-            pathname: "/login",
-          }}
-          asChild
-        >
-          <Pressable>
-            <Text className="text-lg font-bold">Login</Text>
-          </Pressable>
-        </Link>
-
-        <Link
-          href={{
             pathname: "/register-driver",
           }}
           asChild
