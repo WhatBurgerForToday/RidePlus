@@ -1,17 +1,12 @@
-import { type Location } from "~/core/domain/location";
+import { type NamedLocation } from "~/core/domain/location";
 
-export const locationsToConnectOrCreate = (locations: Location[]) => {
-  // TODO: get the correct name
+export const locationsToConnectOrCreate = (locations: NamedLocation[]) => {
   return locations.map((location) => {
     return {
       where: {
         latitude_longitude: location,
       },
-      create: {
-        latitude: location.latitude,
-        longitude: location.longitude,
-        name: "123",
-      },
+      create: location,
     };
   });
 };

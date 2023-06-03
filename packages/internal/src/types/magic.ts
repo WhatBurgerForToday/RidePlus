@@ -3,3 +3,7 @@ export type Expand<T> = {
 } extends infer X
   ? X
   : never;
+
+export type MakeOptional<T, K extends keyof T> = Expand<
+  Omit<T, K> & Partial<Pick<T, K>>
+>;

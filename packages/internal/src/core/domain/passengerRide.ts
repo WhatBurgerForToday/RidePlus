@@ -1,12 +1,12 @@
 import { type PassengerRideStatus } from "@prisma/client";
 
-import { type Location } from "./location";
+import { type NamedLocation } from "./location";
 
 export type PassengerRide = {
   id: string;
   driverId: string;
   passengerId: string;
   driverRideId: string;
-  locations: Location[];
+  locations: NamedLocation[];
   status: PassengerRideStatus;
 };
