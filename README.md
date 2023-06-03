@@ -3,15 +3,12 @@
 ## Run Locally
 
 ```shell
-# Install dependencies
-pnpm i
-
-# Generate Prisma Client
-pnpm db:generate
-
 # Configure Environment Variables
 # You'll need to set the empty ones manually
 cp .env.example .env
+
+# Install dependencies and Generate Prisma Client
+pnpm setup
 
 # Start the Development Servers at once
 pnpm dev
