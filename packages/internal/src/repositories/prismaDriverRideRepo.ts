@@ -17,6 +17,7 @@ export const createPrismaDriverRideRepo = (
           driverId: true,
           locations: true,
           status: true,
+          departAt: true,
         },
         update: {
           locations: {
@@ -29,6 +30,7 @@ export const createPrismaDriverRideRepo = (
           locations: {
             connectOrCreate: locationsToConnectOrCreate(input.locations),
           },
+          departAt: input.departAt,
         },
       });
       return ride;
