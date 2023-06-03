@@ -1,8 +1,8 @@
 import { type DriverRide } from "~/core/domain/driverRide";
-import { type SaveInput } from "./passengerRideRepository";
+import { type MakeOptional } from "~/types/magic";
 
-export type CreateDriverRideInput = SaveInput<DriverRide>;
+export type SaveDriverRideInput = MakeOptional<DriverRide, "id" | "status">;
 
 export type DriverRideRepository = {
-  save: (input: CreateDriverRideInput) => Promise<DriverRide>;
+  save: (input: SaveDriverRideInput) => Promise<DriverRide>;
 };
