@@ -1,6 +1,12 @@
+import { type PassengerRideStatus } from "@prisma/client";
+
 import { type Location } from "../../core/domain/location";
-import { type DriverRideRepository } from "../../core/ports/driverRideRepository";
-import { type LocationRepository } from "../../core/ports/locationRepository";
+import {
+  type DriverRepository,
+  type DriverRideRepository,
+  type LocationRepository,
+  type PassengerRideRepository,
+} from "../ports";
 
 type CreateDriverRideInput = {
   driverId: string;
