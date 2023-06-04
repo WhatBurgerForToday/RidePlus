@@ -75,10 +75,9 @@ const Home = () => {
 
         <View className="mb-10 flex items-center rounded-lg">
           <Image
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            source={require("../images/simon_cat_drive.jpg")}
+            source={{ uri: "https://hackmd.io/_uploads/rkLA70I83.jpg" }}
             resizeMode="contain"
-            className="rounded-lg"
+            className="h-48 w-80 rounded-lg"
           />
         </View>
       </ScrollView>

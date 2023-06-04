@@ -36,7 +36,7 @@ export const RideModal = (props: RideModalProps) => {
                   <View className="px-4 py-2">
                     <Image
                       className="h-20 w-20 rounded-full"
-                      source={registerItemProps.img}
+                      source={{ uri: registerItemProps.img }}
                     />
                   </View>
                   <Text className="font-bold">{registerItemProps.name}</Text>

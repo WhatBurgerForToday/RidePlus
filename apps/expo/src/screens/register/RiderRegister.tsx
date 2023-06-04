@@ -2,10 +2,8 @@ import React from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
+import { Nav } from "~/components/Nav";
 import { RegisterItem } from "~/components/RegisterItem";
-
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-const CatImage: number = require("../images/Simon_cat.webp");
 
 const APPROVEDITEMS = [
   {
@@ -14,7 +12,7 @@ const APPROVEDITEMS = [
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
   {
@@ -23,7 +21,7 @@ const APPROVEDITEMS = [
     src: "TSMC Fab 7",
     dest: "NYCU",
     money: 100,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
 ];
@@ -35,13 +33,30 @@ const PENDITEMS = [
     src: "TSMC Fab 7",
     dest: "新竹城隍廟",
     money: 120,
-    img: CatImage,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
     name: "Simon",
   },
 ];
 
-const Register = () => {
+export const RiderRegister = () => {
   const [text, onChangeText] = React.useState("");
+
+  // filter
+  let FILTER_APPROVEDITEMS = [];
+  let FILTER_PENDITEMS = [];
+  if (text === "") {
+    FILTER_APPROVEDITEMS = APPROVEDITEMS;
+    FILTER_PENDITEMS = PENDITEMS;
+  } else {
+    FILTER_APPROVEDITEMS = APPROVEDITEMS.filter(
+      ({ src, dest, name }) =>
+        name.includes(text) || src.includes(text) || dest.includes(text),
+    );
+    FILTER_PENDITEMS = PENDITEMS.filter(
+      ({ src, dest, name }) =>
+        name.includes(text) || src.includes(text) || dest.includes(text),
+    );
+  }
 
   return (
     <>
@@ -71,24 +86,26 @@ const Register = () => {
           <Text className="sticky top-0 mx-7 py-2 text-xl font-bold">
             Approved
           </Text>
-          {APPROVEDITEMS.map(({ id, time, src, dest, money, img, name }) => (
-            <RegisterItem
-              key={id}
-              id={id}
-              type="rider-approved"
-              time={time}
-              src={src}
-              dest={dest}
-              money={money}
-              img={img}
-              name={name}
-            />
-          ))}
+          {FILTER_APPROVEDITEMS.map(
+            ({ id, time, src, dest, money, img, name }) => (
+              <RegisterItem
+                key={id}
+                id={id}
+                type="rider-approved"
+                time={time}
+                src={src}
+                dest={dest}
+                money={money}
+                img={img}
+                name={name}
+              />
+            ),
+          )}
         </View>
 
         <View className="mb-5 mt-3 pb-3">
           <Text className="mx-7 py-2 text-xl font-bold">Pending</Text>
-          {PENDITEMS.map(({ id, time, src, dest, money, img, name }) => (
+          {FILTER_PENDITEMS.map(({ id, time, src, dest, money, img, name }) => (
             <RegisterItem
               key={id}
               id={id}
@@ -103,8 +120,7 @@ const Register = () => {
           ))}
         </View>
       </ScrollView>
+      <Nav />
     </>
   );
 };
-
-export default Register;

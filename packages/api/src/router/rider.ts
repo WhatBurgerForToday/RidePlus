@@ -121,16 +121,18 @@ export const riderRouter = createTRPCRouter({
         limit: z.number().optional().default(10),
       }),
     )
-    .query(() => {
+    .query(({input}) => {
       return [
         {
           id: "1",
           stars: 4,
           source: {
+            name: "TSMC",
             latitude: 23,
             longitude: 123,
           },
           desiredDestination: {
+            name: "NYCU",
             latitude: 23,
             longitude: 123,
           },
@@ -139,7 +141,61 @@ export const riderRouter = createTRPCRouter({
             id: "1",
             name: "Simon",
             avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 4,
           },
+          departAt: input.departAt,
+          passengers: [],
+        },
+        {
+          id: "2",
+          stars: 4.3,
+          source: {
+            name: "TSMC ABC",
+            latitude: 23,
+            longitude: 123,
+          },
+          desiredDestination: {
+            name: "NYCU ABC",
+            latitude: 23,
+            longitude: 123,
+          },
+          price: 250,
+          driver: {
+            id: "1",
+            name: "Simon",
+            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 5,
+          },
+          departAt: input.departAt,
+          passengers: [
+            {
+              id: "3",
+              name: "Alan"
+            }
+          ],
+        },
+        {
+          id: "3",
+          stars: 3.3,
+          source: {
+            name: "TSMC",
+            latitude: 23,
+            longitude: 123,
+          },
+          desiredDestination: {
+            name: "NYCU",
+            latitude: 23,
+            longitude: 123,
+          },
+          price: 120,
+          driver: {
+            id: "1",
+            name: "Simon",
+            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 4,
+          },
+          departAt: input.departAt,
+          passengers: [],
         },
       ];
     }),

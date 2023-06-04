@@ -13,7 +13,8 @@
   "devDependencies": {
     "@rideplus/eslint-config": "^0.1.0",
     "eslint": "^8.40.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.4"
   },
   "dependencies": {
     "@prisma/client": "^4.14.1",

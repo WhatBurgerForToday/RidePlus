@@ -34,7 +34,7 @@ const PAGES: Page[] = [
     ),
   },
   {
-    href: "/search",
+    href: "/register",
     icon: ({ color, backgroundColor }) => (
       <AntDesign
         name="clockcircle"
@@ -45,7 +45,7 @@ const PAGES: Page[] = [
     ),
   },
   {
-    href: "/user",
+    href: "/rider-profile",
     icon: ({ color, backgroundColor }) => (
       <FontAwesome
         name="user"
