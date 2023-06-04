@@ -1,6 +1,6 @@
 import { type PrismaClient } from "@prisma/client";
 
-import { type DriverRepository } from "~/core/ports/driverRepository";
+import { type DriverRepository } from "../core/ports/driverRepository";
 
 export const createPrismaDriverRepo = (
   prisma: PrismaClient,

@@ -1,7 +1,7 @@
 import { type PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
-import { type PassengerRideRepository } from "~/core/ports/passengerRideRepository";
+import { type PassengerRideRepository } from "../core/ports/passengerRideRepository";
 import { locationsToConnectOrCreate } from "./locationToConnectOrCreate";
 
 export const locationsSchema = z.array(

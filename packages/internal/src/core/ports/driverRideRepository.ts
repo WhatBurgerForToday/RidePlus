@@ -1,5 +1,5 @@
-import { type DriverRide } from "~/core/domain/driverRide";
-import { type MakeOptional } from "~/types/magic";
+import { type DriverRide } from "../../core/domain/driverRide";
+import { type MakeOptional } from "../../types/magic";
 
 export type SaveDriverRideInput = MakeOptional<DriverRide, "id" | "status">;
 

@@ -1,6 +1,6 @@
-import { type Location } from "~/core/domain/location";
-import { type DriverRideRepository } from "~/core/ports/driverRideRepository";
-import { type LocationRepository } from "~/core/ports/locationRepository";
+import { type Location } from "../../core/domain/location";
+import { type DriverRideRepository } from "../../core/ports/driverRideRepository";
+import { type LocationRepository } from "../../core/ports/locationRepository";
 
 type CreateDriverRideInput = {
   driverId: string;
@@ -25,3 +25,5 @@ export const createDriverService = (
     },
   };
 };
+
+export type DriverService = ReturnType<typeof createDriverService>;
