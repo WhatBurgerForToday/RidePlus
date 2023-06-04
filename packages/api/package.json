@@ -13,6 +13,7 @@
   "dependencies": {
     "@rideplus/auth": "0.1.0",
     "@rideplus/db": "0.1.0",
+    "@rideplus/internal": "^0.1.0",
     "@trpc/client": "^10.27.1",
     "@trpc/server": "^10.27.1",
     "superjson": "1.9.1",
