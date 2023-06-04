@@ -19,7 +19,7 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build", "^db:generate", "^test"],
       "outputs": [".expo/**", ".dist/**"]
     },
     "lint": {},
