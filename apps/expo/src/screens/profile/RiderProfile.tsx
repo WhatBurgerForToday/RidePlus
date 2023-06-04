@@ -17,7 +17,7 @@ import {
 
 import { Nav } from "~/components/Nav";
 import { RiderHistory } from "~/components/RiderHistory";
-import SignOut from "~/screens/SignOut";
+import SignOut from "~/screens/auth/SignOut";
 
 const PROFILEINFO = {
   name: "Simon's Cat",
@@ -26,7 +26,7 @@ const PROFILEINFO = {
   totalPaid: 120,
 };
 
-const RiderProfile = () => {
+export const RiderProfile = () => {
   const [text, onChangeText] = useState(PROFILEINFO.bio);
   const [modalVisible, setModalVisible] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -156,4 +156,3 @@ const RiderProfile = () => {
     </>
   );
 };
-export default RiderProfile;
