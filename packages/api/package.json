@@ -8,9 +8,7 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
-    "type-check": "tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest watch"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@rideplus/auth": "0.1.0",
