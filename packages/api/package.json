@@ -8,11 +8,13 @@
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
     "lint:fix": "pnpm lint --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@rideplus/auth": "0.1.0",
     "@rideplus/db": "0.1.0",
+    "@rideplus/internal": "^0.1.0",
     "@trpc/client": "^10.27.1",
     "@trpc/server": "^10.27.1",
     "superjson": "1.9.1",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@rideplus/eslint-config": "0.1.0",
     "eslint": "^8.40.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.4"
   }
 }

@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { getAuth, type AuthObject } from "@rideplus/auth";
 import { prisma } from "@rideplus/db";
+import { createHelloService, type HelloService } from "@rideplus/internal";
 
 /**
  * 1. CONTEXT
@@ -25,6 +26,7 @@ import { prisma } from "@rideplus/db";
  */
 type CreateContextOptions = {
   auth: AuthObject;
+  helloService: HelloService;
 };
 
 /**
@@ -36,10 +38,11 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+export const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     auth: opts.auth,
     prisma,
+    helloService: opts.helloService,
   };
 };
 
@@ -53,6 +56,7 @@ export const createTRPCContext = (opts: CreateFastifyContextOptions) => {
   const auth = getAuth(opts.req);
   return createInnerTRPCContext({
     auth,
+    helloService: createHelloService(),
   });
 };
 
