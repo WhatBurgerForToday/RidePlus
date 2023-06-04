@@ -1,10 +1,10 @@
 import { clerkPlugin } from "@clerk/fastify";
+import cors from "@fastify/cors";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import fastify from "fastify";
 import type { PinoLoggerOptions } from "fastify/types/logger";
 
 import { appRouter, createTRPCContext } from "@rideplus/api";
-
 import { env } from "./env";
 
 const envToLogger = {
@@ -14,7 +14,7 @@ const envToLogger = {
       options: {
         translateTime: true,
         ignore: "pid,hostname,reqId,req,res",
-        messageFormat: "{msg} [id={reqId} {req.method} {req.url}]",
+        messageFormat: "{msg} [id={reqId} {req.method}]",
       },
     },
   } satisfies PinoLoggerOptions,
@@ -28,9 +28,13 @@ const startServer = async () => {
   });
 
   try {
+    await server.register(cors, {
+      origin: "*",
+    });
+
     await server.register(fastifyTRPCPlugin, {
       prefix: "/api/trpc",
-      trpcOptions: { router: appRouter, createContext: createTRPCContext },
+      trpcOptions: { router: appRouter,  createContext: createTRPCContext },
     });
 
     await server.register(clerkPlugin);
