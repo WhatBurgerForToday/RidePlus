@@ -28,6 +28,8 @@ type CreateContextOptions = {
   auth: AuthObject;
   locationRepository: RidePlus.LocationRepository;
   driverRideRepository: RidePlus.DriverRideRepository;
+  passengerRideRepository: RidePlus.PassengerRideRepository;
+  driverRepository: RidePlus.DriverRepository;
 };
 
 /**
@@ -42,6 +44,8 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   const driverService = RidePlus.createDriverService(
     opts.driverRideRepository,
+    opts.driverRepository,
+    opts.passengerRideRepository,
     opts.locationRepository,
   );
 
@@ -63,11 +67,16 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // TODO: replace with real location repository
   const locationRepository = { findName: () => Promise.resolve([]) };
   const driverRideRepository = RidePlus.createPrismaDriverRideRepo(prisma);
+  const passengerRideRepository =
+    RidePlus.createPrismaPassengerRideRepo(prisma);
+  const driverRepository = RidePlus.createPrismaDriverRepo(prisma);
 
   return createInnerTRPCContext({
     auth,
     locationRepository,
     driverRideRepository,
+    passengerRideRepository,
+    driverRepository,
   });
 };
 
