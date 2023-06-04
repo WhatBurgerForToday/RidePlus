@@ -13,7 +13,7 @@ import { ZodError } from "zod";
 
 import { getAuth, type AuthObject } from "@rideplus/auth";
 import { prisma } from "@rideplus/db";
-import { createHelloService, type HelloService } from "@rideplus/internal";
+import * as RidePlus from "@rideplus/internal";
 
 /**
  * 1. CONTEXT
@@ -26,7 +26,8 @@ import { createHelloService, type HelloService } from "@rideplus/internal";
  */
 type CreateContextOptions = {
   auth: AuthObject;
-  helloService: HelloService;
+  locationRepository: RidePlus.LocationRepository;
+  driverRideRepository: RidePlus.DriverRideRepository;
 };
 
 /**
@@ -38,11 +39,15 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-export const createInnerTRPCContext = (opts: CreateContextOptions) => {
+const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  const driverService = RidePlus.createDriverService(
+    opts.driverRideRepository,
+    opts.locationRepository,
+  );
+
   return {
     auth: opts.auth,
-    prisma,
-    helloService: opts.helloService,
+    driverService,
   };
 };
 
@@ -54,9 +59,15 @@ export const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // get the user session from the request
   const auth = getAuth(opts.req);
+
+  // TODO: replace with real location repository
+  const locationRepository = { findName: () => Promise.resolve([]) };
+  const driverRideRepository = RidePlus.createPrismaDriverRideRepo(prisma);
+
   return createInnerTRPCContext({
     auth,
-    helloService: createHelloService(),
+    locationRepository,
+    driverRideRepository,
   });
 };
 
@@ -128,17 +139,3 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-const enforceIsDriver = t.middleware(({ ctx, next }) => {
-  if (false) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  });
-});
-
-export const driverProcedure = t.procedure.use(enforceIsDriver);
