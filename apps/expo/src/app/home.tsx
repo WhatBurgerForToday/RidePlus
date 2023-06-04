@@ -11,8 +11,6 @@ const Home = () => {
   const recentQuery = api.rider.recentRide.useQuery();
   const favoriteQuery = api.rider.favoriteRide.useQuery();
 
-  console.log(recentQuery.data);
-
   return (
     <>
       <View className="mb-5">
