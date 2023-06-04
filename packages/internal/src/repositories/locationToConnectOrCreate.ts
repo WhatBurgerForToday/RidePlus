@@ -1,4 +1,4 @@
-import { type NamedLocation } from "~/core/domain/location";
+import { type NamedLocation } from "../core/domain/location";
 
 export const locationsToConnectOrCreate = (locations: NamedLocation[]) => {
   return locations.map((location) => {
