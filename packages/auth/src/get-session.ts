@@ -1,4 +1,4 @@
-import { getAuth as $getAuth } from "@clerk/fastify";
+import { getAuth as $getAuth } from "@clerk/nextjs/server";
 
 export type GetAuth = typeof $getAuth;
 export type AuthObject = ReturnType<GetAuth>;

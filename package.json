@@ -8,6 +8,7 @@
   "scripts": {
     "setup": "pnpm install && pnpm db:generate",
     "build": "turbo build",
+    "test": "turbo test",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
     "db:generate": "turbo db:generate",
@@ -23,8 +24,8 @@
     "@manypkg/cli": "^0.20.0",
     "@rideplus/eslint-config": "0.1.0",
     "@types/prettier": "^2.7.2",
-    "@typescript-eslint/eslint-plugin": "^5.59.2",
-    "@typescript-eslint/parser": "^5.59.2",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.40.0",
     "eslint-plugin-turbo": "^1.10.0",
     "prettier": "^2.8.8",
