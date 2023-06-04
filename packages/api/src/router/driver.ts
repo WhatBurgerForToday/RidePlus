@@ -28,6 +28,7 @@ export const driverRouter = createTRPCRouter({
   approvedRider: driverProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -50,6 +51,7 @@ export const driverRouter = createTRPCRouter({
   pendingRider: driverProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,
