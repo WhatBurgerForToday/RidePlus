@@ -1,5 +1,5 @@
-import React, { useState, type Dispatch, type SetStateAction } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import { Image, Text, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 

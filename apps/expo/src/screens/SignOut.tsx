@@ -11,7 +11,7 @@ const SignOut = () => {
   return (
     <TouchableOpacity
       onPress={() => {
-        signOut();
+        void signOut();
       }}
     >
       <View className="h-14 flex-row items-center border border-white">
