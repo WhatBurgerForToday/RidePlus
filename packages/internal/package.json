@@ -1,0 +1,22 @@
+{
+  "name": "@rideplus/internal",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@rideplus/eslint-config": "^0.1.0",
+    "eslint": "^8.40.0",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.14.1",
+    "@rideplus/db": "^0.1.0"
+  }
+}

@@ -1,0 +1,75 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["jsonProtocol"]
+}
+
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+enum DriverRideStatus {
+    OPEN
+    CLOSED
+}
+
+enum PassengerRideStatus {
+    PENDING
+    APPROVED
+    CANCELLED
+}
+
+model Driver {
+    id    String       @id
+    rides DriverRide[]
+}
+
+model Passenger {
+    id    String          @id
+    rides PassengerRide[]
+}
+
+model Location {
+    id            String          @id @default(cuid())
+    latitude      Float
+    longitude     Float
+    name          String
+    driverRide    DriverRide[]
+    passengerRide PassengerRide[]
+
+    @@unique([latitude, longitude])
+}
+
+model DriverRide {
+    id       String @id @default(cuid())
+    driverId String
+
+    locations Location[]
+    status    DriverRideStatus @default(OPEN)
+
+    passengerRides PassengerRide[]
+    driver         Driver          @relation(fields: [driverId], references: [id])
+
+    departAt DateTime
+
+    @@index([driverId])
+}
+
+model PassengerRide {
+    id        String              @id @default(cuid())
+    driverId  String
+    status    PassengerRideStatus @default(PENDING)
+    locations Location[]
+
+    passenger   Passenger @relation(fields: [passengerId], references: [id])
+    passengerId String
+
+    isFavorite Boolean @default(false)
+
+    driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
+    @@index([passengerId])
+    @@index([driverRideId])
+}
