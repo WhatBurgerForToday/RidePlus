@@ -1,5 +1,5 @@
-import { type PassengerRide } from "~/core/domain/passengerRide";
-import { type MakeOptional } from "~/types/magic";
+import { type PassengerRide } from "../../core/domain/passengerRide";
+import { type MakeOptional } from "../../types/magic";
 
 export type SavePassengerRideInput = MakeOptional<
   PassengerRide,

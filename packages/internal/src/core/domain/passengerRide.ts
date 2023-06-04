@@ -1,6 +1,6 @@
-import { type PassengerRideStatus } from "@prisma/client";
-
 import { type NamedLocation } from "./location";
+
+export type PassengerRideStatus = "PENDING" | "APPROVED" | "CANCELLED";
 
 export type PassengerRide = {
   id: string;

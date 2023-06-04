@@ -1,6 +1,6 @@
-import { type DriverRideStatus } from "@prisma/client";
-
 import { type NamedLocation } from "./location";
+
+export type DriverRideStatus = "OPEN" | "CLOSED";
 
 export type DriverRide = {
   id: string;

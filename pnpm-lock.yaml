@@ -229,6 +229,9 @@ importers:
       '@rideplus/db':
         specifier: 0.1.0
         version: link:../db
+      '@rideplus/internal':
+        specifier: ^0.1.0
+        version: link:../internal
       '@trpc/client':
         specifier: ^10.27.1
         version: 10.27.1(@trpc/server@10.27.1)

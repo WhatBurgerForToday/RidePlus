@@ -1,4 +1,4 @@
-import { type Expand } from "~/types/magic";
+import { type Expand } from "../../types/magic";
 
 export type Location = {
   latitude: number;
