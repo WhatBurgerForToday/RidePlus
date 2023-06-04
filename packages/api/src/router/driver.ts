@@ -113,7 +113,20 @@ export const driverRouter = createTRPCRouter({
         riderId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(({ input, ctx }) => {
+      try {
+        const status = input.action === "approve" ? "APPROVED" : "CANCELLED";
+        return ctx.driverService.manageRider({
+          driverId: ctx.auth.userId,
+          rideId: input.rideId,
+          riderId: input.riderId,
+          status,
+        });
+      } catch (e) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      }
     }),
 });
