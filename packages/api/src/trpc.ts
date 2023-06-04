@@ -13,6 +13,7 @@ import { ZodError } from "zod";
 
 import { getAuth, type AuthObject } from "@rideplus/auth";
 import { prisma } from "@rideplus/db";
+import * as RidePlus from "@rideplus/internal";
 
 /**
  * 1. CONTEXT
@@ -25,6 +26,8 @@ import { prisma } from "@rideplus/db";
  */
 type CreateContextOptions = {
   auth: AuthObject;
+  locationRepository: RidePlus.LocationRepository;
+  driverRideRepository: RidePlus.DriverRideRepository;
 };
 
 /**
@@ -37,9 +40,14 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  const driverService = RidePlus.createDriverService(
+    opts.driverRideRepository,
+    opts.locationRepository,
+  );
+
   return {
     auth: opts.auth,
-    prisma,
+    driverService,
   };
 };
 
@@ -51,8 +59,15 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
 export const createTRPCContext = (opts: CreateFastifyContextOptions) => {
   // get the user session from the request
   const auth = getAuth(opts.req);
+
+  // TODO: replace with real location repository
+  const locationRepository = { findName: () => Promise.resolve([]) };
+  const driverRideRepository = RidePlus.createPrismaDriverRideRepo(prisma);
+
   return createInnerTRPCContext({
     auth,
+    locationRepository,
+    driverRideRepository,
   });
 };
 
@@ -124,17 +139,3 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-const enforceIsDriver = t.middleware(({ ctx, next }) => {
-  if (false) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  });
-});
-
-export const driverProcedure = t.procedure.use(enforceIsDriver);
