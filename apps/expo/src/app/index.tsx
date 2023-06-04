@@ -6,7 +6,6 @@ import { Link } from "expo-router";
 const IndexPage = () => {
   return (
     <SafeAreaView className="h-full w-full bg-pink-300">
-      <Text className="bg-pink-400"></Text>
       <View className="flex h-full flex-col items-center justify-center">
         <Link
           href={{
