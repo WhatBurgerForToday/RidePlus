@@ -7,7 +7,6 @@ const IndexPage = () => {
   return (
     <SafeAreaView className="h-full w-full bg-pink-300">
       <View className="flex h-full flex-col items-center justify-center">
-        <Text>Home</Text>
         <Link
           href={{
             pathname: "/home",
@@ -16,17 +15,6 @@ const IndexPage = () => {
         >
           <Pressable>
             <Text className="text-lg font-bold">Home</Text>
-          </Pressable>
-        </Link>
-
-        <Link
-          href={{
-            pathname: "/login",
-          }}
-          asChild
-        >
-          <Pressable>
-            <Text className="text-lg font-bold">Login</Text>
           </Pressable>
         </Link>
 

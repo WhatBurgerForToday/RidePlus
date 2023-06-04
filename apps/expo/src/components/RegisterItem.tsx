@@ -17,16 +17,16 @@ export type RegisterItemProps = {
   src: string;
   dest: string;
   money: number;
-  img: number;
+  img: string;
   name: string;
 };
 
-export type RegisterSubItemProps = {
+type RegisterSubItemProps = {
   registerItemProps: RegisterItemProps;
   setModalVisible: Dispatch<SetStateAction<boolean>>;
 };
 
-export const RegisterSubItem = (props: RegisterSubItemProps) => {
+const RegisterSubItem = (props: RegisterSubItemProps) => {
   const { registerItemProps, setModalVisible } = props;
   return (
     <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -35,7 +35,7 @@ export const RegisterSubItem = (props: RegisterSubItemProps) => {
           <View>
             <Image
               className="h-20 w-20 rounded-full"
-              source={registerItemProps.img}
+              source={{ uri: registerItemProps.img }}
             />
           </View>
           {(registerItemProps.type === "driver-passengers" ||
