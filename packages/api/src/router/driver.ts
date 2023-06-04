@@ -19,8 +19,9 @@ export const driverRouter = createTRPCRouter({
   reviews: driverProcedure.query(() => {
     return [
       {
+        id: "1",
         stars: 3,
-        comment: "",
+        comment: "lorem",
       },
     ];
   }),
