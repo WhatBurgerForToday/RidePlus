@@ -20,22 +20,12 @@ const IndexPage = () => {
 
         <Link
           href={{
-            pathname: "/register-driver",
+            pathname: "/register",
           }}
           asChild
         >
           <Pressable>
-            <Text className="text-lg font-bold">Register Driver</Text>
-          </Pressable>
-        </Link>
-        <Link
-          href={{
-            pathname: "/register-rider",
-          }}
-          asChild
-        >
-          <Pressable>
-            <Text className="text-lg font-bold">Register Rider</Text>
+            <Text className="text-lg font-bold">Register</Text>
           </Pressable>
         </Link>
       </View>

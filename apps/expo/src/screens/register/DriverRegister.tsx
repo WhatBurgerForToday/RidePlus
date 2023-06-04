@@ -5,7 +5,19 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Nav } from "~/components/Nav";
 import { RegisterItem } from "~/components/RegisterItem";
 
-const APPROVEDITEMS = [
+const PESSENGERITEMS = [
+  {
+    id: 1,
+    time: "Thu Apr 20 11:07 PM",
+    src: "TSMC Fab 7",
+    dest: "新竹城隍廟",
+    money: 120,
+    img: "https://hackmd.io/_uploads/Byne59oS2.png",
+    name: "Simon",
+  },
+];
+
+const PENDITEMS = [
   {
     id: 1,
     time: "Thu Apr 20 11:07 PM",
@@ -26,29 +38,17 @@ const APPROVEDITEMS = [
   },
 ];
 
-const PENDITEMS = [
-  {
-    id: 1,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-];
-
-const Register = () => {
+export const DriverRegister = () => {
   const [text, onChangeText] = React.useState("");
 
   // filter
-  let FILTER_APPROVEDITEMS = [];
+  let FILTER_PESSENGERITEMS = [];
   let FILTER_PENDITEMS = [];
   if (text === "") {
-    FILTER_APPROVEDITEMS = APPROVEDITEMS;
+    FILTER_PESSENGERITEMS = PESSENGERITEMS;
     FILTER_PENDITEMS = PENDITEMS;
   } else {
-    FILTER_APPROVEDITEMS = APPROVEDITEMS.filter(
+    FILTER_PESSENGERITEMS = PESSENGERITEMS.filter(
       ({ src, dest, name }) =>
         name.includes(text) || src.includes(text) || dest.includes(text),
     );
@@ -75,7 +75,7 @@ const Register = () => {
               onChangeText={onChangeText}
               value={text}
               className="text-md pl-5 text-neutral-500"
-              placeholder="Find Ride"
+              placeholder="Find Passenger"
             />
           </View>
         </View>
@@ -84,14 +84,14 @@ const Register = () => {
       <ScrollView className="relative">
         <View className="pb-3">
           <Text className="sticky top-0 mx-7 py-2 text-xl font-bold">
-            Approved
+            Passengers
           </Text>
-          {FILTER_APPROVEDITEMS.map(
+          {FILTER_PESSENGERITEMS.map(
             ({ id, time, src, dest, money, img, name }) => (
               <RegisterItem
                 key={id}
                 id={id}
-                type="rider-approved"
+                type="driver-passengers"
                 time={time}
                 src={src}
                 dest={dest}
@@ -109,7 +109,7 @@ const Register = () => {
             <RegisterItem
               key={id}
               id={id}
-              type="rider-pending"
+              type="driver-pending"
               time={time}
               src={src}
               dest={dest}
@@ -124,5 +124,3 @@ const Register = () => {
     </>
   );
 };
-
-export default Register;
