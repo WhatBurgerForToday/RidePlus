@@ -11,8 +11,9 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-import { atom, useAtom, useAtomValue } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 
+import { api, type RouterOutputs } from "~/utils/api";
 import { Nav } from "~/components/Nav";
 
 export const regionAtom = atom({
@@ -33,19 +34,8 @@ export const destAtom = atom({
   latitude: 0,
   longitude: 0,
 });
-// const CatImage: number = require("../cat.png");
 
-type TravelItem = {
-  id: string;
-  time: string;
-  src: string;
-  dest: string;
-  money: number;
-  capacity: number;
-  occupy: number;
-  img: string;
-  star: number;
-};
+type TravelItem = RouterOutputs["rider"]["searchRides"][number];
 
 type StarIconProps = {
   isActive: boolean;
@@ -65,18 +55,19 @@ type Props = {
 
 const Travel: FC<Props> = (props) => {
   const { travel } = props;
+
   return (
     <View className="h-40 flex-row">
       <View className="h-full w-32 items-center justify-center">
         <View>
           <Image
             className="h-20 w-20 rounded-full"
-            source={{ uri: travel.img }}
+            source={{ uri: travel.driver.avatarUrl }}
           />
         </View>
         <View className="mt-1 flex-row">
           {new Array(5).fill(null).map((_, i) => (
-            <StarIcon isActive={i < Math.round(travel.star)} />
+            <StarIcon isActive={i < Math.round(travel.stars)} />
           ))}
         </View>
       </View>
@@ -108,88 +99,35 @@ const Travel: FC<Props> = (props) => {
         />
       </View>
       <View className="my-3 w-5/12 justify-around">
-        <Text className="text-sm">{travel.time}</Text>
-        <Text className="text-sm">{travel.src}</Text>
-        <Text className="text-sm">{travel.dest}</Text>
-        <Text className="text-sm">$ {travel.money}</Text>
+        <Text className="text-sm">{travel.departAt.toString()}</Text>
+        <Text className="text-sm">{travel.source.name}</Text>
+        <Text className="text-sm">{travel.desiredDestination.name}</Text>
+        <Text className="text-sm">$ {travel.price}</Text>
       </View>
       <View className="ml-2 mt-28">
         <Text className="text-sm font-bold text-green-600">
-          {travel.occupy}/{travel.capacity}
+          {travel.passengers.length}/{travel.driver.capacity}
         </Text>
       </View>
     </View>
   );
 };
 
-const TRAVELS: TravelItem[] = [
-  {
-    id: "1",
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    capacity: 4,
-    occupy: 3,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    star: 4,
-  },
-  {
-    id: "2",
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    capacity: 5,
-    occupy: 2,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    star: 4.5,
-  },
-  {
-    id: "3",
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    capacity: 5,
-    occupy: 2,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    star: 4.4,
-  },
-  {
-    id: "4",
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    capacity: 5,
-    occupy: 2,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    star: 5,
-  },
-  {
-    id: "5",
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    capacity: 5,
-    occupy: 2,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    star: 5,
-  },
-];
-
 const MILLIS_PER_DAY = 1000 * 86400;
 
 const SearchPage = () => {
   const [date, setDate] = useState(new Date(Date.now() + MILLIS_PER_DAY));
-  const [, setPage] = useAtom(pageAtom);
-  const [, setSrc] = useAtom(srcAtom);
-  const [, setDest] = useAtom(destAtom);
-  const src = useAtomValue(srcAtom);
-  const dest = useAtomValue(destAtom);
+  const setPage = useSetAtom(pageAtom);
+  const [src, setSrc] = useAtom(srcAtom);
+  const [dest, setDest] = useAtom(destAtom);
   const router = useRouter();
+
+  const searchQuery = api.rider.searchRides.useQuery({
+    departAt: date,
+    source: src,
+    destination: dest,
+    limit: 5,
+  });
 
   const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
     if (selectedDate == null) return;
@@ -294,11 +232,13 @@ const SearchPage = () => {
         </View>
       </View>
       <SafeAreaView className="mt-2 flex-1">
-        <FlatList
-          data={TRAVELS}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => index.toString()}
-        />
+        {
+          <FlatList
+            data={searchQuery.data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        }
       </SafeAreaView>
       <Nav />
     </View>
