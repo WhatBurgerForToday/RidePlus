@@ -1,10 +1,11 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { location } from "../schema/location";
-import { createTRPCRouter, driverProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const driverRouter = createTRPCRouter({
-  profile: driverProcedure.query(() => {
+  profile: protectedProcedure.query(() => {
     return {
       name: "Simon",
       avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
@@ -16,7 +17,7 @@ export const driverRouter = createTRPCRouter({
     };
   }),
 
-  reviews: driverProcedure.query(() => {
+  reviews: protectedProcedure.query(() => {
     return [
       {
         stars: 3,
@@ -25,7 +26,7 @@ export const driverRouter = createTRPCRouter({
     ];
   }),
 
-  approvedRider: driverProcedure.query(() => {
+  approvedRider: protectedProcedure.query(() => {
     return [
       {
         id: "1",
@@ -48,7 +49,7 @@ export const driverRouter = createTRPCRouter({
     ];
   }),
 
-  pendingRider: driverProcedure.query(() => {
+  pendingRider: protectedProcedure.query(() => {
     return [
       {
         id: "1",
@@ -71,7 +72,7 @@ export const driverRouter = createTRPCRouter({
     ];
   }),
 
-  editProfile: driverProcedure
+  editProfile: protectedProcedure
     .input(
       z.object({
         bio: z.string().optional(),
@@ -83,18 +84,30 @@ export const driverRouter = createTRPCRouter({
       return {};
     }),
 
-  create: driverProcedure
+  create: protectedProcedure
     .input(
       z.object({
         locations: z.array(location()),
         departAt: z.date(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const driverRide = await ctx.driverService.createDriverRide({
+          driverId: ctx.auth.userId,
+          locations: input.locations,
+          departAt: input.departAt,
+        });
+        return driverRide;
+      } catch (e) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      }
     }),
 
-  manageRider: driverProcedure
+  manageRider: protectedProcedure
     .input(
       z.object({
         rideId: z.string(),
