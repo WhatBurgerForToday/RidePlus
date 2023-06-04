@@ -41,6 +41,23 @@ const PENDITEMS = [
 const Register = () => {
   const [text, onChangeText] = React.useState("");
 
+  // filter
+  let FILTER_PESSENGERITEMS = [];
+  let FILTER_PENDITEMS = [];
+  if (text === "") {
+    FILTER_PESSENGERITEMS = PESSENGERITEMS;
+    FILTER_PENDITEMS = PENDITEMS;
+  } else {
+    FILTER_PESSENGERITEMS = PESSENGERITEMS.filter(
+      ({ src, dest, name }) =>
+        name.includes(text) || src.includes(text) || dest.includes(text),
+    );
+    FILTER_PENDITEMS = PENDITEMS.filter(
+      ({ src, dest, name }) =>
+        name.includes(text) || src.includes(text) || dest.includes(text),
+    );
+  }
+
   return (
     <>
       <View className="mb-5">
@@ -69,24 +86,26 @@ const Register = () => {
           <Text className="sticky top-0 mx-7 py-2 text-xl font-bold">
             Passengers
           </Text>
-          {PESSENGERITEMS.map(({ id, time, src, dest, money, img, name }) => (
-            <RegisterItem
-              key={id}
-              id={id}
-              type="driver-passengers"
-              time={time}
-              src={src}
-              dest={dest}
-              money={money}
-              img={img}
-              name={name}
-            />
-          ))}
+          {FILTER_PESSENGERITEMS.map(
+            ({ id, time, src, dest, money, img, name }) => (
+              <RegisterItem
+                key={id}
+                id={id}
+                type="driver-passengers"
+                time={time}
+                src={src}
+                dest={dest}
+                money={money}
+                img={img}
+                name={name}
+              />
+            ),
+          )}
         </View>
 
         <View className="mb-5 mt-3 pb-3">
           <Text className="mx-7 py-2 text-xl font-bold">Pending</Text>
-          {PENDITEMS.map(({ id, time, src, dest, money, img, name }) => (
+          {FILTER_PENDITEMS.map(({ id, time, src, dest, money, img, name }) => (
             <RegisterItem
               key={id}
               id={id}
