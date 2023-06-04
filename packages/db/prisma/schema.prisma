@@ -68,7 +68,7 @@ model PassengerRide {
     isFavorite Boolean @default(false)
 
     driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
-    driverRideId String
+    driverRideId String     @unique
 
     @@index([passengerId])
     @@index([driverRideId])
