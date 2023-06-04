@@ -2,6 +2,10 @@
   "$schema": "https://turborepo.org/schema.json",
   "globalDependencies": ["**/.env"],
   "pipeline": {
+    "test": {
+      "dependsOn": ["^db:generate"],
+      "cache": true
+    },
     "db:generate": {
       "inputs": ["prisma/schema.prisma"],
       "cache": false
@@ -15,8 +19,8 @@
       "cache": false
     },
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
-      "outputs": [".next/**", ".expo/**"]
+      "dependsOn": ["^build", "^db:generate", "^test"],
+      "outputs": [".expo/**", ".dist/**"]
     },
     "lint": {},
     "lint:fix": {},
@@ -37,6 +41,7 @@
     "EXPO_ROUTER_APP_ROOT",
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
     "CLERK_PUBLISHABLE_KEY",
     "CLERK_SECRET_KEY"
   ]

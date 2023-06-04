@@ -7,7 +7,7 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -60,7 +60,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateFastifyContextOptions) => {
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // get the user session from the request
   const auth = getAuth(opts.req);
 
