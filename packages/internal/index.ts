@@ -1,3 +1,1 @@
-export const hello = (name: string) => {
-  console.log(`Hello ${name}!`);
-};
+export * from "./src/core/service";
