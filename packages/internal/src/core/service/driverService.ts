@@ -14,10 +14,10 @@ type CreateDriverRideInput = {
   locations: Location[];
 };
 
-type ManageRiderInput = {
+type ManagePassengerInput = {
   driverId: string;
-  riderId: string;
-  rideId: string;
+  passengerId: string;
+  driverRideId: string;
   status: PassengerRideStatus;
 };
 
@@ -45,7 +45,7 @@ export const createDriverService = (
       });
     },
 
-    manageRider: async (input: ManageRiderInput) => {
+    manageRider: async (input: ManagePassengerInput) => {
       const driver = await driverRepository.findById(input.driverId);
 
       if (driver === null) {
@@ -53,15 +53,12 @@ export const createDriverService = (
       }
 
       const driverRide = await passengerRideRepository.findByDriverRideId(
-        input.rideId,
+        input.driverRideId,
+        input.passengerId,
       );
 
       if (driverRide === null) {
         throw new Error("DriverRide not found");
-      }
-
-      if (driverRide.passengerId !== input.riderId) {
-        throw new Error("Wrong Rider is found");
       }
 
       return passengerRideRepository.save({

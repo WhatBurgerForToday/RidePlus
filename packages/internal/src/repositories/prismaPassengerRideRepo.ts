@@ -47,10 +47,13 @@ export const createPrismaPassengerRideRepo = (
       return ride;
     },
 
-    findByDriverRideId: async (driverRideId) => {
+    findByDriverRideId: async (driverRideId, passengerId) => {
       const ride = await prisma.passengerRide.findUnique({
         where: {
-          driverRideId,
+          driverRideId_passengerId: {
+            driverRideId,
+            passengerId,
+          },
         },
         select: {
           id: true,

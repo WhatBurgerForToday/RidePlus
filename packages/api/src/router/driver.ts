@@ -118,8 +118,8 @@ export const driverRouter = createTRPCRouter({
         const status = input.action === "approve" ? "APPROVED" : "CANCELLED";
         return ctx.driverService.manageRider({
           driverId: ctx.auth.userId,
-          rideId: input.rideId,
-          riderId: input.riderId,
+          driverRideId: input.rideId,
+          passengerId: input.riderId,
           status,
         });
       } catch (e) {

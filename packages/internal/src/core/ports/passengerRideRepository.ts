@@ -8,5 +8,8 @@ export type SavePassengerRideInput = MakeOptional<
 
 export type PassengerRideRepository = {
   save(input: SavePassengerRideInput): Promise<PassengerRide>;
-  findByDriverRideId(driverRideId: string): Promise<PassengerRide | null>;
+  findByDriverRideId(
+    driverRideId: string,
+    passengerId: string,
+  ): Promise<PassengerRide | null>;
 };
