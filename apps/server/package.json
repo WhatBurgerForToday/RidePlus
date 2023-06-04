@@ -4,6 +4,8 @@
   "main": "src/index.tsx",
   "private": true,
   "scripts": {
+    "build": "tsup",
+    "start": "pnpm with-env node dist/index.js",
     "dev": "pnpm with-env tsx watch --clear-screen=false src/index.ts",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
@@ -25,6 +27,7 @@
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.40.0",
     "pino-pretty": "^10.0.0",
+    "tsup": "^6.7.0",
     "tsx": "^3.12.7"
   }
 }
