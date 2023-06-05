@@ -106,14 +106,15 @@ export const riderRouter = createTRPCRouter({
       ctx.auth.userId,
     );
     return approvedRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
       const [source, destination] = ride.locations;
       return {
         id: ride.driverRideId,
         departAt: ride.driverRide.departAt,
-        source: source,
-        desiredDestination: destination,
+        source: source!,
+        desiredDestination: destination!,
         price: 100,
-        driver: ride.driver,
+        driver: ride.driver!,
       };
     });
   }),
@@ -123,14 +124,15 @@ export const riderRouter = createTRPCRouter({
       ctx.auth.userId,
     );
     return pendingRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
       const [source, destination] = ride.locations;
       return {
         id: ride.driverRideId,
         departAt: ride.driverRide.departAt,
-        source: source,
-        desiredDestination: destination,
+        source: source!,
+        desiredDestination: destination!,
         price: 100,
-        driver: ride.driver,
+        driver: ride.driver!,
       };
     });
   }),
