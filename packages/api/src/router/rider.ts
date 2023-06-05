@@ -273,39 +273,83 @@ export const riderRouter = createTRPCRouter({
       return {};
     }),
 
-  manageRegistration: protectedProcedure
+  applyRide: protectedProcedure
     .input(
       z.object({
-        action: z.enum(["apply", "leave", "cancel"]),
         rideId: z.string(),
+        source: location(),
+        destination: location(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
-      const status = input.action === "apply" ? "PENDING" : "CANCELLED";
-      const passengerRide = await ctx.passengerService.manageRegistration({
+    .mutation(async ({ ctx, input }) => {
+      const passengerRide = await ctx.passengerService.applyRide({
         passengerId: ctx.auth.userId,
         driverRideId: input.rideId,
-        status,
+        source: input.source,
+        destination: input.destination,
       });
 
       const result = match(passengerRide)
         .with({ success: true }, ({ data }) => data)
         .with({ error: PassengerServiceErrors.DRIVER_NOT_FOUND }, () => {
-          throw new TRPCError({ code: "NOT_FOUND" });
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Driver not found",
+          });
         })
-        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
-          throw new TRPCError({ code: "NOT_FOUND" });
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_ALREADY_APPLIED },
+          () => {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Already applied",
+            });
+          },
+        )
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_FULL }, () => {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ride full",
+          });
         })
         .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN }, () => {
-          throw new TRPCError({ code: "BAD_REQUEST" });
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ride not open",
+          });
         })
-        .with({ error: PassengerServiceErrors.DRIVER_RIDE_FULL }, () => {
-          throw new TRPCError({ code: "BAD_REQUEST" });
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
         })
+        .exhaustive();
+
+      return result;
+    }),
+
+  leaveRide: protectedProcedure
+    .input(
+      z.object({
+        rideId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const passengerRide = await ctx.passengerService.leaveRide({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+      });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
         .with(
           { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
           () => {
-            throw new TRPCError({ code: "NOT_FOUND" });
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Passenger not applied to the ride",
+            });
           },
         )
         .exhaustive();
