@@ -70,6 +70,16 @@ export const createDriverService = (
         driverRideId: driverRide.driverRideId,
       });
     },
+
+    getDriverRideById: async (id: string) => {
+      const driverRide = await driverRideRepository.findById(id);
+
+      if (driverRide === null) {
+        throw new Error("DriverRide not found");
+      }
+
+      return driverRide;
+    },
   };
 };
 
