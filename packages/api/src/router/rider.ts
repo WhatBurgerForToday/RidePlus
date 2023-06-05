@@ -1,4 +1,8 @@
+import { TRPCError } from "@trpc/server";
+import { match } from "ts-pattern";
 import { z } from "zod";
+
+import { PassengerServiceErrors } from "@rideplus/internal";
 
 import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -16,6 +20,23 @@ export const riderRouter = createTRPCRouter({
   rideHistory: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        destination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        departAt: new Date(),
+        driver: {
+          id: "1",
+          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+        },
+      },
+      {
+        id: "2",
         source: {
           latitude: 23,
           longitude: 123,
@@ -38,6 +59,18 @@ export const riderRouter = createTRPCRouter({
     return [
       {
         id: "1",
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        destination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        departAt: new Date(),
+      },
+      {
+        id: "2",
         source: {
           latitude: 23,
           longitude: 123,
@@ -71,6 +104,25 @@ export const riderRouter = createTRPCRouter({
   approvedRide: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
+        departAt: new Date(),
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        desiredDestination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        price: 120,
+        driver: {
+          id: "1",
+          name: "Simon",
+          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+        },
+      },
+      {
+        id: "2",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -93,6 +145,7 @@ export const riderRouter = createTRPCRouter({
   pendingRide: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -121,7 +174,7 @@ export const riderRouter = createTRPCRouter({
         limit: z.number().optional().default(10),
       }),
     )
-    .query(({input}) => {
+    .query(({ input }) => {
       return [
         {
           id: "1",
@@ -170,8 +223,8 @@ export const riderRouter = createTRPCRouter({
           passengers: [
             {
               id: "3",
-              name: "Alan"
-            }
+              name: "Alan",
+            },
           ],
         },
         {
@@ -227,8 +280,37 @@ export const riderRouter = createTRPCRouter({
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ input, ctx }) => {
+      const status = input.action === "apply" ? "PENDING" : "CANCELLED";
+      const passengerRide = await ctx.passengerService.manageRegistration({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        status,
+      });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_NOT_FOUND }, () => {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN }, () => {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_FULL }, () => {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({ code: "NOT_FOUND" });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   rateRide: protectedProcedure

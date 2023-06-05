@@ -6,7 +6,7 @@
   },
   "packageManager": "pnpm@8.6.0",
   "scripts": {
-    "setup": "pnpm install && pnpm db:generate",
+    "setup": "pnpm install --frozen-lockfile && pnpm db:generate",
     "build": "turbo build",
     "test": "turbo test",
     "clean": "git clean -xdf node_modules",

@@ -2,60 +2,36 @@ import React from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
+import { api, type RouterOutputs } from "~/utils/api";
 import { Nav } from "~/components/Nav";
 import { RegisterItem } from "~/components/RegisterItem";
 
-const APPROVEDITEMS = [
-  {
-    id: 1,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-  {
-    id: 2,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "NYCU",
-    money: 100,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-];
-
-const PENDITEMS = [
-  {
-    id: 1,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    money: 120,
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-];
+type ApprovedRide = RouterOutputs["rider"]["approvedRide"];
+type PendingRide = RouterOutputs["rider"]["pendingRide"];
 
 export const RiderRegister = () => {
   const [text, onChangeText] = React.useState("");
 
+  const approvedQuery = api.rider.approvedRide.useQuery();
+  const pendingQuery = api.rider.pendingRide.useQuery();
+
   // filter
-  let FILTER_APPROVEDITEMS = [];
-  let FILTER_PENDITEMS = [];
+  let FILTER_APPROVEDITEMS: ApprovedRide = [];
+  let FILTER_PENDITEMS: PendingRide = [];
   if (text === "") {
-    FILTER_APPROVEDITEMS = APPROVEDITEMS;
-    FILTER_PENDITEMS = PENDITEMS;
+    FILTER_APPROVEDITEMS = approvedQuery.data ?? [];
+    FILTER_PENDITEMS = pendingQuery.data ?? [];
   } else {
-    FILTER_APPROVEDITEMS = APPROVEDITEMS.filter(
-      ({ src, dest, name }) =>
-        name.includes(text) || src.includes(text) || dest.includes(text),
-    );
-    FILTER_PENDITEMS = PENDITEMS.filter(
-      ({ src, dest, name }) =>
-        name.includes(text) || src.includes(text) || dest.includes(text),
-    );
+    if (!approvedQuery.isError && !approvedQuery.isLoading) {
+      FILTER_APPROVEDITEMS = approvedQuery.data.filter(({ driver }) =>
+        driver.name.includes(text),
+      );
+    }
+    if (!pendingQuery.isError && !pendingQuery.isLoading) {
+      FILTER_PENDITEMS = pendingQuery.data.filter(({ driver }) =>
+        driver.name.includes(text),
+      );
+    }
   }
 
   return (
@@ -87,17 +63,16 @@ export const RiderRegister = () => {
             Approved
           </Text>
           {FILTER_APPROVEDITEMS.map(
-            ({ id, time, src, dest, money, img, name }) => (
+            ({ id, departAt, source, desiredDestination, price, driver }) => (
               <RegisterItem
                 key={id}
                 id={id}
                 type="rider-approved"
-                time={time}
-                src={src}
-                dest={dest}
-                money={money}
-                img={img}
-                name={name}
+                departAt={departAt}
+                source={source}
+                desiredDestination={desiredDestination}
+                price={price}
+                person={driver}
               />
             ),
           )}
@@ -105,19 +80,20 @@ export const RiderRegister = () => {
 
         <View className="mb-5 mt-3 pb-3">
           <Text className="mx-7 py-2 text-xl font-bold">Pending</Text>
-          {FILTER_PENDITEMS.map(({ id, time, src, dest, money, img, name }) => (
-            <RegisterItem
-              key={id}
-              id={id}
-              type="rider-pending"
-              time={time}
-              src={src}
-              dest={dest}
-              money={money}
-              img={img}
-              name={name}
-            />
-          ))}
+          {FILTER_PENDITEMS.map(
+            ({ id, departAt, source, desiredDestination, price, driver }) => (
+              <RegisterItem
+                key={id}
+                id={id}
+                type="rider-pending"
+                departAt={departAt}
+                source={source}
+                desiredDestination={desiredDestination}
+                price={price}
+                person={driver}
+              />
+            ),
+          )}
         </View>
       </ScrollView>
       <Nav />

@@ -22,9 +22,25 @@ export const createPrismaDriverRepo = (
               departAt: true,
             },
           },
+          capacity: true,
         },
       });
       return driver;
+    },
+
+    findReviews: async (driverId) => {
+      const reviews = await prisma.rideReview.findMany({
+        where: {
+          driverId,
+        },
+      });
+
+      // only expose the fields in the domain model
+      return reviews.map((review) => ({
+        id: review.id,
+        stars: review.stars,
+        comment: review.comment,
+      }));
     },
   };
 };

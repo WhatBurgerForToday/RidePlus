@@ -42,16 +42,23 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  const driverService = RidePlus.createDriverService(
+  const driverService = RidePlus.createDriverService({
+    driverRides: opts.driverRideRepository,
+    drivers: opts.driverRepository,
+    passengerRides: opts.passengerRideRepository,
+    locations: opts.locationRepository,
+  });
+
+  const passengerService = RidePlus.createPassengerService(
+    opts.passengerRideRepository,
     opts.driverRideRepository,
     opts.driverRepository,
-    opts.passengerRideRepository,
-    opts.locationRepository,
   );
 
   return {
     auth: opts.auth,
     driverService,
+    passengerService,
   };
 };
 

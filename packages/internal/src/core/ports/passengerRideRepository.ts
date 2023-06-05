@@ -12,4 +12,5 @@ export type PassengerRideRepository = {
     driverRideId: string,
     passengerId: string,
   ): Promise<PassengerRide | null>;
+  countByDriverRideId(driverRideId: string): Promise<number>;
 };

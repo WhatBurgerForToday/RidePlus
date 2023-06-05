@@ -45,7 +45,7 @@ const PAGES: Page[] = [
     ),
   },
   {
-    href: "/rider-profile",
+    href: "/profile",
     icon: ({ color, backgroundColor }) => (
       <FontAwesome
         name="user"

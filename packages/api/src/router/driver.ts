@@ -1,5 +1,8 @@
 import { TRPCError } from "@trpc/server";
+import { match } from "ts-pattern";
 import { z } from "zod";
+
+import { DriverServiceErrors } from "@rideplus/internal";
 
 import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -20,8 +23,9 @@ export const driverRouter = createTRPCRouter({
   reviews: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
         stars: 3,
-        comment: "",
+        comment: "lorem",
       },
     ];
   }),
@@ -29,6 +33,7 @@ export const driverRouter = createTRPCRouter({
   approvedRider: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -51,6 +56,7 @@ export const driverRouter = createTRPCRouter({
   pendingRider: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -90,19 +96,22 @@ export const driverRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      try {
-        const driverRide = await ctx.driverService.createDriverRide({
-          driverId: ctx.auth.userId,
-          locations: input.locations,
-          departAt: input.departAt,
-        });
-        return driverRide;
-      } catch (e) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not a driver yet",
-        });
-      }
+      const driverRide = await ctx.driverService.createDriverRide({
+        driverId: ctx.auth.userId,
+        locations: input.locations,
+        departAt: input.departAt,
+      });
+
+      const result = match(driverRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not a driver yet",
+          });
+        })
+        .exhaustive();
+      return result;
     }),
 
   manageRider: protectedProcedure
@@ -113,20 +122,30 @@ export const driverRouter = createTRPCRouter({
         riderId: z.string(),
       }),
     )
-    .mutation(({ input, ctx }) => {
-      try {
-        const status = input.action === "approve" ? "APPROVED" : "CANCELLED";
-        return ctx.driverService.manageRider({
-          driverId: ctx.auth.userId,
-          driverRideId: input.rideId,
-          passengerId: input.riderId,
-          status,
-        });
-      } catch (e) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not a driver yet",
-        });
-      }
+    .mutation(async ({ input, ctx }) => {
+      const status = input.action === "approve" ? "APPROVED" : "CANCELLED";
+      const passengerRide = await ctx.driverService.manageRider({
+        driverId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        passengerId: input.riderId,
+        status,
+      });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not a driver yet",
+          });
+        })
+        .with({ error: DriverServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Driver ride not found",
+          });
+        })
+        .exhaustive();
+      return result;
     }),
 });
