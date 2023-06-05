@@ -1,10 +1,12 @@
 import { error, success } from "../../types/result";
 import { type Location } from "../domain/location";
+import { type User } from "../domain/user";
 import {
   type DriverRepository,
   type DriverRideRepository,
   type LocationRepository,
   type PassengerRideRepository,
+  type UserRepository,
 } from "../ports";
 
 type PassengerServiceDeps = {
@@ -12,6 +14,7 @@ type PassengerServiceDeps = {
   driverRides: DriverRideRepository;
   drivers: DriverRepository;
   locations: LocationRepository;
+  users: UserRepository;
 };
 
 type ApplyRideInput = {
@@ -36,7 +39,7 @@ export const PassengerServiceErrors = {
 } as const;
 
 export const createPassengerService = (deps: PassengerServiceDeps) => {
-  const { passengerRides, driverRides, drivers, locations } = deps;
+  const { passengerRides, driverRides, drivers, locations, users } = deps;
 
   return {
     applyRide: async (input: ApplyRideInput) => {
@@ -95,6 +98,48 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       });
 
       return success(updatedPassengerRide);
+    },
+
+    getApprovedPassengerRides: async (passengerId: string) => {
+      const approvedPassengerRides =
+        await passengerRides.findByPassengerIdWithStatus(
+          passengerId,
+          "APPROVED",
+        );
+
+      const driverIds = approvedPassengerRides.map(
+        (passengerRide) => passengerRide.driverId,
+      );
+
+      const driverMap = await users.findManyByIds(driverIds);
+
+      return approvedPassengerRides.map((passengerRide) => {
+        return {
+          ...passengerRide,
+          driver: driverMap.get(passengerRide.driverId),
+        };
+      });
+    },
+
+    getPendingPassengerRides: async (passengerId: string) => {
+      const pendingPassengerRides =
+        await passengerRides.findByPassengerIdWithStatus(
+          passengerId,
+          "PENDING",
+        );
+
+      const driverIds = pendingPassengerRides.map(
+        (passengerRide) => passengerRide.driverId,
+      );
+
+      const driverMap = await users.findManyByIds(driverIds);
+
+      return pendingPassengerRides.map((passengerRide) => {
+        return {
+          ...passengerRide,
+          driver: driverMap.get(passengerRide.driverId),
+        };
+      });
     },
   };
 };
