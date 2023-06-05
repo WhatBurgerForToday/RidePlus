@@ -89,7 +89,7 @@ export const createDriverService = (deps: DriverServiceDeps) => {
     },
 
     getDriverRideById: async (id: string) => {
-      const driverRide = await driverRideRepository.findById(id);
+      const driverRide = await driverRides.findById(id);
 
       if (driverRide === null) {
         throw new Error("DriverRide not found");

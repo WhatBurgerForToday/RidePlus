@@ -1,5 +1,6 @@
 import { type PassengerRideStatus } from "@prisma/client";
 
+import { error, success } from "../../types/result";
 import {
   type DriverRepository,
   type DriverRideRepository,
@@ -12,53 +13,59 @@ type ManageRegistrationInput = {
   status: PassengerRideStatus;
 };
 
+export const PassengerServiceErrors = {
+  PASSENGER_RIDE_NOT_FOUND: "passenger ride not found",
+  DRIVER_RIDE_NOT_FOUND: "driver ride not found",
+  DRIVER_NOT_FOUND: "driver not found",
+  DRIVER_RIDE_NOT_OPEN: "driver ride not open",
+  DRIVER_RIDE_FULL: "driver ride full",
+} as const;
+
 export const createPassengerService = (
-  passengerRideRepository: PassengerRideRepository,
-  driverRideRepository: DriverRideRepository,
-  driverRepository: DriverRepository,
+  passengerRides: PassengerRideRepository,
+  driverRides: DriverRideRepository,
+  drivers: DriverRepository,
 ) => {
   return {
     manageRegistration: async (input: ManageRegistrationInput) => {
-      const passengerRide = await passengerRideRepository.findByDriverRideId(
+      const passengerRide = await passengerRides.findByDriverRideId(
         input.driverRideId,
         input.passengerId,
       );
 
       if (passengerRide === null) {
-        throw new Error("PassengerRide not found");
+        return error(PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND);
       }
 
-      const driverRide = await driverRideRepository.findById(
-        input.driverRideId,
-      );
+      const driverRide = await driverRides.findById(input.driverRideId);
 
       if (driverRide === null) {
-        throw new Error("DriverRide not found");
+        return error(PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND);
       }
 
       if (driverRide.status !== "OPEN") {
-        throw new Error("DriverRide is not open");
+        return error(PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN);
       }
 
-      const driver = await driverRepository.findById(driverRide.driverId);
+      const driver = await drivers.findById(driverRide.driverId);
       if (driver === null) {
-        throw new Error("Driver not found");
+        return error(PassengerServiceErrors.DRIVER_NOT_FOUND);
       }
 
-      const passengerCount = await passengerRideRepository.countByDriverRideId(
+      const passengerCount = await passengerRides.countByDriverRideId(
         driverRide.id,
       );
 
       if (driver.capacity <= passengerCount) {
-        throw new Error("DriverRide is full");
+        return error(PassengerServiceErrors.DRIVER_RIDE_FULL);
       }
 
-      const newPassengerRide = await passengerRideRepository.save({
+      const newPassengerRide = await passengerRides.save({
         ...passengerRide,
         status: input.status,
       });
 
-      return newPassengerRide;
+      return success(newPassengerRide);
     },
   };
 };
