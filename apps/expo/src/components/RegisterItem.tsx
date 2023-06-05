@@ -7,18 +7,17 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { RideModal } from "./RideModal";
 
 export type RegisterItemProps = {
-  id: number;
+  id: string;
   type:
     | "driver-passengers"
     | "driver-pending"
     | "rider-approved"
     | "rider-pending";
-  time: string;
-  src: string;
-  dest: string;
-  money: number;
-  img: string;
-  name: string;
+  departAt: Date;
+  source: { latitude: number; longitude: number };
+  desiredDestination: { latitude: number; longitude: number };
+  price: number;
+  person: { id: string; name: string; avatarUrl: string };
 };
 
 type RegisterSubItemProps = {
@@ -35,19 +34,19 @@ const RegisterSubItem = (props: RegisterSubItemProps) => {
           <View>
             <Image
               className="h-20 w-20 rounded-full"
-              source={{ uri: registerItemProps.img }}
+              source={{ uri: registerItemProps.person.avatarUrl }}
             />
           </View>
           {(registerItemProps.type === "driver-passengers" ||
             registerItemProps.type === "rider-approved") && (
             <Text className="font-bold text-white">
-              {registerItemProps.name}
+              {registerItemProps.person.name}
             </Text>
           )}
           {(registerItemProps.type === "driver-pending" ||
             registerItemProps.type === "rider-pending") && (
             <Text className="font-bold text-black">
-              {registerItemProps.name}
+              {registerItemProps.person.name}
             </Text>
           )}
         </View>
@@ -59,10 +58,18 @@ const RegisterSubItem = (props: RegisterSubItemProps) => {
           <Ionicons name="wallet-outline" size={22} color="#000000" />
         </View>
         <View className="my-3 w-5/12 justify-around">
-          <Text className="text-sm">{registerItemProps.time}</Text>
-          <Text className="text-sm">{registerItemProps.src}</Text>
-          <Text className="text-sm">{registerItemProps.dest}</Text>
-          <Text className="text-sm">$ {registerItemProps.money}</Text>
+          <Text className="text-sm">
+            {registerItemProps.departAt.toDateString()}
+          </Text>
+          <Text className="text-sm">
+            ({registerItemProps.source.latitude},{" "}
+            {registerItemProps.source.longitude})
+          </Text>
+          <Text className="text-sm">
+            ({registerItemProps.desiredDestination.latitude},{" "}
+            {registerItemProps.desiredDestination.longitude})
+          </Text>
+          <Text className="text-sm">$ {registerItemProps.price}</Text>
         </View>
         <View className="mt-28">
           {(registerItemProps.type === "driver-passengers" ||

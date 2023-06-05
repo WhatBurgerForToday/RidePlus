@@ -2,34 +2,8 @@ import React, { type Dispatch, type SetStateAction } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+import { api } from "~/utils/api";
 import { HistoryItem } from "./HistoryItem";
-
-const HISTORYITEMS = [
-  {
-    id: 1,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "新竹城隍廟",
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-  {
-    id: 2,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "NYCU",
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-  {
-    id: 3,
-    time: "Thu Apr 20 11:07 PM",
-    src: "TSMC Fab 7",
-    dest: "NYCU",
-    img: "https://hackmd.io/_uploads/Byne59oS2.png",
-    name: "Simon",
-  },
-];
 
 type RiderHistoryProps = {
   setShowHistory: Dispatch<SetStateAction<boolean>>;
@@ -37,6 +11,8 @@ type RiderHistoryProps = {
 
 export const RiderHistory = (props: RiderHistoryProps) => {
   const { setShowHistory } = props;
+  const historyQuery = api.rider.rideHistory.useQuery();
+
   return (
     <View className="mx-5">
       <View className="flex-row items-center pb-4">
@@ -52,17 +28,18 @@ export const RiderHistory = (props: RiderHistoryProps) => {
       </View>
 
       <View>
-        {HISTORYITEMS.map(({ id, time, src, dest, img, name }) => (
-          <HistoryItem
-            key={id}
-            id={id}
-            time={time}
-            src={src}
-            dest={dest}
-            img={img}
-            name={name}
-          />
-        ))}
+        {historyQuery.data?.map(
+          ({ id, source, destination, departAt, driver }) => (
+            <HistoryItem
+              key={id}
+              id={id}
+              source={source}
+              destination={destination}
+              departAt={departAt}
+              driver={driver}
+            />
+          ),
+        )}
       </View>
     </View>
   );

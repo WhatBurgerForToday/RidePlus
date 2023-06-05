@@ -4,14 +4,15 @@ import { Link } from "expo-router";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
 export type HomeItemProps = {
-  id: number;
+  id: string;
   type: "Recent" | "Favorite";
-  location: string;
-  departTime: string;
+  source: { latitude: number; longitude: number };
+  destination: { latitude: number; longitude: number };
+  departAt: Date;
 };
 
 export const HomeItem = (props: HomeItemProps) => {
-  const { type, location, departTime } = props;
+  const { type, source, destination, departAt } = props;
   return (
     <View className="mx-5 my-2 rounded-lg bg-amber-400 px-2 py-5">
       <Link
@@ -31,8 +32,15 @@ export const HomeItem = (props: HomeItemProps) => {
               )}
             </View>
             <View className=" px-2">
-              <Text className="py-1 font-bold text-black">{location}</Text>
-              <Text className="py-1 text-white">Depart at {departTime}</Text>
+              <Text className="py-1 font-bold text-black">
+                FROM ({source.latitude}, {source.longitude})
+              </Text>
+              <Text className="py-1 font-bold text-black">
+                TO ({destination.latitude}, {destination.longitude})
+              </Text>
+              <Text className="py-1 text-white">
+                Depart at {departAt.toDateString()}
+              </Text>
             </View>
           </View>
         </TouchableOpacity>

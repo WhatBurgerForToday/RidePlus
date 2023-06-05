@@ -6,10 +6,11 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
+import { api } from "~/utils/api";
 import type { RegisterItemProps } from "./RegisterItem";
 
 export type RideModalProps = {
-  id: number;
+  id: string;
   type: string;
   modalVisible: boolean;
   setModalVisible: Dispatch<SetStateAction<boolean>>;
@@ -17,9 +18,12 @@ export type RideModalProps = {
 };
 
 export const RideModal = (props: RideModalProps) => {
-  const { type, modalVisible, setModalVisible, registerItemProps } = props;
+  const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
+  const riderMutation = api.rider.manageRegistration.useMutation();
+  const driverMutation = api.driver.manageRider.useMutation();
+
   return (
-    <View className="">
+    <View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -36,10 +40,12 @@ export const RideModal = (props: RideModalProps) => {
                   <View className="px-4 py-2">
                     <Image
                       className="h-20 w-20 rounded-full"
-                      source={{ uri: registerItemProps.img }}
+                      source={{ uri: registerItemProps.person.avatarUrl }}
                     />
                   </View>
-                  <Text className="font-bold">{registerItemProps.name}</Text>
+                  <Text className="font-bold">
+                    {registerItemProps.person.name}
+                  </Text>
                 </View>
 
                 <View className="flex-row px-2">
@@ -54,10 +60,18 @@ export const RideModal = (props: RideModalProps) => {
                     <Ionicons name="wallet-outline" size={22} color="#000000" />
                   </View>
                   <View className="my-3 justify-around">
-                    <Text className="text-sm">{registerItemProps.time}</Text>
-                    <Text className="text-sm">{registerItemProps.src}</Text>
-                    <Text className="text-sm">{registerItemProps.dest}</Text>
-                    <Text className="text-sm">$ {registerItemProps.money}</Text>
+                    <Text className="text-sm">
+                      {registerItemProps.departAt.toDateString()}
+                    </Text>
+                    <Text className="text-sm">
+                      ({registerItemProps.source.latitude},{" "}
+                      {registerItemProps.source.longitude})
+                    </Text>
+                    <Text className="text-sm">
+                      ({registerItemProps.desiredDestination.latitude},{" "}
+                      {registerItemProps.desiredDestination.longitude})
+                    </Text>
+                    <Text className="text-sm">$ {registerItemProps.price}</Text>
                   </View>
                 </View>
               </View>
@@ -68,21 +82,26 @@ export const RideModal = (props: RideModalProps) => {
                   className="h-96 w-96"
                   showsUserLocation
                   initialRegion={{
-                    latitude: 24.8148,
-                    longitude: 120.9675,
+                    latitude: registerItemProps.source.latitude,
+                    longitude: registerItemProps.source.longitude,
                     latitudeDelta: 0.09,
                     longitudeDelta: 0.09,
                   }}
-                >
-                  <Text>test</Text>
-                </MapView>
+                ></MapView>
               </View>
 
               <View className="py-1">
                 {type === "driver-passengers" && (
                   <View className="flex-row items-center justify-end">
                     <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        driverMutation.mutate({
+                          rideId: id,
+                          action: "cancel",
+                          riderId: registerItemProps.person.id,
+                        });
+                        setModalVisible(!modalVisible);
+                      }}
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">
@@ -101,7 +120,14 @@ export const RideModal = (props: RideModalProps) => {
                 {type === "driver-pending" && (
                   <View className="flex-row items-center justify-between">
                     <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        driverMutation.mutate({
+                          rideId: id,
+                          action: "deny",
+                          riderId: registerItemProps.person.id,
+                        });
+                        setModalVisible(!modalVisible);
+                      }}
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">
@@ -115,7 +141,14 @@ export const RideModal = (props: RideModalProps) => {
                       </View>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        driverMutation.mutate({
+                          rideId: id,
+                          action: "approve",
+                          riderId: registerItemProps.person.id,
+                        });
+                        setModalVisible(!modalVisible);
+                      }}
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">
@@ -134,7 +167,10 @@ export const RideModal = (props: RideModalProps) => {
                 {type === "rider-pending" && (
                   <View className="flex-row items-center justify-between">
                     <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        riderMutation.mutate({ action: "cancel", rideId: id });
+                        setModalVisible(!modalVisible);
+                      }}
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">
@@ -168,7 +204,10 @@ export const RideModal = (props: RideModalProps) => {
                 {type === "rider-approved" && (
                   <View className="flex-row items-center justify-between">
                     <TouchableOpacity
-                      onPress={() => setModalVisible(!modalVisible)}
+                      onPress={() => {
+                        riderMutation.mutate({ action: "leave", rideId: id });
+                        setModalVisible(!modalVisible);
+                      }}
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">

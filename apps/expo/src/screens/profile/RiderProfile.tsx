@@ -15,21 +15,18 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 
+import { api } from "~/utils/api";
 import { Nav } from "~/components/Nav";
 import { RiderHistory } from "~/components/RiderHistory";
 import SignOut from "~/screens/auth/SignOut";
 import { useSetAtom } from "jotai";
 import { userRoleAtom } from "~/app/register";
 
-const PROFILEINFO = {
-  name: "Simon's Cat",
-  img: "https://hackmd.io/_uploads/Byne59oS2.png",
-  bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-  totalPaid: 120,
-};
-
 export const RiderProfile = () => {
-  const [text, onChangeText] = useState(PROFILEINFO.bio);
+  const profileQuery = api.rider.profile.useQuery();
+  const editMutation = api.rider.editProfile.useMutation();
+
+  const [text, onChangeText] = useState(profileQuery.data?.bio);
   const [modalVisible, setModalVisible] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const setUserRole = useSetAtom(userRoleAtom);
@@ -57,7 +54,12 @@ export const RiderProfile = () => {
             placeholder={text}
           />
 
-          <TouchableOpacity onPress={() => setModalVisible(!modalVisible)}>
+          <TouchableOpacity
+            onPress={() => {
+              editMutation.mutate({ bio: text ?? "" });
+              setModalVisible(!modalVisible);
+            }}
+          >
             <View className=" mx-2 my-4 w-28 flex-row items-center self-end rounded-lg bg-white px-6 py-2">
               <View className="pr-4">
                 <AntDesign name="checkcircle" size={24} color="green" />
@@ -98,14 +100,16 @@ export const RiderProfile = () => {
         <View className="mx-2 flex-row">
           <View className="justify-center px-5 py-5">
             <Image
-              source={{ uri: PROFILEINFO.img }}
+              source={{ uri: profileQuery.data?.avatarUrl }}
               className="h-24 w-24 rounded-full"
             />
           </View>
           <View className="flex-col justify-center pl-5">
-            <Text className="text-xl font-bold">{PROFILEINFO.name}</Text>
+            <Text className="text-xl font-bold">{profileQuery.data?.name}</Text>
             <View className="shrink">
-              <Text className="">Total Paid: {PROFILEINFO.totalPaid}</Text>
+              <Text className="">
+                Total Paid: {profileQuery.data?.totalPaid}
+              </Text>
             </View>
           </View>
         </View>
