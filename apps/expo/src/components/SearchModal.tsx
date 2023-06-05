@@ -5,10 +5,12 @@ import { AntDesign } from "@expo/vector-icons";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { useAtomValue } from "jotai";
 
 import { type RouterOutputs } from "@rideplus/api";
 
 import { api } from "~/utils/api";
+import { destAtom, srcAtom } from "~/app/search";
 
 type TravelItem = RouterOutputs["rider"]["searchRides"][number];
 
@@ -20,7 +22,9 @@ type SearchModalProps = {
 
 export const SearchModal = (props: SearchModalProps) => {
   const { modalVisible, setModalVisible, travel } = props;
-  const manageMutation = api.rider.manageRegistration.useMutation();
+  const source = useAtomValue(srcAtom);
+  const destination = useAtomValue(destAtom);
+  const applyRideMutation = api.rider.applyRide.useMutation();
 
   return (
     <View className="">
@@ -88,9 +92,10 @@ export const SearchModal = (props: SearchModalProps) => {
                 <View className="flex-row items-center justify-between">
                   <TouchableOpacity
                     onPress={() => {
-                      manageMutation.mutate({
-                        action: "apply",
+                      applyRideMutation.mutate({
                         rideId: travel.id,
+                        source,
+                        destination,
                       });
                       setModalVisible(!modalVisible);
                     }}
