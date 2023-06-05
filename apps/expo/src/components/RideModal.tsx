@@ -19,7 +19,7 @@ export type RideModalProps = {
 
 export const RideModal = (props: RideModalProps) => {
   const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
-  const riderMutation = api.rider.manageRegistration.useMutation();
+  const cancelRideMutation = api.rider.leaveRide.useMutation();
   const driverMutation = api.driver.manageRider.useMutation();
 
   return (
@@ -168,7 +168,7 @@ export const RideModal = (props: RideModalProps) => {
                   <View className="flex-row items-center justify-between">
                     <TouchableOpacity
                       onPress={() => {
-                        riderMutation.mutate({ action: "cancel", rideId: id });
+                        cancelRideMutation.mutate({ rideId: id });
                         setModalVisible(!modalVisible);
                       }}
                     >
@@ -205,7 +205,7 @@ export const RideModal = (props: RideModalProps) => {
                   <View className="flex-row items-center justify-between">
                     <TouchableOpacity
                       onPress={() => {
-                        riderMutation.mutate({ action: "leave", rideId: id });
+                        cancelRideMutation.mutate({ rideId: id });
                         setModalVisible(!modalVisible);
                       }}
                     >
