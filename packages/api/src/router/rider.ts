@@ -16,6 +16,23 @@ export const riderRouter = createTRPCRouter({
   rideHistory: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        destination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        departAt: new Date(),
+        driver: {
+          id: "1",
+          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+        },
+      },
+      {
+        id: "2",
         source: {
           latitude: 23,
           longitude: 123,
@@ -38,6 +55,18 @@ export const riderRouter = createTRPCRouter({
     return [
       {
         id: "1",
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        destination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        departAt: new Date(),
+      },
+      {
+        id: "2",
         source: {
           latitude: 23,
           longitude: 123,
@@ -71,6 +100,25 @@ export const riderRouter = createTRPCRouter({
   approvedRide: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
+        departAt: new Date(),
+        source: {
+          latitude: 23,
+          longitude: 123,
+        },
+        desiredDestination: {
+          latitude: 23,
+          longitude: 123,
+        },
+        price: 120,
+        driver: {
+          id: "1",
+          name: "Simon",
+          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+        },
+      },
+      {
+        id: "2",
         departAt: new Date(),
         source: {
           latitude: 23,
@@ -93,6 +141,7 @@ export const riderRouter = createTRPCRouter({
   pendingRide: protectedProcedure.query(() => {
     return [
       {
+        id: "1",
         departAt: new Date(),
         source: {
           latitude: 23,

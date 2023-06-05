@@ -37,7 +37,6 @@ const getBaseUrl = () => {
       "Failed to get localhost. Please point to your production server.",
     );
   }
-  console.log(localhost);
   return `http://${localhost}:3000`;
 };
 

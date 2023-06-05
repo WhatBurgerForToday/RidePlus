@@ -4,12 +4,11 @@ import { AntDesign } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
 type HistoryItemProps = {
-  id: number;
-  src: string;
-  dest: string;
-  time: string;
-  name: string;
-  img: string;
+  id: string;
+  source: { latitude: number; longitude: number };
+  destination: { latitude: number; longitude: number };
+  departAt: Date;
+  driver: { id: string; avatarUrl: string };
 };
 
 export const HistoryItem = (props: HistoryItemProps) => {
@@ -19,24 +18,27 @@ export const HistoryItem = (props: HistoryItemProps) => {
         <View>
           <Image
             className="h-20 w-20 rounded-full"
-            source={{ uri: props.img }}
+            source={{ uri: props.driver.avatarUrl }}
           />
         </View>
-        <Text className="font-bold">{props.name}</Text>
       </View>
 
       <View className="justify-center px-5">
         <View className="flex-row py-2">
           <AntDesign name="clockcircleo" size={20} />
-          <Text className="px-2 text-sm">{props.time}</Text>
+          <Text className="px-2 text-sm">{props.departAt.toDateString()}</Text>
         </View>
         <View className="flex-row py-2">
           <SimpleLineIcons name="target" size={20} />
-          <Text className="px-2 text-sm">{props.src}</Text>
+          <Text className="px-2 text-sm">
+            ({props.source.latitude}, {props.source.longitude})
+          </Text>
         </View>
         <View className="flex-row py-2">
           <SimpleLineIcons name="location-pin" size={20} />
-          <Text className="px-2 text-sm">{props.dest}</Text>
+          <Text className="px-2 text-sm">
+            ({props.destination.latitude}, {props.destination.longitude})
+          </Text>
         </View>
       </View>
     </View>
