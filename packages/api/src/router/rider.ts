@@ -121,7 +121,7 @@ export const riderRouter = createTRPCRouter({
         limit: z.number().optional().default(10),
       }),
     )
-    .query(({input}) => {
+    .query(({ input }) => {
       return [
         {
           id: "1",
@@ -170,8 +170,8 @@ export const riderRouter = createTRPCRouter({
           passengers: [
             {
               id: "3",
-              name: "Alan"
-            }
+              name: "Alan",
+            },
           ],
         },
         {
@@ -227,8 +227,24 @@ export const riderRouter = createTRPCRouter({
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ input, ctx }) => {
+      const status = input.action === "apply" ? "PENDING" : "CANCELLED";
+      const driverRide = await ctx.driverService.getDriverRideById(
+        input.rideId,
+      );
+      if (driverRide === null) {
+        throw new Error("DriverRide not found");
+      }
+
+      if (driverRide.status !== "OPEN") {
+        throw new Error("DriverRide is not open");
+      }
+
+      return ctx.passengerService.manageRegistration({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        status,
+      });
     }),
 
   rateRide: protectedProcedure
