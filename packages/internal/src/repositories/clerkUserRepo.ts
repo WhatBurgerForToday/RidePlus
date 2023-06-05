@@ -15,7 +15,7 @@ const clerkUserToDomainUser = (user: ClerkUser): User => {
   };
 };
 
-export const createClerkUserRepository = (): UserRepository => {
+export const createClerkUserRepo = (): UserRepository => {
   return {
     findById: async (id) => {
       const user = await clerk.users.getUser(id);
