@@ -17,6 +17,7 @@
     "@trpc/client": "^10.27.1",
     "@trpc/server": "^10.27.1",
     "superjson": "1.12.2",
+    "ts-pattern": "^4.3.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {

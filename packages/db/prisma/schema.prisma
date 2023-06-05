@@ -21,14 +21,16 @@ enum PassengerRideStatus {
 }
 
 model Driver {
-    id       String       @id
-    rides    DriverRide[]
-    capacity Int
+    id             String       @id
+    rides          DriverRide[]
+    capacity       Int
+    receivedReview RideReview[]
 }
 
 model Passenger {
-    id    String          @id
-    rides PassengerRide[]
+    id         String          @id
+    rides      PassengerRide[]
+    sentReview RideReview[]
 }
 
 model Location {
@@ -52,7 +54,8 @@ model DriverRide {
     passengerRides PassengerRide[]
     driver         Driver          @relation(fields: [driverId], references: [id])
 
-    departAt DateTime
+    departAt   DateTime
+    rideReview RideReview[]
 
     @@index([driverId])
 }
@@ -72,6 +75,26 @@ model PassengerRide {
     driverRideId String
 
     @@unique([driverRideId, passengerId])
+    @@index([passengerId])
+    @@index([driverRideId])
+}
+
+model RideReview {
+    id      String @id @default(cuid())
+    stars   Int
+    comment String
+
+    ride         DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
+    driver   Driver @relation(fields: [driverId], references: [id])
+    driverId String
+
+    passenger   Passenger @relation(fields: [passengerId], references: [id])
+    passengerId String
+
+    @@unique([passengerId, driverRideId])
+    @@index([driverId])
     @@index([passengerId])
     @@index([driverRideId])
 }

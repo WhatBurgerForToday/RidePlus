@@ -18,6 +18,8 @@ import {
 import { Nav } from "~/components/Nav";
 import { RiderHistory } from "~/components/RiderHistory";
 import SignOut from "~/screens/auth/SignOut";
+import { useSetAtom } from "jotai";
+import { userRoleAtom } from "~/app/register";
 
 const PROFILEINFO = {
   name: "Simon's Cat",
@@ -30,6 +32,7 @@ export const RiderProfile = () => {
   const [text, onChangeText] = useState(PROFILEINFO.bio);
   const [modalVisible, setModalVisible] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const setUserRole = useSetAtom(userRoleAtom);
 
   return (
     <>
@@ -135,7 +138,7 @@ export const RiderProfile = () => {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setUserRole("driver")}>
               <View className="h-14 flex-row items-center border border-white">
                 <View className="pl-4 pr-6">
                   <MaterialCommunityIcons

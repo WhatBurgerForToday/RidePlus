@@ -271,6 +271,9 @@ importers:
       superjson:
         specifier: 1.12.2
         version: 1.12.2
+      ts-pattern:
+        specifier: ^4.3.0
+        version: 4.3.0
       zod:
         specifier: ^3.21.4
         version: 3.21.4
@@ -12057,6 +12060,10 @@ packages:
 
   /ts-object-utils@0.0.5:
     resolution: {integrity: sha512-iV0GvHqOmilbIKJsfyfJY9/dNHCs969z3so90dQWsO1eMMozvTpnB1MEaUbb3FYtZTGjv5sIy/xmslEz0Rg2TA==}
+    dev: false
+
+  /ts-pattern@4.3.0:
+    resolution: {integrity: sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==}
     dev: false
 
   /tsconfig-paths@3.14.2:
