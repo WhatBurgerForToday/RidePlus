@@ -1,5 +1,12 @@
 import React, { useState, type FC } from "react";
-import { FlatList, Image, SafeAreaView, Text, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Link, useRouter } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
@@ -15,6 +22,7 @@ import { atom, useAtom, useSetAtom } from "jotai";
 
 import { api, type RouterOutputs } from "~/utils/api";
 import { Nav } from "~/components/Nav";
+import { SearchModal } from "~/components/SearchModal";
 
 export const regionAtom = atom({
   latitude: 22,
@@ -55,61 +63,71 @@ type Props = {
 
 const Travel: FC<Props> = (props) => {
   const { travel } = props;
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
-    <View className="h-40 flex-row">
-      <View className="h-full w-32 items-center justify-center">
-        <View>
-          <Image
-            className="h-20 w-20 rounded-full"
-            source={{ uri: travel.driver.avatarUrl }}
-          />
-        </View>
-        <View className="mt-1 flex-row">
-          {new Array(5).fill(null).map((_, i) => (
-            <StarIcon isActive={i < Math.round(travel.stars)} />
-          ))}
-        </View>
-      </View>
+    <>
+      <SearchModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        travel={travel}
+      />
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
+        <View className="h-40 flex-row">
+          <View className="h-full w-32 items-center justify-center">
+            <View>
+              <Image
+                className="h-20 w-20 rounded-full"
+                source={{ uri: travel.driver.avatarUrl }}
+              />
+            </View>
+            <View className="mt-1 flex-row">
+              {new Array(5).fill(null).map((_, i) => (
+                <StarIcon isActive={i < Math.round(travel.stars)} />
+              ))}
+            </View>
+          </View>
 
-      <View className="my-3 w-12 items-center justify-around">
-        <EvilIcons
-          name="clock"
-          size={28}
-          backgroundColor="#FFFFFF"
-          color="#000000"
-        />
-        <SimpleLineIcons
-          name="target"
-          size={22}
-          backgroundColor="#FFFFFF"
-          color="#000000"
-        />
-        <SimpleLineIcons
-          name="location-pin"
-          size={22}
-          backgroundColor="#FFFFFF"
-          color="#000000"
-        />
-        <Ionicons
-          name="wallet-outline"
-          size={22}
-          backgroundColor="#FFFFFF"
-          color="#000000"
-        />
-      </View>
-      <View className="my-3 w-5/12 justify-around">
-        <Text className="text-sm">{travel.departAt.toString()}</Text>
-        <Text className="text-sm">{travel.source.name}</Text>
-        <Text className="text-sm">{travel.desiredDestination.name}</Text>
-        <Text className="text-sm">$ {travel.price}</Text>
-      </View>
-      <View className="ml-2 mt-28">
-        <Text className="text-sm font-bold text-green-600">
-          {travel.passengers.length}/{travel.driver.capacity}
-        </Text>
-      </View>
-    </View>
+          <View className="my-3 w-12 items-center justify-around">
+            <EvilIcons
+              name="clock"
+              size={28}
+              backgroundColor="#FFFFFF"
+              color="#000000"
+            />
+            <SimpleLineIcons
+              name="target"
+              size={22}
+              backgroundColor="#FFFFFF"
+              color="#000000"
+            />
+            <SimpleLineIcons
+              name="location-pin"
+              size={22}
+              backgroundColor="#FFFFFF"
+              color="#000000"
+            />
+            <Ionicons
+              name="wallet-outline"
+              size={22}
+              backgroundColor="#FFFFFF"
+              color="#000000"
+            />
+          </View>
+          <View className="my-3 w-5/12 justify-around">
+            <Text className="text-sm">{travel.departAt.toString()}</Text>
+            <Text className="text-sm">{travel.source.name}</Text>
+            <Text className="text-sm">{travel.desiredDestination.name}</Text>
+            <Text className="text-sm">$ {travel.price}</Text>
+          </View>
+          <View className="ml-2 mt-28">
+            <Text className="text-sm font-bold text-green-600">
+              {travel.passengers.length}/{travel.driver.capacity}
+            </Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </>
   );
 };
 

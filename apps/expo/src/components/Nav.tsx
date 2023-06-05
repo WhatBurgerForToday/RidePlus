@@ -23,17 +23,6 @@ const PAGES: Page[] = [
     ),
   },
   {
-    href: "/message",
-    icon: ({ color, backgroundColor }) => (
-      <Ionicons
-        name="chatbubble-ellipses"
-        size={36}
-        backgroundColor={backgroundColor}
-        color={color}
-      />
-    ),
-  },
-  {
     href: "/register",
     icon: ({ color, backgroundColor }) => (
       <AntDesign
