@@ -15,17 +15,21 @@ const clerkUserToDomainUser = (user: ClerkUser): User => {
   };
 };
 
-export const createClerkUserRepository = (): UserRepository => {
+export const createClerkUserRepo = (): UserRepository => {
   return {
     findById: async (id) => {
       const user = await clerk.users.getUser(id);
       return clerkUserToDomainUser(user);
     },
     findManyByIds: async (ids) => {
+      const uniqueIds = [...new Set(ids)];
       const users = await clerk.users.getUserList({
-        userId: ids,
+        userId: uniqueIds,
       });
-      return users.map(clerkUserToDomainUser);
+      return users.reduce((userMap, user) => {
+        userMap.set(user.id, clerkUserToDomainUser(user));
+        return userMap;
+      }, new Map<string, User>());
     },
   };
 };

@@ -101,68 +101,40 @@ export const riderRouter = createTRPCRouter({
     ];
   }),
 
-  approvedRide: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
-        driver: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-      {
-        id: "2",
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
-        driver: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
+  approvedRide: protectedProcedure.query(async ({ ctx }) => {
+    const approvedRides = await ctx.passengerService.getApprovedPassengerRides(
+      ctx.auth.userId,
+    );
+    return approvedRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
   }),
 
-  pendingRide: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
-        driver: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
+  pendingRide: protectedProcedure.query(async ({ ctx }) => {
+    const pendingRides = await ctx.passengerService.getPendingPassengerRides(
+      ctx.auth.userId,
+    );
+    return pendingRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
   }),
 
   searchRides: protectedProcedure
