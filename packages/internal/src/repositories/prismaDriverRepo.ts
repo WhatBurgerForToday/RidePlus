@@ -11,18 +11,12 @@ export const createPrismaDriverRepo = (
         where: {
           id,
         },
-        select: {
-          id: true,
+        include: {
           rides: {
-            select: {
-              id: true,
-              driverId: true,
+            include: {
               locations: true,
-              status: true,
-              departAt: true,
             },
           },
-          capacity: true,
         },
       });
       return driver;
