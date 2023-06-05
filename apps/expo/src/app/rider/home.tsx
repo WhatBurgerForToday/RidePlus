@@ -1,13 +1,13 @@
+import { FontAwesome } from "@expo/vector-icons";
+import { Link } from "expo-router";
 import React from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { Link } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
 
-import { api } from "~/utils/api";
 import { HomeItem } from "~/components/HomeItem";
-import { Nav } from "~/components/Nav";
+import { RiderNavbar } from "~/components/Navbar/RiderNavbar";
+import { api } from "~/utils/api";
 
-const Home = () => {
+const HomePage = () => {
   const recentQuery = api.rider.recentRide.useQuery();
   const favoriteQuery = api.rider.favoriteRide.useQuery();
 
@@ -18,12 +18,7 @@ const Home = () => {
           <Text className=" text-2xl font-bold text-amber-400">Ride+</Text>
         </View>
 
-        <Link
-          href={{
-            pathname: "/search",
-          }}
-          asChild
-        >
+        <Link href="/rider/search" asChild>
           <Pressable className="flex items-center">
             <View className="w-5/6 flex-row place-items-center rounded-full bg-neutral-200 py-1.5">
               <View className="pl-5">
@@ -72,9 +67,10 @@ const Home = () => {
           />
         </View>
       </ScrollView>
-      <Nav />
+
+      <RiderNavbar />
     </>
   );
 };
 
-export default Home;
+export default HomePage;

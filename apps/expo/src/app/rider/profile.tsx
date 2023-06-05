@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { Link } from "expo-router";
 import {
   AntDesign,
   Feather,
@@ -16,20 +17,15 @@ import {
 } from "@expo/vector-icons";
 
 import { api } from "~/utils/api";
-import { Nav } from "~/components/Nav";
-import { RiderHistory } from "~/components/RiderHistory";
+import { RiderNavbar } from "~/components/Navbar/RiderNavbar";
 import SignOut from "~/screens/auth/SignOut";
-import { useSetAtom } from "jotai";
-import { userRoleAtom } from "~/app/register";
 
-export const RiderProfile = () => {
+const ProfilePage = () => {
   const profileQuery = api.rider.profile.useQuery();
   const editMutation = api.rider.editProfile.useMutation();
 
   const [text, onChangeText] = useState(profileQuery.data?.bio);
   const [modalVisible, setModalVisible] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
-  const setUserRole = useSetAtom(userRoleAtom);
 
   return (
     <>
@@ -120,46 +116,44 @@ export const RiderProfile = () => {
 
         <View className="mx-5 mb-10 mt-5 border border-amber-400" />
 
-        {showHistory && <RiderHistory setShowHistory={setShowHistory} />}
-
-        {!showHistory && (
-          <View className="w-11/12 self-center rounded-xl bg-amber-100">
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <View className="h-14 flex-row items-center border border-white">
-                <View className="pl-4 pr-6">
-                  <Feather name="edit" size={24} color="black" />
-                </View>
-                <Text className="font-bold">Edit bio</Text>
+        <View className="w-11/12 self-center rounded-xl bg-amber-100">
+          <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <View className="h-14 flex-row items-center border border-white">
+              <View className="pl-4 pr-6">
+                <Feather name="edit" size={24} color="black" />
               </View>
-            </TouchableOpacity>
+              <Text className="font-bold">Edit bio</Text>
+            </View>
+          </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setShowHistory(true)}>
-              <View className="h-14 flex-row items-center border border-white">
-                <View className="pl-4 pr-6">
-                  <FontAwesome5 name="history" size={24} color="black" />
-                </View>
-                <Text className="font-bold">View History Rides</Text>
+          <Link href="/rider/history" asChild>
+            <TouchableOpacity className="h-14 flex-row items-center border border-white">
+              <View className="pl-4 pr-6">
+                <FontAwesome5 name="history" size={24} color="black" />
               </View>
+              <Text className="font-bold">View History Rides</Text>
             </TouchableOpacity>
+          </Link>
 
-            <TouchableOpacity onPress={() => setUserRole("driver")}>
-              <View className="h-14 flex-row items-center border border-white">
-                <View className="pl-4 pr-6">
-                  <MaterialCommunityIcons
-                    name="account-switch-outline"
-                    size={24}
-                    color="black"
-                  />
-                </View>
-                <Text className="font-bold">Switch to Driver's Account</Text>
+          <Link href="/driver/profile" asChild>
+            <TouchableOpacity className="h-14 flex-row items-center border border-white">
+              <View className="pl-4 pr-6">
+                <MaterialCommunityIcons
+                  name="account-switch-outline"
+                  size={24}
+                  color="black"
+                />
               </View>
+              <Text className="font-bold">Switch to Driver's Account</Text>
             </TouchableOpacity>
+          </Link>
 
-            <SignOut />
-          </View>
-        )}
+          <SignOut />
+        </View>
       </ScrollView>
-      <Nav />
+      <RiderNavbar />
     </>
   );
 };
+
+export default ProfilePage;

@@ -8,21 +8,28 @@ import {
   View,
 } from "react-native";
 import { Link, useRouter } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import {
+  EvilIcons,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import DateTimePicker, {
   type DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { atom, useAtom, useSetAtom } from "jotai";
 
 import { api, type RouterOutputs } from "~/utils/api";
-import { Nav } from "~/components/Nav";
+import { RiderNavbar } from "~/components/Navbar/RiderNavbar";
+import { RatingStars } from "~/components/RatingStars";
 import { SearchModal } from "~/components/SearchModal";
+import {
+  destinationAtom,
+  locationTargetAtom,
+  sourceAtom,
+} from "~/atoms/locationAtom";
 
 export const regionAtom = atom({
   latitude: 22,
@@ -31,31 +38,7 @@ export const regionAtom = atom({
   longitudeDelta: 0.0922,
 });
 
-export const pageAtom = atom({
-  page: "src",
-});
-export const srcAtom = atom({
-  latitude: 0,
-  longitude: 0,
-});
-export const destAtom = atom({
-  latitude: 0,
-  longitude: 0,
-});
-
 type TravelItem = RouterOutputs["rider"]["searchRides"][number];
-
-type StarIconProps = {
-  isActive: boolean;
-};
-
-const StarIcon: FC<StarIconProps> = (props) => {
-  const { isActive } = props;
-  const c = isActive ? "#FEC20C" : "#CCCCCC";
-  return (
-    <AntDesign name="star" size={16} backgroundColor="#FFFFFF" color={c} />
-  );
-};
 
 type Props = {
   travel: TravelItem;
@@ -81,11 +64,7 @@ const Travel: FC<Props> = (props) => {
                 source={{ uri: travel.driver.avatarUrl }}
               />
             </View>
-            <View className="mt-1 flex-row">
-              {new Array(5).fill(null).map((_, i) => (
-                <StarIcon isActive={i < Math.round(travel.stars)} />
-              ))}
-            </View>
+            <RatingStars stars={travel.stars} />
           </View>
 
           <View className="my-3 w-12 items-center justify-around">
@@ -135,15 +114,15 @@ const MILLIS_PER_DAY = 1000 * 86400;
 
 const SearchPage = () => {
   const [date, setDate] = useState(new Date(Date.now() + MILLIS_PER_DAY));
-  const setPage = useSetAtom(pageAtom);
-  const [src, setSrc] = useAtom(srcAtom);
-  const [dest, setDest] = useAtom(destAtom);
+  const setLocationTarget = useSetAtom(locationTargetAtom);
+  const [source, setSource] = useAtom(sourceAtom);
+  const [destination, setDestination] = useAtom(destinationAtom);
   const router = useRouter();
 
   const searchQuery = api.rider.searchRides.useQuery({
     departAt: date,
-    source: src,
-    destination: dest,
+    source: source,
+    destination: destination,
     limit: 5,
   });
 
@@ -176,7 +155,7 @@ const SearchPage = () => {
             backgroundColor="#FBBF24"
             color="#000000"
           />
-          <MaterialCommunityIcon
+          <MaterialCommunityIcons
             name="target"
             size={26}
             backgroundColor="#FBBF24"
@@ -203,33 +182,34 @@ const SearchPage = () => {
             <Text
               className="ml-3 text-sm"
               onPress={() => {
-                setPage({ page: "src" });
-                router.push("/set-location");
+                setLocationTarget("source");
+                router.push("/rider/set-location");
               }}
             >
-              {src.latitude === 0 && src.longitude === 0
+              {source.latitude === 0 && source.longitude === 0
                 ? "Press here to select location"
-                : `緯度: ${src.latitude.toFixed(
+                : `緯度: ${source.latitude.toFixed(
                     4,
-                  )}${"   "}經度: ${src?.longitude.toFixed(4)}`}
+                  )}${"   "}經度: ${source?.longitude.toFixed(4)}`}
             </Text>
           </View>
           <View className="h-10 w-56 justify-center rounded-xl border border-gray-400 bg-white">
             <Text
               className="ml-3 text-sm"
               onPress={() => {
-                setPage({ page: "dest" });
-                router.push("/set-location");
+                setLocationTarget("destination");
+                router.push("/rider/set-location");
               }}
             >
-              {dest.latitude === 0 && dest.longitude === 0
+              {destination.latitude === 0 && destination.longitude === 0
                 ? "Press here to select location"
-                : `緯度: ${dest.latitude.toFixed(
+                : `緯度: ${destination.latitude.toFixed(
                     4,
-                  )}${"   "}經度: ${dest?.longitude.toFixed(4)}`}
+                  )}${"   "}經度: ${destination?.longitude.toFixed(4)}`}
             </Text>
           </View>
         </View>
+
         <View className="ml-3 mr-2 mt-48 h-full">
           <MaterialIcons
             name="swap-vert"
@@ -237,28 +217,27 @@ const SearchPage = () => {
             backgroundColor="#FBBF24"
             color="#000000"
             onPress={() => {
-              setSrc({
-                latitude: dest.latitude,
-                longitude: dest.longitude,
+              setSource({
+                latitude: destination.latitude,
+                longitude: destination.longitude,
               });
-              setDest({
-                latitude: src.latitude,
-                longitude: src.longitude,
+              setDestination({
+                latitude: source.latitude,
+                longitude: source.longitude,
               });
             }}
           />
         </View>
       </View>
+
       <SafeAreaView className="mt-2 flex-1">
-        {
-          <FlatList
-            data={searchQuery.data}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-        }
+        <FlatList
+          data={searchQuery.data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
       </SafeAreaView>
-      <Nav />
+      <RiderNavbar />
     </View>
   );
 };
