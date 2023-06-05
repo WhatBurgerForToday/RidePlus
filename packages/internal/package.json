@@ -17,6 +17,7 @@
     "vitest": "^0.31.4"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.10.2",
     "@prisma/client": "^4.14.1",
     "@rideplus/db": "^0.1.0"
   }
