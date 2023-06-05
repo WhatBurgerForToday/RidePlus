@@ -67,5 +67,15 @@ export const createPrismaPassengerRideRepo = (
 
       return ride;
     },
+    countByDriverRideId: async (driverRideId) => {
+      const count = await prisma.passengerRide.count({
+        where: {
+          driverRideId,
+          status: "APPROVED",
+        },
+      });
+
+      return count;
+    },
   };
 };
