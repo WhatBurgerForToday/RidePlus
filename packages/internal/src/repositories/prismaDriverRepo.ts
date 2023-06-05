@@ -42,5 +42,34 @@ export const createPrismaDriverRepo = (
         comment: review.comment,
       }));
     },
+
+    save: async (driver) => {
+      const newDriver = await prisma.driver.upsert({
+        where: {
+          id: driver.id,
+        },
+        select: {
+          id: true,
+          capacity: true,
+          rides: {
+            select: {
+              id: true,
+              driverId: true,
+              locations: true,
+              status: true,
+              departAt: true,
+            },
+          },
+        },
+        update: {
+          capacity: driver.capacity,
+        },
+        create: {
+          id: driver.id,
+          capacity: driver.capacity,
+        },
+      });
+      return newDriver;
+    },
   };
 };
