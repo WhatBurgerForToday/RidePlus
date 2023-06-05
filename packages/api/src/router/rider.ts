@@ -1,4 +1,8 @@
+import { TRPCError } from "@trpc/server";
+import { match } from "ts-pattern";
 import { z } from "zod";
+
+import { PassengerServiceErrors } from "@rideplus/internal";
 
 import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -229,22 +233,35 @@ export const riderRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const status = input.action === "apply" ? "PENDING" : "CANCELLED";
-      const driverRide = await ctx.driverService.getDriverRideById(
-        input.rideId,
-      );
-      if (driverRide === null) {
-        throw new Error("DriverRide not found");
-      }
-
-      if (driverRide.status !== "OPEN") {
-        throw new Error("DriverRide is not open");
-      }
-
-      return ctx.passengerService.manageRegistration({
+      const passengerRide = await ctx.passengerService.manageRegistration({
         passengerId: ctx.auth.userId,
         driverRideId: input.rideId,
         status,
       });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_NOT_FOUND }, () => {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN }, () => {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_FULL }, () => {
+          throw new TRPCError({ code: "BAD_REQUEST" });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({ code: "NOT_FOUND" });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   rateRide: protectedProcedure
