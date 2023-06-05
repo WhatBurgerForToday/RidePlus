@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Link } from "expo-router";
 import {
@@ -13,26 +13,18 @@ import { api } from "~/utils/api";
 import { Modal } from "~/components/Modal";
 import { DriverNavbar } from "~/components/Navbar/DriverNavbar";
 import { RatingStars } from "~/components/RatingStars";
+import { useObjectState } from "~/hooks/useObjectState";
 import SignOut from "~/screens/auth/SignOut";
-
-type Profile = {
-  bio: string;
-  rules: string;
-  capacity: string;
-};
 
 type ModalTypes = "Bio" | "Rules" | "Capacity" | "none";
 
 const DriverProfile = () => {
   const [visibleModal, setVisibleModal] = useState<ModalTypes>("none");
-  const [profile, updateProfile] = useReducer(
-    (state: Profile, newState: Partial<Profile>) => ({ ...state, ...newState }),
-    {
-      bio: "",
-      rules: "",
-      capacity: "",
-    },
-  );
+  const [profile, updateProfile] = useObjectState({
+    bio: "",
+    rules: "",
+    capacity: "",
+  });
 
   const profileQuery = api.driver.profile.useQuery(undefined, {
     onSuccess: (data) => {
