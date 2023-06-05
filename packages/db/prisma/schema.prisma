@@ -23,6 +23,7 @@ enum PassengerRideStatus {
 model Driver {
     id             String       @id
     rides          DriverRide[]
+    capacity       Int
     receivedReview RideReview[]
 }
 

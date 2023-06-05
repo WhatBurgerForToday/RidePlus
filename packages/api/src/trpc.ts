@@ -49,9 +49,16 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     locations: opts.locationRepository,
   });
 
+  const passengerService = RidePlus.createPassengerService(
+    opts.passengerRideRepository,
+    opts.driverRideRepository,
+    opts.driverRepository,
+  );
+
   return {
     auth: opts.auth,
     driverService,
+    passengerService,
   };
 };
 

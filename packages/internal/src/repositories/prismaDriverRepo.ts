@@ -22,6 +22,7 @@ export const createPrismaDriverRepo = (
               departAt: true,
             },
           },
+          capacity: true,
         },
       });
       return driver;

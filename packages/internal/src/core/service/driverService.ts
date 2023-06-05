@@ -87,6 +87,16 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       const reviews = await drivers.findReviews(driverId);
       return success(reviews);
     },
+
+    getDriverRideById: async (id: string) => {
+      const driverRide = await driverRides.findById(id);
+
+      if (driverRide === null) {
+        throw new Error("DriverRide not found");
+      }
+
+      return driverRide;
+    },
   };
 };
 
