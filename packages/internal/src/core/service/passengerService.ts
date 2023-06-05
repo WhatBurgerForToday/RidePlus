@@ -1,6 +1,5 @@
 import { error, success } from "../../types/result";
 import { type Location } from "../domain/location";
-import { type User } from "../domain/user";
 import {
   type DriverRepository,
   type DriverRideRepository,
