@@ -1,10 +1,19 @@
-import { type PassengerRide } from "../../core/domain/passengerRide";
+import {
+  type PassengerRide,
+  type PassengerRideStatus,
+} from "../../core/domain/passengerRide";
 import { type MakeOptional } from "../../types/magic";
 
 export type SavePassengerRideInput = MakeOptional<
   PassengerRide,
   "id" | "status"
 >;
+
+type PassengerRideWithDepartAt = PassengerRide & {
+  driverRide: {
+    departAt: Date;
+  };
+};
 
 export type PassengerRideRepository = {
   save(input: SavePassengerRideInput): Promise<PassengerRide>;
@@ -13,4 +22,8 @@ export type PassengerRideRepository = {
     passengerId: string,
   ): Promise<PassengerRide | null>;
   countByDriverRideId(driverRideId: string): Promise<number>;
+  findByPassengerIdWithStatus(
+    passengerId: string,
+    status: PassengerRideStatus,
+  ): Promise<PassengerRideWithDepartAt[]>;
 };

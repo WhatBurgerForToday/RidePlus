@@ -77,5 +77,28 @@ export const createPrismaPassengerRideRepo = (
 
       return count;
     },
+    findByPassengerIdWithStatus: async (passengerId, status) => {
+      const rides = await prisma.passengerRide.findMany({
+        where: {
+          passengerId,
+          status,
+        },
+        select: {
+          id: true,
+          driverId: true,
+          passengerId: true,
+          driverRide: {
+            select: {
+              departAt: true,
+            },
+          },
+          driverRideId: true,
+          status: true,
+          locations: true,
+        },
+      });
+
+      return rides;
+    },
   };
 };
