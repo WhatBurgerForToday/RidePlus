@@ -1,10 +1,13 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import {
+  AntDesign,
+  EvilIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 
 import { api } from "~/utils/api";
 import type { RegisterItemProps } from "./RegisterItem";

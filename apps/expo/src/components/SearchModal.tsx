@@ -1,16 +1,18 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { AntDesign } from "@expo/vector-icons";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import {
+  AntDesign,
+  EvilIcons,
+  Ionicons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import { useAtomValue } from "jotai";
 
 import { type RouterOutputs } from "@rideplus/api";
 
 import { api } from "~/utils/api";
-import { destAtom, srcAtom } from "~/app/search";
+import { destinationAtom, sourceAtom } from "~/atoms/locationAtom";
 
 type TravelItem = RouterOutputs["rider"]["searchRides"][number];
 
@@ -22,12 +24,12 @@ type SearchModalProps = {
 
 export const SearchModal = (props: SearchModalProps) => {
   const { modalVisible, setModalVisible, travel } = props;
-  const source = useAtomValue(srcAtom);
-  const destination = useAtomValue(destAtom);
+  const source = useAtomValue(sourceAtom);
+  const destination = useAtomValue(destinationAtom);
   const applyRideMutation = api.rider.applyRide.useMutation();
 
   return (
-    <View className="">
+    <View>
       <Modal
         animationType="slide"
         transparent={true}

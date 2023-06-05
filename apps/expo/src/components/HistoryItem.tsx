@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 
 import { api } from "~/utils/api";
 

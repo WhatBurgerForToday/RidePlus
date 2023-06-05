@@ -1,8 +1,6 @@
 import React, { useState, type Dispatch, type SetStateAction } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { EvilIcons, Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 
 import { RideModal } from "./RideModal";
 
