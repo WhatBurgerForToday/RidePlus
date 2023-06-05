@@ -15,10 +15,10 @@ export const riderRouter = createTRPCRouter({
 
     const result = match(passengerProfile)
       .with({ success: true }, ({ data }) => data)
-      .with({ error: PassengerServiceErrors.PASSENGER_NOT_FOUND }, () => {
+      .with({ error: PassengerServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Passenger not found",
+          message: "Provider user not found",
         });
       })
       .exhaustive();

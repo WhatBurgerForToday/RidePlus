@@ -31,7 +31,7 @@ type LeaveRideInput = {
 };
 
 export const PassengerServiceErrors = {
-  PASSENGER_NOT_FOUND: "passenger not found",
+  PROVIDER_USER_NOT_FOUND: "provider user not found",
   PASSENGER_RIDE_NOT_FOUND: "passenger ride not found",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
   DRIVER_NOT_FOUND: "driver not found",
@@ -49,7 +49,7 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       const passenger = await passengers.findOrCreate(passengerId);
       const user = await users.findById(passengerId);
       if (user == null) {
-        return error(PassengerServiceErrors.PASSENGER_NOT_FOUND);
+        return error(PassengerServiceErrors.PROVIDER_USER_NOT_FOUND);
       }
       return success({
         id: passenger.id,
