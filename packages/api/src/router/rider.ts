@@ -8,13 +8,21 @@ import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const riderRouter = createTRPCRouter({
-  profile: protectedProcedure.query(() => {
-    return {
-      name: "Simon",
-      avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      totalPaid: 120,
-    };
+  profile: protectedProcedure.query(async ({ ctx }) => {
+    const passengerProfile = await ctx.passengerService.getProfile(
+      ctx.auth.userId,
+    );
+
+    const result = match(passengerProfile)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: PassengerServiceErrors.PASSENGER_NOT_FOUND }, () => {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Passenger not found",
+        });
+      })
+      .exhaustive();
+    return result;
   }),
 
   rideHistory: protectedProcedure.query(() => {

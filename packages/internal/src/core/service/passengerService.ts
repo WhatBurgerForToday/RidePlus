@@ -4,12 +4,14 @@ import {
   type DriverRepository,
   type DriverRideRepository,
   type LocationRepository,
+  type PassengerRepository,
   type PassengerRideRepository,
   type UserRepository,
 } from "../ports";
 
 type PassengerServiceDeps = {
   passengerRides: PassengerRideRepository;
+  passengers: PassengerRepository;
   driverRides: DriverRideRepository;
   drivers: DriverRepository;
   locations: LocationRepository;
@@ -29,6 +31,7 @@ type LeaveRideInput = {
 };
 
 export const PassengerServiceErrors = {
+  PASSENGER_NOT_FOUND: "passenger not found",
   PASSENGER_RIDE_NOT_FOUND: "passenger ride not found",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
   DRIVER_NOT_FOUND: "driver not found",
@@ -38,9 +41,24 @@ export const PassengerServiceErrors = {
 } as const;
 
 export const createPassengerService = (deps: PassengerServiceDeps) => {
-  const { passengerRides, driverRides, drivers, locations, users } = deps;
+  const { passengerRides, passengers, driverRides, drivers, locations, users } =
+    deps;
 
   return {
+    getProfile: async (passengerId: string) => {
+      const passenger = await passengers.findOrCreate(passengerId);
+      const user = await users.findById(passengerId);
+      if (user == null) {
+        return error(PassengerServiceErrors.PASSENGER_NOT_FOUND);
+      }
+      return success({
+        id: passenger.id,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        bio: passenger.bio,
+      });
+    },
+
     applyRide: async (input: ApplyRideInput) => {
       const driverRide = await driverRides.findById(input.driverRideId);
       if (driverRide == null) {
