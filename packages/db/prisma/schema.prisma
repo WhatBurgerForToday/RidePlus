@@ -70,6 +70,7 @@ model PassengerRide {
     driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
     driverRideId String
 
+    @@unique([driverRideId, passengerId])
     @@index([passengerId])
     @@index([driverRideId])
 }

@@ -28,7 +28,6 @@ export const createPrismaPassengerRideRepo = (
           status: true,
           locations: true,
         },
-        // TODO: finish the update
         update: {
           status: input.status,
           locations: {
@@ -42,6 +41,27 @@ export const createPrismaPassengerRideRepo = (
           },
           passengerId: input.passengerId,
           driverRideId: input.driverRideId,
+        },
+      });
+
+      return ride;
+    },
+
+    findByDriverRideId: async (driverRideId, passengerId) => {
+      const ride = await prisma.passengerRide.findUnique({
+        where: {
+          driverRideId_passengerId: {
+            driverRideId,
+            passengerId,
+          },
+        },
+        select: {
+          id: true,
+          driverId: true,
+          passengerId: true,
+          driverRideId: true,
+          status: true,
+          locations: true,
         },
       });
 
