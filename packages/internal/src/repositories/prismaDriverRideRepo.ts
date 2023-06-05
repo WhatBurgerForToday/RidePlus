@@ -35,5 +35,20 @@ export const createPrismaDriverRideRepo = (
       });
       return ride;
     },
+    findById: async (id) => {
+      const ride = await prisma.driverRide.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          driverId: true,
+          locations: true,
+          status: true,
+          departAt: true,
+        },
+      });
+      return ride;
+    },
   };
 };
