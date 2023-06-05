@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Link } from "expo-router";
 import {
@@ -8,43 +8,62 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { atom, useSetAtom } from "jotai";
 
 import { api } from "~/utils/api";
-import { Modals } from "~/components/Modal";
+import { Modal } from "~/components/Modal";
 import { DriverNavbar } from "~/components/Navbar/DriverNavbar";
 import { RatingStars } from "~/components/RatingStars";
 import SignOut from "~/screens/auth/SignOut";
 
-export const bioAtom = atom(false);
-export const capacityAtom = atom(false);
-export const ruleAtom = atom(false);
+type Profile = {
+  bio: string;
+  rules: string;
+  capacity: string;
+};
+
+type ModalTypes = "Bio" | "Rules" | "Capacity" | "none";
 
 const DriverProfile = () => {
-  const setBioVisible = useSetAtom(bioAtom);
-  const setRuleVisible = useSetAtom(ruleAtom);
-  const setCapacityVisible = useSetAtom(capacityAtom);
-  const [bio, setBio] = useState("");
-  const [rule, setRule] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const profile = api.driver.profile.useQuery(undefined, {
+  const [visibleModal, setVisibleModal] = useState<ModalTypes>("none");
+  const [profile, updateProfile] = useReducer(
+    (state: Profile, newState: Partial<Profile>) => ({ ...state, ...newState }),
+    {
+      bio: "",
+      rules: "",
+      capacity: "",
+    },
+  );
+
+  const profileQuery = api.driver.profile.useQuery(undefined, {
     onSuccess: (data) => {
-      setBio(data.bio);
-      setRule(data.rules);
-      setCapacity(data.capacity.toString());
+      updateProfile({ ...data, capacity: data.capacity.toString() });
     },
   });
 
   return (
     <>
-      <Modals atom={bioAtom} text="Bio" item={bio} setItem={setBio} />
-      <Modals atom={ruleAtom} text="Rules" item={rule} setItem={setRule} />
-      <Modals
-        atom={capacityAtom}
-        text="Capacity"
-        item={capacity}
-        setItem={setCapacity}
+      <Modal
+        text="Bio"
+        value={profile.bio}
+        onChangeText={(text) => updateProfile({ bio: text })}
+        visible={visibleModal === "Bio"}
+        onClose={() => setVisibleModal("none")}
       />
+      <Modal
+        text="Rules"
+        value={profile.rules}
+        onChangeText={(text) => updateProfile({ rules: text })}
+        visible={visibleModal === "Rules"}
+        onClose={() => setVisibleModal("none")}
+      />
+      <Modal
+        text="Capacity"
+        value={profile.capacity}
+        onChangeText={(text) => updateProfile({ capacity: text })}
+        visible={visibleModal === "Capacity"}
+        onClose={() => setVisibleModal("none")}
+      />
+
       <View className="pb-5 pl-7 pt-20">
         <Text className="text-2xl font-bold text-amber-400">Profile</Text>
       </View>
@@ -52,25 +71,27 @@ const DriverProfile = () => {
         <View className="mx-2 flex-row">
           <View className="justify-center px-5 py-5">
             <Image
-              source={{ uri: profile.data?.avatarUrl }}
+              source={{ uri: profileQuery.data?.avatarUrl }}
               className="h-24 w-24 rounded-full"
             />
           </View>
           <View className="flex-col justify-center pl-5">
-            <Text className="text-xl font-bold">{profile.data?.name}</Text>
-            <RatingStars stars={profile.data?.stars ?? 0} />
-            <Text className="mt-2">Capacity: {profile.data?.capacity}</Text>
+            <Text className="text-xl font-bold">{profileQuery.data?.name}</Text>
+            <RatingStars stars={profileQuery.data?.stars ?? 0} />
+            <Text className="mt-2">
+              Capacity: {profileQuery.data?.capacity}
+            </Text>
           </View>
         </View>
 
         <View className="px-10">
-          <Text>{profile.data?.bio}</Text>
+          <Text>{profileQuery.data?.bio}</Text>
         </View>
 
         <View className="mx-5 mb-10 mt-5 border border-amber-400" />
 
         <View className="w-11/12 self-center rounded-xl bg-amber-100">
-          <TouchableOpacity onPress={() => setBioVisible(true)}>
+          <TouchableOpacity onPress={() => setVisibleModal("Bio")}>
             <View className="h-14 flex-row items-center border border-white">
               <View className="pl-4 pr-6">
                 <Feather name="edit" size={24} color="black" />
@@ -79,7 +100,7 @@ const DriverProfile = () => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setCapacityVisible(true)}>
+          <TouchableOpacity onPress={() => setVisibleModal("Capacity")}>
             <View className="h-14 flex-row items-center border border-white">
               <View className="pl-4 pr-6">
                 <Ionicons name="ios-people" size={24} color="black"></Ionicons>
@@ -88,7 +109,7 @@ const DriverProfile = () => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setRuleVisible(true)}>
+          <TouchableOpacity onPress={() => setVisibleModal("Rules")}>
             <View className="h-14 flex-row items-center border border-white">
               <View className="pl-4 pr-6">
                 <MaterialIcons

@@ -1,43 +1,48 @@
-import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Modal as ReactNativeModal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { useAtom, type PrimitiveAtom } from "jotai";
 
 import { api } from "~/utils/api";
 
 type ModalProps = {
-  atom: PrimitiveAtom<boolean>;
   text: "Bio" | "Rules" | "Capacity";
-  item: string;
-  setItem: (item: string) => void;
+  visible: boolean;
+  onClose: () => void;
+  value: string;
+  onChangeText: (text: string) => void;
 };
 
-export const Modals = (props: ModalProps) => {
-  const [visible, setVisible] = useAtom(props.atom);
-  const { item, setItem } = props;
+export const Modal = (props: ModalProps) => {
+  const { value, onChangeText, visible, onClose, text } = props;
+
   const utils = api.useContext();
   const editMutation = api.driver.editProfile.useMutation({
     onSuccess: () => {
       void utils.driver.profile.invalidate();
     },
   });
+
   const mutation = () => {
-    setVisible(!visible);
-    if (props.text === "Capacity") {
-      const val = parseInt(item);
-      editMutation.mutate({ capacity: val });
+    onClose();
+    if (text === "Capacity") {
+      const intValue = parseInt(value);
+      editMutation.mutate({ capacity: intValue });
       return;
     }
-    editMutation.mutate({ [props.text.toLowerCase()]: item });
+    editMutation.mutate({ [text.toLowerCase()]: value });
   };
 
   return (
-    <Modal
+    <ReactNativeModal
       animationType="slide"
       transparent={true}
       visible={visible}
-      onRequestClose={() => {
-        setVisible(!visible);
-      }}
+      onRequestClose={onClose}
     >
       <View className="justify-top mt-44 h-full rounded-t-3xl bg-amber-500 px-5 py-5">
         <Text className="px-2 py-2 text-xl font-bold">
@@ -48,10 +53,10 @@ export const Modals = (props: ModalProps) => {
           editable
           multiline
           numberOfLines={10}
-          onChangeText={setItem}
-          value={item}
+          onChangeText={onChangeText}
+          value={value}
           className="text-md mx-2 rounded-lg bg-white px-5"
-          placeholder={item}
+          placeholder={value}
         />
 
         <TouchableOpacity onPress={mutation}>
@@ -63,6 +68,6 @@ export const Modals = (props: ModalProps) => {
           </View>
         </TouchableOpacity>
       </View>
-    </Modal>
+    </ReactNativeModal>
   );
 };
