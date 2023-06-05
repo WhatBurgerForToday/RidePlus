@@ -1,7 +1,9 @@
-import React from "react";
-import { Image, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+
+import { api } from "~/utils/api";
 
 type HistoryItemProps = {
   id: string;
@@ -12,6 +14,10 @@ type HistoryItemProps = {
 };
 
 export const HistoryItem = (props: HistoryItemProps) => {
+  const addMutation = api.rider.addToFavorite.useMutation();
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
   return (
     <View className="h-40 flex-row">
       <View className="w-30 mr-4 h-full items-center justify-center px-2">
@@ -40,6 +46,22 @@ export const HistoryItem = (props: HistoryItemProps) => {
             ({props.destination.latitude}, {props.destination.longitude})
           </Text>
         </View>
+      </View>
+
+      <View className="items-center justify-center px-2">
+        <TouchableOpacity
+          onPress={() => {
+            if (!isFavorite) {
+              addMutation.mutate({ rideId: props.id });
+            } else {
+              // TODO: add remove favorite api
+            }
+            setIsFavorite(!isFavorite);
+          }}
+        >
+          {!isFavorite && <AntDesign name="hearto" size={24} color="black" />}
+          {isFavorite && <AntDesign name="heart" size={24} color="#ff7a45" />}
+        </TouchableOpacity>
       </View>
     </View>
   );
