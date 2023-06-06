@@ -79,8 +79,7 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // get the user session from the request
   const auth = getAuth(opts.req);
 
-  // TODO: replace with real location repository
-  const locationRepository = { findName: () => Promise.resolve([]) };
+  const locationRepository = RidePlus.createPrismaLocationRepo(prisma);
   const driverRideRepository = RidePlus.createPrismaDriverRideRepo(prisma);
   const passengerRideRepository =
     RidePlus.createPrismaPassengerRideRepo(prisma);
