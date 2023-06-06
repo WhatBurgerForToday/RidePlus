@@ -24,6 +24,7 @@ export const RideModal = (props: RideModalProps) => {
   const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
   const cancelRideMutation = api.rider.leaveRide.useMutation();
   const driverMutation = api.driver.manageRider.useMutation();
+  const finishRide = api.driver.finishRide.useMutation();
 
   return (
     <View>
@@ -117,13 +118,11 @@ export const RideModal = (props: RideModalProps) => {
                         <Text className="font-bold">Cancel</Text>
                       </View>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                       onPress={() => {
-                        driverMutation.mutate({
+                        finishRide.mutate({
                           rideId: id,
-                          action: "cancel",
-                          riderId: registerItemProps.person.id,
                         });
                         setModalVisible(!modalVisible);
                       }}
