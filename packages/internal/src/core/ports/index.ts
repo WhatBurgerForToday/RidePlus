@@ -3,4 +3,5 @@ export * from "./driverRideRepository";
 export * from "./locationRepository";
 export * from "./passengerRepository";
 export * from "./passengerRideRepository";
+export * from "./reviewRepository";
 export * from "./userRepository";
