@@ -22,7 +22,11 @@ export const riderRouter = createTRPCRouter({
         });
       })
       .exhaustive();
-    return result;
+
+    return {
+      ...result,
+      totalPaid: 100,
+    };
   }),
 
   rideHistory: protectedProcedure.query(() => {
