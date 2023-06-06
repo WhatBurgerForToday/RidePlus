@@ -18,7 +18,7 @@ export const RiderNavbar: FC = () => {
 
       <Navbar.Link href="/rider/register">
         {({ active }) => (
-          <AntDesign name="clockcircle" {...iconStyle(active)} />
+          <Ionicons name="newspaper-sharp" {...iconStyle(active)} />
         )}
       </Navbar.Link>
 
