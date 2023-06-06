@@ -38,7 +38,7 @@ const ReviewStar: FC<StarProps> = (props) => {
 export const HistoryModal = (props: HistoryModalProps) => {
   const { modalVisible, setModalVisible, historyItemProps } = props;
   const [starNum, setStarNum] = useState(4);
-  const [text, onChangeText] = useState("");
+  const [commentInput, setCommentInput] = useState("");
   const historyMutation = api.rider.rateRide.useMutation();
 
   return (
@@ -69,10 +69,10 @@ export const HistoryModal = (props: HistoryModalProps) => {
               editable
               multiline
               numberOfLines={10}
-              onChangeText={onChangeText}
-              value={text}
+              onChangeText={setCommentInput}
+              value={commentInput}
               className="text-md mx-2 rounded-lg bg-white px-5"
-              placeholder={text}
+              placeholder={commentInput}
             />
           </View>
 
@@ -94,7 +94,7 @@ export const HistoryModal = (props: HistoryModalProps) => {
                 historyMutation.mutate({
                   rideId: historyItemProps.id,
                   stars: starNum + 1,
-                  // TODO: mutate text reviews
+                  comment: commentInput,
                 });
                 setModalVisible(!modalVisible);
               }}

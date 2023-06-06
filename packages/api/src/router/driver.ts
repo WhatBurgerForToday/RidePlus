@@ -30,14 +30,20 @@ export const driverRouter = createTRPCRouter({
     return result;
   }),
 
-  reviews: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        stars: 3,
-        comment: "lorem",
-      },
-    ];
+  reviews: protectedProcedure.query(async ({ ctx }) => {
+    const reviews = await ctx.driverService.getReviews(ctx.auth.userId);
+
+    const result = match(reviews)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      })
+      .exhaustive();
+
+    return result;
   }),
 
   approvedRider: protectedProcedure.query(async ({ ctx }) => {
