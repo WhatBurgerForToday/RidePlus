@@ -34,5 +34,33 @@ export const createPrismaReviewRepo = (
         rideId: review.driverRideId,
       }));
     },
+
+    save: async (review) => {
+      const newReview = await prisma.rideReview.upsert({
+        where: {
+          id: review.id,
+        },
+        update: {
+          stars: review.stars,
+          comment: review.comment,
+        },
+        create: {
+          driverId: review.driverId,
+          passengerId: review.passengerId,
+          stars: review.stars,
+          comment: review.comment,
+          driverRideId: review.rideId,
+        },
+      });
+
+      return {
+        id: newReview.id,
+        driverId: newReview.driverId,
+        passengerId: newReview.passengerId,
+        stars: newReview.stars,
+        comment: newReview.comment,
+        rideId: newReview.driverRideId,
+      };
+    },
   };
 };
