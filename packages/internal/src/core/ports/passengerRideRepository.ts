@@ -30,4 +30,8 @@ export type PassengerRideRepository = {
     passengerId: string,
     limit: number,
   ): Promise<PassengerRideWithDepartAt[]>;
+  findByDriverIdWithStatus(
+    driverId: string,
+    status: PassengerRideStatus,
+  ): Promise<PassengerRideWithDepartAt[]>;
 };
