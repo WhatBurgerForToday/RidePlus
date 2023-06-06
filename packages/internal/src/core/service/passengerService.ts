@@ -35,6 +35,13 @@ type LeaveRideInput = {
   passengerId: string;
 };
 
+type SearchNearbyRidesInput = {
+  source: Location;
+  destination: Location;
+  departAfter: Date;
+  limit: number;
+};
+
 export const PassengerServiceErrors = {
   PROVIDER_USER_NOT_FOUND: "provider user not found",
   PASSENGER_RIDE_NOT_FOUND: "passenger ride not found",
@@ -228,6 +235,38 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       });
 
       return success(favoriteRide);
+    },
+
+    searchNearbyRides: async (input: SearchNearbyRidesInput) => {
+      const rides = await driverRides.findByNearbyLocations(input);
+
+      const driverIds = rides.map((ride) => ride.driverId);
+      const passengerIds = rides.flatMap((ride) =>
+        ride.passengers.map((passenger) => passenger.id),
+      );
+
+      const userMap = await users.findManyByIds([
+        ...driverIds,
+        ...passengerIds,
+      ]);
+
+      return rides.map((ride) => {
+        return {
+          ...ride,
+          driver: {
+            ...ride.driver,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            ...userMap.get(ride.driverId)!,
+          },
+          passengers: ride.passengers.map((passenger) => {
+            return {
+              ...passenger,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              ...userMap.get(passenger.id)!,
+            };
+          }),
+        };
+      });
     },
   };
 };
