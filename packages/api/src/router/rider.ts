@@ -427,10 +427,31 @@ export const riderRouter = createTRPCRouter({
       z.object({
         rideId: z.string(),
         stars: z.number().min(1).max(5),
+        comment: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const newRating = await ctx.passengerService.rateRide({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        stars: input.stars,
+        comment: input.comment,
+      });
+
+      const result = match(newRating)
+        .with({ success: true }, ({ data }) => data)
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Passenger not applied to the ride",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   becomeDriver: protectedProcedure
