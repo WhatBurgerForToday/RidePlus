@@ -1,49 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import { error, success } from "../../types/result";
 import {
-  type DriverRepository,
-  type DriverRideRepository,
-  type LocationRepository,
-  type PassengerRideRepository,
-  type ReviewRepository,
-  type UserRepository,
-} from "../ports";
+  mockDriverRepo,
+  mockDriverRidesRepo,
+  mockLocationRepo,
+  mockPassengerRideRepo,
+  mockReviewRepo,
+  mockUserRepo,
+} from "../../repositories/mockRepositories";
+import { error, success } from "../../types/result";
 import { DriverServiceErrors, createDriverService } from "./driverService";
-
-const mockDriverRepo = {
-  save: vi.fn(),
-  findById: vi.fn(),
-} satisfies DriverRepository;
-
-const mockDriverRidesRepo = {
-  findById: vi.fn(),
-  save: vi.fn(),
-} satisfies DriverRideRepository;
-
-const mockPassengerRideRepo = {
-  save: vi.fn(),
-  findByDriverRideId: vi.fn(),
-  countByDriverRideId: vi.fn(),
-  findByPassengerIdWithStatus: vi.fn(),
-  findFavoritesByPassengerId: vi.fn(),
-  findByDriverIdWithStatus: vi.fn(),
-} satisfies PassengerRideRepository;
-
-const mockLocationRepo = {
-  findName: vi.fn(),
-} satisfies LocationRepository;
-
-const mockUserRepo = {
-  findById: vi.fn(),
-  findManyByIds: vi.fn(),
-} satisfies UserRepository;
-
-const mockReviewRepo = {
-  calculateDriverStars: vi.fn(),
-  findByDriverId: vi.fn(),
-  save: vi.fn(),
-} satisfies ReviewRepository;
 
 const service = createDriverService({
   drivers: mockDriverRepo,
