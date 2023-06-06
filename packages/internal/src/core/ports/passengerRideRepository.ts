@@ -6,7 +6,7 @@ import { type MakeOptional } from "../../types/magic";
 
 export type SavePassengerRideInput = MakeOptional<
   PassengerRide,
-  "id" | "status"
+  "id" | "status" | "isFavorite"
 >;
 
 type PassengerRideWithDepartAt = PassengerRide & {
