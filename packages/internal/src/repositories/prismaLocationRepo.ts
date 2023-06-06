@@ -3,7 +3,7 @@ import { type PrismaClient } from "@prisma/client";
 import { type LocationRepository, type LocationWithDistance } from "../core";
 import { type NamedLocation } from "../core/domain/location";
 
-export const createPrimsaLocationRepo = (
+export const createPrismaLocationRepo = (
   prisma: PrismaClient,
 ): LocationRepository => {
   return {
@@ -44,7 +44,7 @@ export const createPrimsaLocationRepo = (
             sin(radians(lat)) 
           ) ) AS "distance"
         FROM "Location"
-        HAVING "distance" < ${maxDistance}
+        HAVING ( "distance" * 1000 ) < ${maxDistance}
         ORDER BY "distance"
       `;
 
