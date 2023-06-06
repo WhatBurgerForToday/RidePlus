@@ -66,52 +66,71 @@ export const riderRouter = createTRPCRouter({
     ];
   }),
 
-  recentRide: protectedProcedure.query(() => {
-    // give back at most 2 recent rides.
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
+  recentRide: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
+    )
+    .query(() => {
+      // give back at most 2 recent rides.
+      return [
+        {
+          id: "1",
+          source: {
+            latitude: 23,
+            longitude: 123,
+          },
+          destination: {
+            latitude: 23,
+            longitude: 123,
+          },
+          departAt: new Date(),
         },
-        destination: {
-          latitude: 23,
-          longitude: 123,
+        {
+          id: "2",
+          source: {
+            latitude: 23,
+            longitude: 123,
+          },
+          destination: {
+            latitude: 23,
+            longitude: 123,
+          },
+          departAt: new Date(),
         },
-        departAt: new Date(),
-      },
-      {
-        id: "2",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
+      ];
+    }),
 
-  favoriteRide: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
+  favoriteRide: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
+    )
+    .query(async ({ ctx, input }) => {
+      const favoriteRides = await ctx.passengerService.getFavoriteRides(
+        ctx.auth.userId,
+        input.limit,
+      );
+      return favoriteRides.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.driverRideId,
+          departAt: ride.driverRide.departAt,
+          source: source!,
+          destination: destination!,
+          price: 100,
+        };
+      });
+    }),
 
   approvedRide: protectedProcedure.query(async ({ ctx }) => {
     const approvedRides = await ctx.passengerService.getApprovedPassengerRides(
@@ -257,8 +276,66 @@ export const riderRouter = createTRPCRouter({
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.passengerService.addRideToFavorites(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(ride)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Ride not found",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
+    }),
+
+  removeFromFavorite: protectedProcedure
+    .input(
+      z.object({
+        rideId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.passengerService.removeRideFromFavorites(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(ride)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Ride not found",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   applyRide: protectedProcedure

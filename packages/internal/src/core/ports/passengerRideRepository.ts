@@ -6,7 +6,7 @@ import { type MakeOptional } from "../../types/magic";
 
 export type SavePassengerRideInput = MakeOptional<
   PassengerRide,
-  "id" | "status"
+  "id" | "status" | "isFavorite"
 >;
 
 type PassengerRideWithDepartAt = PassengerRide & {
@@ -25,5 +25,9 @@ export type PassengerRideRepository = {
   findByPassengerIdWithStatus(
     passengerId: string,
     status: PassengerRideStatus,
+  ): Promise<PassengerRideWithDepartAt[]>;
+  findFavoritesByPassengerId(
+    passengerId: string,
+    limit: number,
   ): Promise<PassengerRideWithDepartAt[]>;
 };
