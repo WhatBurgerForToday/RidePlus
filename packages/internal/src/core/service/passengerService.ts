@@ -18,6 +18,11 @@ type PassengerServiceDeps = {
   users: UserRepository;
 };
 
+type EditProfileInput = {
+  passengerId: string;
+  bio: string;
+};
+
 type ApplyRideInput = {
   driverRideId: string;
   passengerId: string;
@@ -57,6 +62,17 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
         avatarUrl: user.avatarUrl,
         bio: passenger.bio,
       });
+    },
+
+    editProfile: async (input: EditProfileInput) => {
+      const passenger = await passengers.findOrCreate(input.passengerId);
+
+      const newPassenger = await passengers.save({
+        ...passenger,
+        bio: input.bio,
+      });
+
+      return newPassenger;
     },
 
     applyRide: async (input: ApplyRideInput) => {

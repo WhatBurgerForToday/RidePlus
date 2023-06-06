@@ -243,8 +243,12 @@ export const riderRouter = createTRPCRouter({
         bio: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const passenger = await ctx.passengerService.editProfile({
+        passengerId: ctx.auth.userId,
+        bio: input.bio,
+      });
+      return passenger;
     }),
 
   addToFavorite: protectedProcedure

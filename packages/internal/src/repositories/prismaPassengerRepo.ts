@@ -27,5 +27,29 @@ export const createPrismaPassengerRepo = (
 
       return passenger;
     },
+
+    save: async (passenger) => {
+      const newPassenger = await prisma.passenger.upsert({
+        where: {
+          id: passenger.id,
+        },
+        include: {
+          rides: {
+            include: {
+              locations: true,
+            },
+          },
+        },
+        update: {
+          bio: passenger.bio,
+        },
+        create: {
+          id: passenger.id,
+          bio: passenger.bio,
+        },
+      });
+
+      return newPassenger;
+    },
   };
 };
