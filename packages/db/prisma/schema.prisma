@@ -24,6 +24,7 @@ model Driver {
     id             String       @id
     capacity       Int
     bio            String
+    rules          String
     rides          DriverRide[]
     receivedReview RideReview[]
 }
