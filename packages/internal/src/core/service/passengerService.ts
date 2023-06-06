@@ -170,6 +170,31 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
 
       return success(favoriteRide);
     },
+
+    removeRideFromFavorites: async (
+      passengerId: string,
+      driverRideId: string,
+    ) => {
+      const driverRide = await driverRides.findById(driverRideId);
+      if (driverRide == null) {
+        return error(PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND);
+      }
+
+      const passengerRide = await passengerRides.findByDriverRideId(
+        driverRideId,
+        passengerId,
+      );
+      if (passengerRide == null) {
+        return error(PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND);
+      }
+
+      const favoriteRide = await passengerRides.save({
+        ...passengerRide,
+        isFavorite: false,
+      });
+
+      return success(favoriteRide);
+    },
   };
 };
 

@@ -20,12 +20,7 @@ export const createPrismaPassengerRideRepo = (
         where: {
           id: input.id,
         },
-        select: {
-          id: true,
-          driverId: true,
-          passengerId: true,
-          driverRideId: true,
-          status: true,
+        include: {
           locations: true,
         },
         update: {
@@ -55,12 +50,7 @@ export const createPrismaPassengerRideRepo = (
             passengerId,
           },
         },
-        select: {
-          id: true,
-          driverId: true,
-          passengerId: true,
-          driverRideId: true,
-          status: true,
+        include: {
           locations: true,
         },
       });
@@ -85,17 +75,12 @@ export const createPrismaPassengerRideRepo = (
           passengerId,
           status,
         },
-        select: {
-          id: true,
-          driverId: true,
-          passengerId: true,
+        include: {
           driverRide: {
             select: {
               departAt: true,
             },
           },
-          driverRideId: true,
-          status: true,
           locations: true,
         },
       });
