@@ -40,50 +40,71 @@ export const driverRouter = createTRPCRouter({
     ];
   }),
 
-  approvedRider: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
+  approvedRider: protectedProcedure.query(async ({ ctx }) => {
+    const approvedRiders = await ctx.driverService.getApprovedPassengers(
+      ctx.auth.userId,
+    );
+
+    const result = match(approvedRiders)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      })
+      .exhaustive();
+
+    return result.map((rider) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = rider.locations;
+      return {
+        id: rider.id,
+        departAt: rider.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
         rider: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+          id: rider.passengerId,
+          name: rider.name,
+          avatarUrl: rider.avatarUrl,
         },
-      },
-    ];
+      };
+    });
   }),
 
-  pendingRider: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
+  pendingRider: protectedProcedure.query(async ({ ctx }) => {
+    const pendingRiders = await ctx.driverService.getPendingPassengers(
+      ctx.auth.userId,
+    );
+
+    const result = match(pendingRiders)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      })
+      .exhaustive();
+
+    return result.map((rider) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+      const [source, destination] = rider.locations;
+      return {
+        id: rider.id,
+        departAt: rider.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
         rider: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+          id: rider.passengerId,
+          name: rider.name,
+          avatarUrl: rider.avatarUrl,
         },
-      },
-    ];
+      };
+    });
   }),
 
   editProfile: protectedProcedure

@@ -168,6 +168,68 @@ export const createDriverService = (deps: DriverServiceDeps) => {
 
       return newDriver;
     },
+
+    getApprovedPassengers: async (driverId: string) => {
+      const driver = await drivers.findById(driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const approvedPassengers = await passengerRides.findByDriverIdWithStatus(
+        driverId,
+        "APPROVED",
+      );
+
+      const riderIds = approvedPassengers.map(
+        (passengerRide) => passengerRide.passengerId,
+      );
+
+      const passengerMap = await users.findManyByIds(riderIds);
+
+      const approvedPassengersInfo = approvedPassengers.map(
+        (passengerRide) => ({
+          id: passengerRide.id,
+          passengerId: passengerRide.passengerId,
+          locations: passengerRide.locations,
+          departAt: passengerRide.driverRide.departAt,
+          name:
+            passengerMap.get(passengerRide.passengerId)?.name ?? "Anonymous",
+          avatarUrl:
+            passengerMap.get(passengerRide.passengerId)?.avatarUrl ?? "",
+        }),
+      );
+
+      return success(approvedPassengersInfo);
+    },
+
+    getPendingPassengers: async (driverId: string) => {
+      const driver = await drivers.findById(driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const pendingPassengers = await passengerRides.findByDriverIdWithStatus(
+        driverId,
+        "PENDING",
+      );
+
+      const riderIds = pendingPassengers.map(
+        (passengerRide) => passengerRide.passengerId,
+      );
+
+      const passengerMap = await users.findManyByIds(riderIds);
+
+      const pendingPassengersInfo = pendingPassengers.map((passengerRide) => ({
+        id: passengerRide.id,
+        passengerId: passengerRide.passengerId,
+        locations: passengerRide.locations,
+        departAt: passengerRide.driverRide.departAt,
+        name: passengerMap.get(passengerRide.passengerId)?.name ?? "Anonymous",
+        avatarUrl: passengerMap.get(passengerRide.passengerId)?.avatarUrl ?? "",
+      }));
+
+      return success(pendingPassengersInfo);
+    },
   };
 };
 
