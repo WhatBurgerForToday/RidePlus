@@ -140,6 +140,14 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
         };
       });
     },
+
+    getFavoriteRides: async (passengerId: string, limit: number) => {
+      const favoriteRides = await passengerRides.findFavoritesByPassengerId(
+        passengerId,
+        limit,
+      );
+      return favoriteRides;
+    },
   };
 };
 

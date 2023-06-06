@@ -54,175 +54,64 @@ export const riderRouter = createTRPCRouter({
     ];
   }),
 
-  recentRide: protectedProcedure.query(() => {
-    // give back at most 2 recent rides.
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-      {
-        id: "2",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
-
-  favoriteRide: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
-
-  approvedRide: protectedProcedure.query(async ({ ctx }) => {
-    const approvedRides = await ctx.passengerService.getApprovedPassengerRides(
-      ctx.auth.userId,
-    );
-    return approvedRides.map((ride) => {
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      const [source, destination] = ride.locations;
-      return {
-        id: ride.driverRideId,
-        departAt: ride.driverRide.departAt,
-        source: source!,
-        desiredDestination: destination!,
-        price: 100,
-        driver: ride.driver!,
-      };
-    });
-  }),
-
-  pendingRide: protectedProcedure.query(async ({ ctx }) => {
-    const pendingRides = await ctx.passengerService.getPendingPassengerRides(
-      ctx.auth.userId,
-    );
-    return pendingRides.map((ride) => {
-      /* eslint-disable @typescript-eslint/no-non-null-assertion */
-      const [source, destination] = ride.locations;
-      return {
-        id: ride.driverRideId,
-        departAt: ride.driverRide.departAt,
-        source: source!,
-        desiredDestination: destination!,
-        price: 100,
-        driver: ride.driver!,
-      };
-    });
-  }),
-
-  searchRides: protectedProcedure
+  recentRide: protectedProcedure
     .input(
       z.object({
-        source: location(),
-        destination: location(),
-        departAt: z.date(),
-        limit: z.number().optional().default(10),
+        limit: z.number().optional().default(2),
       }),
     )
-    .query(({ input }) => {
+    .query(() => {
+      // give back at most 2 recent rides.
       return [
         {
           id: "1",
-          stars: 4,
           source: {
-            name: "TSMC",
             latitude: 23,
             longitude: 123,
           },
-          desiredDestination: {
-            name: "NYCU",
+          destination: {
             latitude: 23,
             longitude: 123,
           },
-          price: 120,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 4,
-          },
-          departAt: input.departAt,
-          passengers: [],
+          departAt: new Date(),
         },
         {
           id: "2",
-          stars: 4.3,
           source: {
-            name: "TSMC ABC",
             latitude: 23,
             longitude: 123,
           },
-          desiredDestination: {
-            name: "NYCU ABC",
+          destination: {
             latitude: 23,
             longitude: 123,
           },
-          price: 250,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 5,
-          },
-          departAt: input.departAt,
-          passengers: [
-            {
-              id: "3",
-              name: "Alan",
-            },
-          ],
-        },
-        {
-          id: "3",
-          stars: 3.3,
-          source: {
-            name: "TSMC",
-            latitude: 23,
-            longitude: 123,
-          },
-          desiredDestination: {
-            name: "NYCU",
-            latitude: 23,
-            longitude: 123,
-          },
-          price: 120,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 4,
-          },
-          departAt: input.departAt,
-          passengers: [],
+          departAt: new Date(),
         },
       ];
+    }),
+
+  favoriteRide: protectedProcedure
+    .input(
+      z.object({
+        limit: z.number().optional().default(2),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const favoriteRides = await ctx.passengerService.getFavoriteRides(
+        ctx.auth.userId,
+        input.limit,
+      );
+      return favoriteRides.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.driverRideId,
+          departAt: ride.driverRide.departAt,
+          source: source!,
+          destination: destination!,
+          price: 100,
+        };
+      });
     }),
 
   editProfile: protectedProcedure
