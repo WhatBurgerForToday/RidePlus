@@ -7,6 +7,8 @@ import {
   type DriverRideRepository,
   type LocationRepository,
   type PassengerRideRepository,
+  type ReviewRepository,
+  type UserRepository,
 } from "../ports";
 
 type DriverServiceDeps = {
@@ -14,6 +16,15 @@ type DriverServiceDeps = {
   drivers: DriverRepository;
   passengerRides: PassengerRideRepository;
   locations: LocationRepository;
+  users: UserRepository;
+  reviews: ReviewRepository;
+};
+
+type EditProfileInput = {
+  driverId: string;
+  bio?: string;
+  rules?: string;
+  capacity?: number;
 };
 
 type CreateDriverRideInput = {
@@ -30,14 +41,57 @@ type ManagePassengerInput = {
 };
 
 export const DriverServiceErrors = {
+  PROVIDER_USER_NOT_FOUND: "provider user not found",
   NOT_A_DRIVER: "not a driver",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
 } as const;
 
 export const createDriverService = (deps: DriverServiceDeps) => {
-  const { driverRides, drivers, passengerRides, locations } = deps;
+  const { driverRides, drivers, passengerRides, locations, users, reviews } =
+    deps;
 
   return {
+    getProfile: async (driverId: string) => {
+      const driver = await drivers.findById(driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const user = await users.findById(driverId);
+      if (user == null) {
+        return error(DriverServiceErrors.PROVIDER_USER_NOT_FOUND);
+      }
+
+      const stars = await reviews.calculateDriverStars(driverId);
+
+      return success({
+        id: driver.id,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        bio: driver.bio,
+        rules: driver.rules,
+        capacity: driver.capacity,
+        stars,
+      });
+    },
+
+    editProfile: async (input: EditProfileInput) => {
+      const driver = await drivers.findById(input.driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const newDriver = await drivers.save({
+        id: driver.id,
+        bio: input.bio ?? driver.bio,
+        rules: input.rules ?? driver.rules,
+        capacity: input.capacity ?? driver.capacity,
+        rides: driver.rides,
+      });
+
+      return success(newDriver);
+    },
+
     createDriverRide: async (input: CreateDriverRideInput) => {
       const driver = drivers.findById(input.driverId);
       if (driver == null) {
@@ -84,8 +138,8 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       if (driver == null) {
         return error(DriverServiceErrors.NOT_A_DRIVER);
       }
-      const reviews = await drivers.findReviews(driverId);
-      return success(reviews);
+      const receivedReviews = await reviews.findByDriverId(driverId);
+      return success(receivedReviews);
     },
 
     getDriverRideById: async (id: string) => {
@@ -96,6 +150,23 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       }
 
       return driverRide;
+    },
+
+    register: async (id: string, capacity: number) => {
+      const driver = await drivers.findById(id);
+      if (driver != null) {
+        return driver;
+      }
+
+      const newDriver = await drivers.save({
+        id,
+        capacity,
+        rides: [],
+        bio: "",
+        rules: "",
+      });
+
+      return newDriver;
     },
   };
 };

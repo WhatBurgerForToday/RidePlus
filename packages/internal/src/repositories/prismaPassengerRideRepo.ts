@@ -76,12 +76,12 @@ export const createPrismaPassengerRideRepo = (
           status,
         },
         include: {
+          locations: true,
           driverRide: {
             select: {
               departAt: true,
             },
           },
-          locations: true,
         },
       });
 

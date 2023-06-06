@@ -8,16 +8,26 @@ import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const driverRouter = createTRPCRouter({
-  profile: protectedProcedure.query(() => {
-    return {
-      name: "Simon",
-      avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      stars: 4,
-      capacity: 3,
-      rules:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    };
+  profile: protectedProcedure.query(async ({ ctx }) => {
+    const driverProfile = await ctx.driverService.getProfile(ctx.auth.userId);
+
+    const result = match(driverProfile)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a driver yet",
+        });
+      })
+      .with({ error: DriverServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Provider user not found",
+        });
+      })
+      .exhaustive();
+
+    return result;
   }),
 
   reviews: protectedProcedure.query(() => {
@@ -84,8 +94,25 @@ export const driverRouter = createTRPCRouter({
         capacity: z.number().optional(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const newDriver = await ctx.driverService.editProfile({
+        driverId: ctx.auth.userId,
+        bio: input.bio,
+        rules: input.rules,
+        capacity: input.capacity,
+      });
+
+      const result = match(newDriver)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not a driver yet",
+          });
+        })
+        .exhaustive();
+
+      return result;
     }),
 
   create: protectedProcedure
