@@ -6,7 +6,7 @@ import MapView, {
   type Region,
 } from "react-native-maps";
 import * as Location from "expo-location";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
   FontAwesome,
   Ionicons,
@@ -67,14 +67,13 @@ const SetLocationPage = () => {
     <View className="relative flex h-full flex-col items-center justify-center">
       <View className="h-1/6 w-full flex-row items-center bg-amber-400 pb-2 pt-12 shadow-sm shadow-gray-400">
         <View className="w-1/8 mb-1 ml-6 mr-2 h-full items-center justify-around">
-          <Link href="/search">
-            <FontAwesome
-              name="angle-left"
-              size={32}
-              backgroundColor="#FBBF24"
-              color="#000000"
-            />
-          </Link>
+          <FontAwesome
+            name="angle-left"
+            size={32}
+            backgroundColor="#FBBF24"
+            color="#000000"
+            onPress={() => router.back()}
+          />
         </View>
         <View className="w-1/8 ml-4 mr-4 h-full items-center justify-around">
           <MaterialCommunityIcons

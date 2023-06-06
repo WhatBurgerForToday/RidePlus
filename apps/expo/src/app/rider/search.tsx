@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import {
   EvilIcons,
   FontAwesome,
@@ -111,9 +111,10 @@ const Travel: FC<Props> = (props) => {
 };
 
 const MILLIS_PER_DAY = 1000 * 86400;
+export const dataAtom = atom(new Date(Date.now() + MILLIS_PER_DAY));
 
 const SearchPage = () => {
-  const [date, setDate] = useState(new Date(Date.now() + MILLIS_PER_DAY));
+  const [date, setDate] = useAtom(dataAtom);
   const setLocationTarget = useSetAtom(locationTargetAtom);
   const [source, setSource] = useAtom(sourceAtom);
   const [destination, setDestination] = useAtom(destinationAtom);
@@ -139,14 +140,13 @@ const SearchPage = () => {
     <View className="flex-1 bg-white">
       <View className="h-1/4 flex-row items-center bg-amber-400 pb-2 pt-12 shadow-sm shadow-gray-400">
         <View className="ml-6 mr-2 mt-7 h-full">
-          <Link href="/home">
-            <FontAwesome
-              name="angle-left"
-              size={32}
-              backgroundColor="#FBBF24"
-              color="#000000"
-            />
-          </Link>
+          <FontAwesome
+            name="angle-left"
+            size={32}
+            backgroundColor="#FBBF24"
+            color="#000000"
+            onPress={() => router.back()}
+          />
         </View>
         <View className="ml-4 mr-4 mt-3 h-full items-center justify-around">
           <EvilIcons

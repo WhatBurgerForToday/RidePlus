@@ -151,6 +151,21 @@ export const createDriverService = (deps: DriverServiceDeps) => {
 
       return driverRide;
     },
+
+    register: async (id: string, capacity: number) => {
+      const driver = await drivers.findById(id);
+      if (driver != null) {
+        return driver;
+      }
+
+      const newDriver = await drivers.save({
+        id,
+        capacity,
+        rides: [],
+      });
+
+      return newDriver;
+    },
   };
 };
 
