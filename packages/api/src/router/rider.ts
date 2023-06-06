@@ -56,9 +56,12 @@ export const riderRouter = createTRPCRouter({
 
   recentRide: protectedProcedure
     .input(
-      z.object({
-        limit: z.number().optional().default(2),
-      }),
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
     )
     .query(() => {
       // give back at most 2 recent rides.
@@ -92,9 +95,12 @@ export const riderRouter = createTRPCRouter({
 
   favoriteRide: protectedProcedure
     .input(
-      z.object({
-        limit: z.number().optional().default(2),
-      }),
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
     )
     .query(async ({ ctx, input }) => {
       const favoriteRides = await ctx.passengerService.getFavoriteRides(
@@ -112,6 +118,130 @@ export const riderRouter = createTRPCRouter({
           price: 100,
         };
       });
+    }),
+
+  approvedRide: protectedProcedure.query(async ({ ctx }) => {
+    const approvedRides = await ctx.passengerService.getApprovedPassengerRides(
+      ctx.auth.userId,
+    );
+    return approvedRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
+  }),
+
+  pendingRide: protectedProcedure.query(async ({ ctx }) => {
+    const pendingRides = await ctx.passengerService.getPendingPassengerRides(
+      ctx.auth.userId,
+    );
+    return pendingRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
+  }),
+
+  searchRides: protectedProcedure
+    .input(
+      z.object({
+        source: location(),
+        destination: location(),
+        departAt: z.date(),
+        limit: z.number().optional().default(10),
+      }),
+    )
+    .query(({ input }) => {
+      return [
+        {
+          id: "1",
+          stars: 4,
+          source: {
+            name: "TSMC",
+            latitude: 23,
+            longitude: 123,
+          },
+          desiredDestination: {
+            name: "NYCU",
+            latitude: 23,
+            longitude: 123,
+          },
+          price: 120,
+          driver: {
+            id: "1",
+            name: "Simon",
+            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 4,
+          },
+          departAt: input.departAt,
+          passengers: [],
+        },
+        {
+          id: "2",
+          stars: 4.3,
+          source: {
+            name: "TSMC ABC",
+            latitude: 23,
+            longitude: 123,
+          },
+          desiredDestination: {
+            name: "NYCU ABC",
+            latitude: 23,
+            longitude: 123,
+          },
+          price: 250,
+          driver: {
+            id: "1",
+            name: "Simon",
+            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 5,
+          },
+          departAt: input.departAt,
+          passengers: [
+            {
+              id: "3",
+              name: "Alan",
+            },
+          ],
+        },
+        {
+          id: "3",
+          stars: 3.3,
+          source: {
+            name: "TSMC",
+            latitude: 23,
+            longitude: 123,
+          },
+          desiredDestination: {
+            name: "NYCU",
+            latitude: 23,
+            longitude: 123,
+          },
+          price: 120,
+          driver: {
+            id: "1",
+            name: "Simon",
+            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
+            capacity: 4,
+          },
+          departAt: input.departAt,
+          passengers: [],
+        },
+      ];
     }),
 
   editProfile: protectedProcedure
