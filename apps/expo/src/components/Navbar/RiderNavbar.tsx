@@ -1,5 +1,5 @@
 import React, { type FC } from "react";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 import { Navbar } from "./Navbar";
 
@@ -18,7 +18,7 @@ export const RiderNavbar: FC = () => {
 
       <Navbar.Link href="/rider/register">
         {({ active }) => (
-          <AntDesign name="clockcircle" {...iconStyle(active)} />
+          <Ionicons name="newspaper-sharp" {...iconStyle(active)} />
         )}
       </Navbar.Link>
 

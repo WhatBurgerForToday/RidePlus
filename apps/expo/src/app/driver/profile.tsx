@@ -31,10 +31,11 @@ const DriverProfile = () => {
     onSuccess: (data) => {
       updateProfile({ ...data, capacity: data.capacity.toString() });
     },
-    onError: () => {
-      router.push("/driver/become-driver");
-    }
   });
+
+  if (profileQuery.data == null) {
+    router.push("/driver/become-driver");
+  }
 
   return (
     <>
