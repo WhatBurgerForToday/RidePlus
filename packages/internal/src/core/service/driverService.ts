@@ -162,6 +162,8 @@ export const createDriverService = (deps: DriverServiceDeps) => {
         id,
         capacity,
         rides: [],
+        bio: "",
+        rules: "",
       });
 
       return newDriver;
