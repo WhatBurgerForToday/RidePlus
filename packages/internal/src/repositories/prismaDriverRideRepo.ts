@@ -12,12 +12,8 @@ export const createPrismaDriverRideRepo = (
         where: {
           id: input.id,
         },
-        select: {
-          id: true,
-          driverId: true,
+        include: {
           locations: true,
-          status: true,
-          departAt: true,
         },
         update: {
           locations: {
@@ -35,17 +31,14 @@ export const createPrismaDriverRideRepo = (
       });
       return ride;
     },
+
     findById: async (id) => {
       const ride = await prisma.driverRide.findUnique({
         where: {
           id,
         },
-        select: {
-          id: true,
-          driverId: true,
+        include: {
           locations: true,
-          status: true,
-          departAt: true,
         },
       });
       return ride;

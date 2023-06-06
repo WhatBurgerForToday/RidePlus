@@ -8,12 +8,24 @@ import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const riderRouter = createTRPCRouter({
-  profile: protectedProcedure.query(() => {
+  profile: protectedProcedure.query(async ({ ctx }) => {
+    const passengerProfile = await ctx.passengerService.getProfile(
+      ctx.auth.userId,
+    );
+
+    const result = match(passengerProfile)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: PassengerServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Provider user not found",
+        });
+      })
+      .exhaustive();
+
     return {
-      name: "Simon",
-      avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      totalPaid: 120,
+      ...result,
+      totalPaid: 100,
     };
   }),
 
@@ -231,8 +243,12 @@ export const riderRouter = createTRPCRouter({
         bio: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const passenger = await ctx.passengerService.editProfile({
+        passengerId: ctx.auth.userId,
+        bio: input.bio,
+      });
+      return passenger;
     }),
 
   addToFavorite: protectedProcedure

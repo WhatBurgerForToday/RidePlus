@@ -11,65 +11,43 @@ export const createPrismaDriverRepo = (
         where: {
           id,
         },
-        select: {
-          id: true,
+        include: {
           rides: {
-            select: {
-              id: true,
-              driverId: true,
+            include: {
               locations: true,
-              status: true,
-              departAt: true,
             },
           },
-          capacity: true,
         },
       });
       return driver;
     },
 
-    findReviews: async (driverId) => {
-      const reviews = await prisma.rideReview.findMany({
-        where: {
-          driverId,
-        },
-      });
-
-      // only expose the fields in the domain model
-      return reviews.map((review) => ({
-        id: review.id,
-        stars: review.stars,
-        comment: review.comment,
-      }));
-    },
-
     save: async (driver) => {
-      const newDriver = await prisma.driver.upsert({
+      const result = await prisma.driver.upsert({
         where: {
           id: driver.id,
         },
-        select: {
-          id: true,
-          capacity: true,
+        include: {
           rides: {
-            select: {
-              id: true,
-              driverId: true,
+            include: {
               locations: true,
-              status: true,
-              departAt: true,
             },
           },
         },
         update: {
+          bio: driver.bio,
+          rules: driver.rules,
           capacity: driver.capacity,
         },
         create: {
           id: driver.id,
+          bio: driver.bio,
+          rules: driver.rules,
           capacity: driver.capacity,
         },
       });
-      return newDriver;
+
+      return result;
     },
   };
 };
