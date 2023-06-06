@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 
 import { Navbar } from "./Navbar";
 
@@ -12,12 +12,15 @@ export const DriverNavbar = () => {
   return (
     <Navbar>
       <Navbar.Link href="/driver/home">
-        {({ active }) => <Ionicons name="md-home" {...iconStyle(active)} />}
+        {/* {({ active }) => <Ionicons name="md-home" {...iconStyle(active)} />} */}
+        {({ active }) => (
+          <FontAwesome5 name="car-side" {...iconStyle(active)} />
+        )}
       </Navbar.Link>
 
       <Navbar.Link href="/driver/register">
         {({ active }) => (
-          <AntDesign name="clockcircle" {...iconStyle(active)} />
+          <Ionicons name="newspaper-sharp" {...iconStyle(active)} />
         )}
       </Navbar.Link>
 

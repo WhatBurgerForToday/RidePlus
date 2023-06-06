@@ -6,6 +6,7 @@ import {
   type LocationRepository,
   type PassengerRepository,
   type PassengerRideRepository,
+  type ReviewRepository,
   type UserRepository,
 } from "../ports";
 
@@ -16,6 +17,7 @@ type PassengerServiceDeps = {
   drivers: DriverRepository;
   locations: LocationRepository;
   users: UserRepository;
+  reviews: ReviewRepository;
 };
 
 type EditProfileInput = {
@@ -33,6 +35,13 @@ type ApplyRideInput = {
 type LeaveRideInput = {
   driverRideId: string;
   passengerId: string;
+};
+
+type RateRideInput = {
+  driverRideId: string;
+  passengerId: string;
+  stars: number;
+  comment: string;
 };
 
 type SearchNearbyRidesInput = {
@@ -53,8 +62,15 @@ export const PassengerServiceErrors = {
 } as const;
 
 export const createPassengerService = (deps: PassengerServiceDeps) => {
-  const { passengerRides, passengers, driverRides, drivers, locations, users } =
-    deps;
+  const {
+    passengerRides,
+    passengers,
+    driverRides,
+    drivers,
+    locations,
+    users,
+    reviews,
+  } = deps;
 
   return {
     getProfile: async (passengerId: string) => {
@@ -235,6 +251,26 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       });
 
       return success(favoriteRide);
+    },
+
+    rateRide: async (input: RateRideInput) => {
+      const passengerRide = await passengerRides.findByDriverRideId(
+        input.driverRideId,
+        input.passengerId,
+      );
+      if (passengerRide == null) {
+        return error(PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND);
+      }
+
+      const newReview = await reviews.save({
+        driverId: passengerRide.driverId,
+        passengerId: passengerRide.passengerId,
+        rideId: passengerRide.driverRideId,
+        stars: input.stars,
+        comment: input.comment,
+      });
+
+      return success(newReview);
     },
 
     searchNearbyRides: async (input: SearchNearbyRidesInput) => {

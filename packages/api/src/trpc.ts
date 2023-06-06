@@ -61,6 +61,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
     locations: opts.locationRepository,
     users: opts.userRepository,
     passengers: opts.passengerRepository,
+    reviews: opts.reviewRepository,
   });
 
   return {

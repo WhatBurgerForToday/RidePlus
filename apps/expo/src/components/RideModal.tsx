@@ -21,9 +21,16 @@ export type RideModalProps = {
 };
 
 export const RideModal = (props: RideModalProps) => {
+  const utils = api.useContext();
   const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
   const cancelRideMutation = api.rider.leaveRide.useMutation();
   const driverMutation = api.driver.manageRider.useMutation();
+  const finishRide = api.driver.finishRide.useMutation({
+    onSuccess: () => {
+      void utils.driver.approvedRider.invalidate();
+      void utils.driver.pendingRider.invalidate();
+    },
+  });
 
   return (
     <View>
@@ -95,7 +102,7 @@ export const RideModal = (props: RideModalProps) => {
 
               <View className="py-1">
                 {type === "driver-passengers" && (
-                  <View className="flex-row items-center justify-end">
+                  <View className="flex-row items-center justify-around">
                     <TouchableOpacity
                       onPress={() => {
                         driverMutation.mutate({
@@ -115,6 +122,26 @@ export const RideModal = (props: RideModalProps) => {
                           />
                         </View>
                         <Text className="font-bold">Cancel</Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => {
+                        finishRide.mutate({
+                          rideId: id,
+                        });
+                        setModalVisible(!modalVisible);
+                      }}
+                    >
+                      <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
+                        <View className="pr-4">
+                          <AntDesign
+                            name="checkcircle"
+                            size={24}
+                            color="green"
+                          />
+                        </View>
+                        <Text className="font-bold">Finish</Text>
                       </View>
                     </TouchableOpacity>
                   </View>
