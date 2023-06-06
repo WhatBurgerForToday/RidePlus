@@ -20,6 +20,13 @@ type DriverServiceDeps = {
   reviews: ReviewRepository;
 };
 
+type EditProfileInput = {
+  driverId: string;
+  bio?: string;
+  rules?: string;
+  capacity?: number;
+};
+
 type CreateDriverRideInput = {
   driverId: string;
   departAt: Date;
@@ -66,6 +73,23 @@ export const createDriverService = (deps: DriverServiceDeps) => {
         capacity: driver.capacity,
         stars,
       });
+    },
+
+    editProfile: async (input: EditProfileInput) => {
+      const driver = await drivers.findById(input.driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const newDriver = await drivers.save({
+        id: driver.id,
+        bio: input.bio ?? driver.bio,
+        rules: input.rules ?? driver.rules,
+        capacity: input.capacity ?? driver.capacity,
+        rides: driver.rides,
+      });
+
+      return success(newDriver);
     },
 
     createDriverRide: async (input: CreateDriverRideInput) => {

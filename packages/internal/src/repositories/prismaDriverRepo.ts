@@ -21,5 +21,33 @@ export const createPrismaDriverRepo = (
       });
       return driver;
     },
+
+    save: async (driver) => {
+      const result = await prisma.driver.upsert({
+        where: {
+          id: driver.id,
+        },
+        include: {
+          rides: {
+            include: {
+              locations: true,
+            },
+          },
+        },
+        update: {
+          bio: driver.bio,
+          rules: driver.rules,
+          capacity: driver.capacity,
+        },
+        create: {
+          id: driver.id,
+          bio: driver.bio,
+          rules: driver.rules,
+          capacity: driver.capacity,
+        },
+      });
+
+      return result;
+    },
   };
 };
