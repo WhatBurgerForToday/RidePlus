@@ -17,5 +17,22 @@ export const createPrismaReviewRepo = (
       });
       return stars._avg.stars ?? 0;
     },
+
+    findByDriverId: async (driverId) => {
+      const reviews = await prisma.rideReview.findMany({
+        where: {
+          driverId,
+        },
+      });
+
+      return reviews.map((review) => ({
+        id: review.id,
+        driverId: review.driverId,
+        passengerId: review.passengerId,
+        stars: review.stars,
+        comment: review.comment,
+        rideId: review.driverRideId,
+      }));
+    },
   };
 };

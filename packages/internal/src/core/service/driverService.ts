@@ -114,8 +114,8 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       if (driver == null) {
         return error(DriverServiceErrors.NOT_A_DRIVER);
       }
-      const reviews = await drivers.findReviews(driverId);
-      return success(reviews);
+      const receivedReviews = await reviews.findByDriverId(driverId);
+      return success(receivedReviews);
     },
 
     getDriverRideById: async (id: string) => {
