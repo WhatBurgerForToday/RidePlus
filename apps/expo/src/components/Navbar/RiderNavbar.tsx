@@ -1,5 +1,5 @@
 import React, { type FC } from "react";
-import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 import { Navbar } from "./Navbar";
 
