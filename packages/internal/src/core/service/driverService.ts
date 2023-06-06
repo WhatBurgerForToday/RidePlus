@@ -230,6 +230,28 @@ export const createDriverService = (deps: DriverServiceDeps) => {
 
       return success(pendingPassengersInfo);
     },
+
+    finishRide: async (driverId: string, driverRideId: string) => {
+      const driver = await drivers.findById(driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const driverRide = await driverRides.findById(driverRideId);
+      if (driverRide == null) {
+        return error(DriverServiceErrors.DRIVER_RIDE_NOT_FOUND);
+      }
+
+      const finishedDriverRide = await driverRides.save({
+        id: driverRide.id,
+        departAt: driverRide.departAt,
+        locations: driverRide.locations,
+        driverId: driverRide.driverId,
+        status: "CLOSED",
+      });
+
+      return success(finishedDriverRide);
+    },
   };
 };
 

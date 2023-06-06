@@ -196,4 +196,35 @@ export const driverRouter = createTRPCRouter({
         .exhaustive();
       return result;
     }),
+
+  finishRide: protectedProcedure
+    .input(
+      z.object({
+        rideId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const driverRide = await ctx.driverService.finishRide(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(driverRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: DriverServiceErrors.NOT_A_DRIVER }, () => {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not a driver yet",
+          });
+        })
+        .with({ error: DriverServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Driver ride not found",
+          });
+        })
+        .exhaustive();
+
+      return result;
+    }),
 });
