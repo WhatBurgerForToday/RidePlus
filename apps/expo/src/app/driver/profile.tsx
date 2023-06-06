@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   Feather,
   FontAwesome5,
@@ -25,11 +25,15 @@ const DriverProfile = () => {
     rules: "",
     capacity: "",
   });
+  const router = useRouter();
 
   const profileQuery = api.driver.profile.useQuery(undefined, {
     onSuccess: (data) => {
       updateProfile({ ...data, capacity: data.capacity.toString() });
     },
+    onError: () => {
+      router.push("/driver/become-driver");
+    }
   });
 
   return (
