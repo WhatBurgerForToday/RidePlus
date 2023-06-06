@@ -340,7 +340,17 @@ export const riderRouter = createTRPCRouter({
       return {};
     }),
 
-  becomeDriver: protectedProcedure.mutation(() => {
-    return {};
-  }),
+  becomeDriver: protectedProcedure
+    .input(
+      z.object({
+        capacity: z.number().min(1).max(10),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const driver = await ctx.driverService.register(
+        ctx.auth.userId,
+        input.capacity,
+      );
+      return driver;
+    }),
 });
