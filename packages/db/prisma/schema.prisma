@@ -18,6 +18,7 @@ enum PassengerRideStatus {
     PENDING
     APPROVED
     CANCELLED
+    COMPLETED
 }
 
 model Driver {
