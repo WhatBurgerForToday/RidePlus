@@ -21,10 +21,16 @@ export type RideModalProps = {
 };
 
 export const RideModal = (props: RideModalProps) => {
+  const utils = api.useContext();
   const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
   const cancelRideMutation = api.rider.leaveRide.useMutation();
   const driverMutation = api.driver.manageRider.useMutation();
-  const finishRide = api.driver.finishRide.useMutation();
+  const finishRide = api.driver.finishRide.useMutation({
+    onSuccess: () => {
+      void utils.driver.approvedRider.invalidate();
+      void utils.driver.pendingRider.invalidate();
+    },
+  });
 
   return (
     <View>
