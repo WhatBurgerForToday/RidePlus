@@ -7,6 +7,8 @@ import {
   type DriverRideRepository,
   type LocationRepository,
   type PassengerRideRepository,
+  type ReviewRepository,
+  type UserRepository,
 } from "../ports";
 
 type DriverServiceDeps = {
@@ -14,6 +16,8 @@ type DriverServiceDeps = {
   drivers: DriverRepository;
   passengerRides: PassengerRideRepository;
   locations: LocationRepository;
+  users: UserRepository;
+  reviews: ReviewRepository;
 };
 
 type CreateDriverRideInput = {
@@ -30,14 +34,40 @@ type ManagePassengerInput = {
 };
 
 export const DriverServiceErrors = {
+  PROVIDER_USER_NOT_FOUND: "provider user not found",
   NOT_A_DRIVER: "not a driver",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
 } as const;
 
 export const createDriverService = (deps: DriverServiceDeps) => {
-  const { driverRides, drivers, passengerRides, locations } = deps;
+  const { driverRides, drivers, passengerRides, locations, users, reviews } =
+    deps;
 
   return {
+    getProfile: async (driverId: string) => {
+      const driver = await drivers.findById(driverId);
+      if (driver == null) {
+        return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      const user = await users.findById(driverId);
+      if (user == null) {
+        return error(DriverServiceErrors.PROVIDER_USER_NOT_FOUND);
+      }
+
+      const stars = await reviews.calculateDriverStars(driverId);
+
+      return success({
+        id: driver.id,
+        name: user.name,
+        avatarUrl: user.avatarUrl,
+        bio: driver.bio,
+        rules: driver.rules,
+        capacity: driver.capacity,
+        stars,
+      });
+    },
+
     createDriverRide: async (input: CreateDriverRideInput) => {
       const driver = drivers.findById(input.driverId);
       if (driver == null) {
