@@ -1,18 +1,21 @@
-import { FontAwesome } from "@expo/vector-icons";
-import { Link, useRouter } from "expo-router";
 import React from "react";
-import { Image, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Link, useRouter } from "expo-router";
+import { FontAwesome } from "@expo/vector-icons";
+import { useSetAtom } from "jotai";
 
+import { api } from "~/utils/api";
 import { HomeItem } from "~/components/HomeItem";
 import { RiderNavbar } from "~/components/Navbar/RiderNavbar";
-import { api } from "~/utils/api";
-
-import {
-  destinationAtom,
-  sourceAtom,
-} from "~/atoms/locationAtom";
+import { destinationAtom, sourceAtom } from "~/atoms/locationAtom";
 import { dataAtom } from "./search";
-import { useSetAtom } from "jotai";
 
 const HomePage = () => {
   const recentQuery = api.rider.recentRide.useQuery();
@@ -45,7 +48,14 @@ const HomePage = () => {
         <View className="mx-7 pb-3">
           <Text className="sticky top-0 py-2 text-xl font-bold">Recent</Text>
           {recentQuery.data?.map(({ id, source, destination, departAt }) => (
-            <TouchableOpacity onPress={() => {router.push("/rider/search"); setDataAtom(departAt); setSrcAtom(source); setDestAtom(destination);}}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/rider/search");
+                setDataAtom(departAt);
+                setSrcAtom(source);
+                setDestAtom(destination);
+              }}
+            >
               <HomeItem
                 key={id}
                 id={id}
@@ -61,7 +71,14 @@ const HomePage = () => {
         <View className="mx-7 mb-5 mt-3 pb-3">
           <Text className="py-2 text-xl font-bold">Favorite</Text>
           {favoriteQuery.data?.map(({ id, source, destination, departAt }) => (
-            <TouchableOpacity onPress={() => {router.push("/rider/search"); setDataAtom(departAt); setSrcAtom(source); setDestAtom(destination);}}>
+            <TouchableOpacity
+              onPress={() => {
+                router.push("/rider/search");
+                setDataAtom(departAt);
+                setSrcAtom(source);
+                setDestAtom(destination);
+              }}
+            >
               <HomeItem
                 key={id}
                 id={id}
