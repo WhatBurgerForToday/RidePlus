@@ -130,8 +130,32 @@ export const riderRouter = createTRPCRouter({
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.passengerService.addRideToFavorites(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(ride)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Ride not found",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   applyRide: protectedProcedure
