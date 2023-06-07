@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { DriverServiceErrors } from "@rideplus/internal";
 
-import { location } from "../schema/location";
+import { namedLocation } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const driverRouter = createTRPCRouter({
@@ -145,7 +145,7 @@ export const driverRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        locations: z.array(location()),
+        locations: z.array(namedLocation()),
         departAt: z.date(),
       }),
     )
@@ -180,7 +180,7 @@ export const driverRouter = createTRPCRouter({
       const status = input.action === "approve" ? "APPROVED" : "CANCELLED";
       const passengerRide = await ctx.driverService.manageRider({
         driverId: ctx.auth.userId,
-        driverRideId: input.rideId,
+        passengerRideId: input.rideId,
         passengerId: input.riderId,
         status,
       });
@@ -193,10 +193,10 @@ export const driverRouter = createTRPCRouter({
             message: "You are not a driver yet",
           });
         })
-        .with({ error: DriverServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+        .with({ error: DriverServiceErrors.PASSANGER_RIDE_NOT_FOUND }, () => {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Driver ride not found",
+            message: "Passenger ride not found",
           });
         })
         .exhaustive();
@@ -223,10 +223,22 @@ export const driverRouter = createTRPCRouter({
             message: "You are not a driver yet",
           });
         })
+        .with({ error: DriverServiceErrors.PASSANGER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Passenger ride not found",
+          });
+        })
         .with({ error: DriverServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Driver ride not found",
+          });
+        })
+        .with({ error: DriverServiceErrors.NOT_OWNED_RIDE }, () => {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You are not the owner of this ride",
           });
         })
         .exhaustive();

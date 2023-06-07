@@ -49,6 +49,7 @@ const HomePage = () => {
           <Text className="sticky top-0 py-2 text-xl font-bold">Recent</Text>
           {recentQuery.data?.map(({ id, source, destination, departAt }) => (
             <TouchableOpacity
+              key={id}
               onPress={() => {
                 router.push("/rider/search");
                 setDataAtom(departAt);
@@ -72,6 +73,7 @@ const HomePage = () => {
           <Text className="py-2 text-xl font-bold">Favorite</Text>
           {favoriteQuery.data?.map(({ id, source, destination, departAt }) => (
             <TouchableOpacity
+              key={id}
               onPress={() => {
                 router.push("/rider/search");
                 setDataAtom(departAt);

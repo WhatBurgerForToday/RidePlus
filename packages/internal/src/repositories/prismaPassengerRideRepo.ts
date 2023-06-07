@@ -158,5 +158,23 @@ export const createPrismaPassengerRideRepo = (
 
       return rides;
     },
+
+    findById: async (id) => {
+      const ride = await prisma.passengerRide.findUnique({
+        where: {
+          id,
+        },
+        include: {
+          driverRide: {
+            select: {
+              departAt: true,
+            },
+          },
+          locations: true,
+        },
+      });
+
+      return ride;
+    },
   };
 };

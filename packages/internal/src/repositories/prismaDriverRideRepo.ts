@@ -16,7 +16,7 @@ const locationToRangeFilter = (location: Location, range: number) => {
   };
 };
 
-const LONG_LAT_OFFSET = 0.005;
+const LONG_LAT_OFFSET = 0.01;
 
 export const createPrismaDriverRideRepo = (
   prisma: PrismaClient,
@@ -77,7 +77,10 @@ export const createPrismaDriverRideRepo = (
           locations: {
             createMany: {
               data: input.locations.map((location, index) => ({
-                ...location,
+                driverRideId: input.id!,
+                latitude: location.latitude,
+                longitude: location.longitude,
+                name: location.name,
                 serialNumber: index,
               })),
             },

@@ -5,4 +5,12 @@ export type Location = {
   longitude: number;
 };
 
+export type LocationWithId = Expand<
+  {
+    id: string;
+  } & Location
+>;
+
 export type NamedLocation = Expand<Location & { name: string }>;
+
+export type NamedLocationWithId = Expand<LocationWithId & { name: string }>;

@@ -1,5 +1,12 @@
 import React, { type Dispatch, type SetStateAction } from "react";
-import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  LogBox,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import {
   AntDesign,
@@ -12,6 +19,10 @@ import {
 import { api } from "~/utils/api";
 import type { RegisterItemProps } from "./RegisterItem";
 
+LogBox.ignoreLogs([
+  "Modal with 'formSheet' presentation style and 'transparent' value is not supported.",
+]);
+
 export type RideModalProps = {
   id: string;
   type: string;
@@ -23,8 +34,18 @@ export type RideModalProps = {
 export const RideModal = (props: RideModalProps) => {
   const utils = api.useContext();
   const { id, type, modalVisible, setModalVisible, registerItemProps } = props;
-  const cancelRideMutation = api.rider.leaveRide.useMutation();
-  const driverMutation = api.driver.manageRider.useMutation();
+  const cancelRideMutation = api.rider.leaveRide.useMutation({
+    onSuccess: () => {
+      void utils.driver.approvedRider.invalidate();
+      void utils.driver.pendingRider.invalidate();
+    },
+  });
+  const driverMutation = api.driver.manageRider.useMutation({
+    onSuccess: () => {
+      void utils.driver.approvedRider.invalidate();
+      void utils.driver.pendingRider.invalidate();
+    },
+  });
   const finishRide = api.driver.finishRide.useMutation({
     onSuccess: () => {
       void utils.driver.approvedRider.invalidate();
@@ -37,12 +58,13 @@ export const RideModal = (props: RideModalProps) => {
       <Modal
         animationType="slide"
         transparent={true}
+        presentationStyle="formSheet"
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}
       >
-        <View className="mt-52">
+        <View className="mt-40">
           <View className="justify-top h-full items-center rounded-t-3xl bg-amber-500 py-5">
             <View>
               <View className="flex-row">
@@ -74,12 +96,10 @@ export const RideModal = (props: RideModalProps) => {
                       {registerItemProps.departAt.toDateString()}
                     </Text>
                     <Text className="text-sm">
-                      ({registerItemProps.source.latitude},{" "}
-                      {registerItemProps.source.longitude})
+                      {registerItemProps.source.name}
                     </Text>
                     <Text className="text-sm">
-                      ({registerItemProps.desiredDestination.latitude},{" "}
-                      {registerItemProps.desiredDestination.longitude})
+                      {registerItemProps.desiredDestination.name}
                     </Text>
                     <Text className="text-sm">$ {registerItemProps.price}</Text>
                   </View>
@@ -109,26 +129,6 @@ export const RideModal = (props: RideModalProps) => {
                           rideId: id,
                           action: "cancel",
                           riderId: registerItemProps.person.id,
-                        });
-                        setModalVisible(!modalVisible);
-                      }}
-                    >
-                      <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
-                        <View className="pr-4">
-                          <MaterialCommunityIcons
-                            name="close-circle"
-                            size={24}
-                            color="red"
-                          />
-                        </View>
-                        <Text className="font-bold">Cancel</Text>
-                      </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      onPress={() => {
-                        finishRide.mutate({
-                          rideId: id,
                         });
                         setModalVisible(!modalVisible);
                       }}

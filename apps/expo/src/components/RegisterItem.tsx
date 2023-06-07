@@ -12,8 +12,8 @@ export type RegisterItemProps = {
     | "rider-approved"
     | "rider-pending";
   departAt: Date;
-  source: { latitude: number; longitude: number };
-  desiredDestination: { latitude: number; longitude: number };
+  source: { latitude: number; longitude: number; name: string };
+  desiredDestination: { latitude: number; longitude: number; name: string };
   price: number;
   person: { id: string; name: string; avatarUrl: string };
 };
@@ -27,23 +27,21 @@ const RegisterSubItem = (props: RegisterSubItemProps) => {
   const { registerItemProps, setModalVisible } = props;
   return (
     <TouchableOpacity onPress={() => setModalVisible(true)}>
-      <View className="h-40 flex-row">
-        <View className="w-30 mr-4 h-full items-center justify-center px-2">
-          <View>
-            <Image
-              className="h-20 w-20 rounded-full"
-              source={{ uri: registerItemProps.person.avatarUrl }}
-            />
-          </View>
+      <View className="h-40 flex-row pr-8">
+        <View className="mr-4 h-full items-center justify-center px-2">
+          <Image
+            className="h-20 w-20 rounded-full"
+            source={{ uri: registerItemProps.person.avatarUrl }}
+          />
           {(registerItemProps.type === "driver-passengers" ||
             registerItemProps.type === "rider-approved") && (
-            <Text className="font-bold text-white">
+            <Text className="pt-4 font-bold text-white">
               {registerItemProps.person.name}
             </Text>
           )}
           {(registerItemProps.type === "driver-pending" ||
             registerItemProps.type === "rider-pending") && (
-            <Text className="font-bold text-black">
+            <Text className="pt-4 font-bold text-black">
               {registerItemProps.person.name}
             </Text>
           )}
@@ -59,13 +57,9 @@ const RegisterSubItem = (props: RegisterSubItemProps) => {
           <Text className="text-sm">
             {registerItemProps.departAt.toDateString()}
           </Text>
+          <Text className="text-sm">{registerItemProps.source.name}</Text>
           <Text className="text-sm">
-            ({registerItemProps.source.latitude},{" "}
-            {registerItemProps.source.longitude})
-          </Text>
-          <Text className="text-sm">
-            ({registerItemProps.desiredDestination.latitude},{" "}
-            {registerItemProps.desiredDestination.longitude})
+            {registerItemProps.desiredDestination.name}
           </Text>
           <Text className="text-sm">$ {registerItemProps.price}</Text>
         </View>

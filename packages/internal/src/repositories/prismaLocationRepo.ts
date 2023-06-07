@@ -11,25 +11,20 @@ export const createPrismaLocationRepo = (
       const uniqueLocations = [...new Set(locations)];
       const namedLocations = await prisma.location.findMany({
         where: {
-          AND: {
-            latitude: {
-              in: uniqueLocations.map((location) => location.latitude),
-            },
-            longitude: {
-              in: uniqueLocations.map((location) => location.longitude),
-            },
+          id: {
+            in: uniqueLocations,
           },
         },
       });
 
       const locationMap = namedLocations.reduce((acc, location) => {
-        acc[`${location.latitude},${location.longitude}`] = location;
+        acc[location.id] = location;
         return acc;
       }, {} as Record<string, NamedLocation>);
 
-      return locations.map((location) => {
-        const key = `${location.latitude},${location.longitude}`;
-        return locationMap[key] ?? { ...location, name: "unknown" };
+      return locations.map((locationId) => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return locationMap[locationId]!;
       });
     },
 

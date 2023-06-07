@@ -1,9 +1,17 @@
-import { type DriverRide } from "../../core/domain/driverRide";
-import { type MakeOptional } from "../../types/magic";
-import { type Location } from "../domain/location";
+import {
+  type DriverRide,
+  type DriverRideStatus,
+} from "../../core/domain/driverRide";
+import { type Location, type NamedLocation } from "../domain/location";
 import { type RideReview } from "../domain/rideReview";
 
-export type SaveDriverRideInput = MakeOptional<DriverRide, "id" | "status">;
+export type SaveDriverRideInput = {
+  id?: string;
+  driverId: string;
+  locations: NamedLocation[];
+  departAt: Date;
+  status?: DriverRideStatus;
+};
 
 export type FindByNearbyLocationsInput = {
   source: Location;
