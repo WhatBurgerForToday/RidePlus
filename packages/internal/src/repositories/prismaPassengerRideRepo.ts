@@ -2,7 +2,6 @@ import { type PrismaClient } from "@prisma/client";
 import { z } from "zod";
 
 import { type PassengerRideRepository } from "../core/ports/passengerRideRepository";
-import { locationsToConnectOrCreate } from "./locationToConnectOrCreate";
 
 export const locationsSchema = z.array(
   z.object({
@@ -26,13 +25,25 @@ export const createPrismaPassengerRideRepo = (
         update: {
           status: input.status,
           locations: {
-            connectOrCreate: locationsToConnectOrCreate(input.locations),
+            connect: input.locations.map((location) => ({
+              driverRideId_latitude_longitude: {
+                driverRideId: input.driverRideId,
+                latitude: location.latitude,
+                longitude: location.longitude,
+              },
+            })),
           },
         },
         create: {
           driverId: input.driverId,
           locations: {
-            connectOrCreate: locationsToConnectOrCreate(input.locations),
+            connect: input.locations.map((location) => ({
+              driverRideId_latitude_longitude: {
+                driverRideId: input.driverRideId,
+                latitude: location.latitude,
+                longitude: location.longitude,
+              },
+            })),
           },
           passengerId: input.passengerId,
           driverRideId: input.driverRideId,
