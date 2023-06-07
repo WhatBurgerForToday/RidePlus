@@ -27,6 +27,11 @@ export const LocationPicker = ({
 
   useEffect(() => {
     const setCurrentLocation = async () => {
+      if (locations[0] != null) {
+        setRegion(locations[0]);
+        return;
+      }
+
       const { status } = await requestForegroundPermissionsAsync();
       if (status !== "granted") {
         return;
@@ -56,7 +61,6 @@ export const LocationPicker = ({
         <Image
           source={{ uri: "https://hackmd.io/_uploads/H1uca9p8h.gif" }}
           style={{ width: 400, height: 300 }}
-          className="bg-amber-400"
         />
       </SafeAreaView>
     );
