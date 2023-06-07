@@ -6,7 +6,7 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import { TRPCProvider } from "~/utils/api";
 import { tokenCache } from "~/utils/cache";
 import { CLERK_PUBLISHABLE_KEY } from "~/constants";
-import SignInWithOAuth from "~/screens/SignInWithOAuth";
+import SignInWithOAuth from "~/screens/auth/SignInWithOAuth";
 
 // This is the main layout of the app
 // It wraps your pages with the providers they need

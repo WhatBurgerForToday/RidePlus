@@ -18,27 +18,39 @@ enum PassengerRideStatus {
     PENDING
     APPROVED
     CANCELLED
+    COMPLETED
 }
 
 model Driver {
-    id    String       @id
-    rides DriverRide[]
+    id             String       @id
+    capacity       Int
+    bio            String
+    rules          String
+    rides          DriverRide[]
+    receivedReview RideReview[]
 }
 
 model Passenger {
-    id    String          @id
-    rides PassengerRide[]
+    id         String          @id
+    bio        String
+    rides      PassengerRide[]
+    sentReview RideReview[]
 }
 
 model Location {
-    id            String          @id @default(cuid())
-    latitude      Float
-    longitude     Float
-    name          String
-    driverRide    DriverRide[]
+    id           String @id @default(cuid())
+    name         String
+    latitude     Float
+    longitude    Float
+    serialNumber Int
+
+    driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
     passengerRide PassengerRide[]
 
-    @@unique([latitude, longitude])
+    @@unique([driverRideId, latitude, longitude])
+    @@index([driverRideId])
 }
 
 model DriverRide {
@@ -51,7 +63,8 @@ model DriverRide {
     passengerRides PassengerRide[]
     driver         Driver          @relation(fields: [driverId], references: [id])
 
-    departAt DateTime
+    departAt   DateTime
+    rideReview RideReview[]
 
     @@index([driverId])
 }
@@ -70,6 +83,27 @@ model PassengerRide {
     driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
     driverRideId String
 
+    @@unique([driverRideId, passengerId])
+    @@index([passengerId])
+    @@index([driverRideId])
+}
+
+model RideReview {
+    id      String @id @default(cuid())
+    stars   Int
+    comment String
+
+    ride         DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
+    driver   Driver @relation(fields: [driverId], references: [id])
+    driverId String
+
+    passenger   Passenger @relation(fields: [passengerId], references: [id])
+    passengerId String
+
+    @@unique([passengerId, driverRideId])
+    @@index([driverId])
     @@index([passengerId])
     @@index([driverRideId])
 }

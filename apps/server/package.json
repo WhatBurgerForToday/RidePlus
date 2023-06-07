@@ -1,30 +1,45 @@
 {
   "name": "@rideplus/server",
   "version": "0.1.0",
-  "main": "src/index.tsx",
   "private": true,
   "scripts": {
-    "dev": "pnpm with-env tsx watch --clear-screen=false src/index.ts",
+    "build": "pnpm with-env next build",
+    "dev": "pnpm with-env next dev",
+    "lint": "pnpm with-env next lint",
+    "start": "pnpm with-env next start",
     "type-check": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix",
+    "clean": "git clean -xdf .next .turbo node_modules",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@clerk/fastify": "^0.4.4",
-    "@rideplus/api": "0.1.0",
-    "@t3-oss/env-core": "^0.3.1",
+    "@clerk/nextjs": "^4.19.0",
+    "@rideplus/api": "^0.1.0",
+    "@t3-oss/env-nextjs": "^0.3.1",
+    "@tanstack/react-query": "^4.29.7",
+    "@trpc/client": "^10.27.1",
+    "@trpc/next": "^10.27.1",
+    "@trpc/react-query": "^10.27.1",
     "@trpc/server": "^10.27.1",
-    "fastify": "^4.17.0",
-    "fastify-plugin": "^4.5.0",
-    "superjson": "1.9.1",
+    "next": "^13.4.2",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "superjson": "1.12.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {
     "@rideplus/eslint-config": "^0.1.0",
+    "@types/eslint": "^8.37.0",
+    "@types/node": "^18.16.0",
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.6",
+    "@typescript-eslint/parser": "^5.59.6",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.40.0",
-    "pino-pretty": "^10.0.0",
-    "tsx": "^3.12.7"
+    "eslint-config-next": "^13.4.2",
+    "typescript": "^5.0.4"
+  },
+  "ct3aMetadata": {
+    "initVersion": "7.13.1"
   }
 }

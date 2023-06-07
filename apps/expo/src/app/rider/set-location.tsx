@@ -6,21 +6,27 @@ import MapView, {
   type Region,
 } from "react-native-maps";
 import * as Location from "expo-location";
-import { Link, useRouter } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { useAtom, useAtomValue } from "jotai";
+import { useRouter } from "expo-router";
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { useAtomValue, useSetAtom } from "jotai";
 
-import { destAtom, pageAtom, srcAtom } from "./search";
+import {
+  destinationAtom,
+  locationTargetAtom,
+  sourceAtom,
+} from "~/atoms/locationAtom";
 
-const SetLocation = () => {
+const SetLocationPage = () => {
   const mapRef = useRef(null);
   const [region, setRegion] = useState<Region | null>(null);
-  const [, setSrc] = useAtom(srcAtom);
-  const [, setDest] = useAtom(destAtom);
+  const setSource = useSetAtom(sourceAtom);
+  const setDestination = useSetAtom(destinationAtom);
   const router = useRouter();
-  const page = useAtomValue(pageAtom);
+  const locationTarget = useAtomValue(locationTargetAtom);
 
   useEffect(() => {
     (async () => {
@@ -42,14 +48,14 @@ const SetLocation = () => {
   const handleClick = () => {
     // Update the state by calling the updatePageState function passed as prop
     if (region == null) return;
-    if (page.page === "src") {
-      setSrc({
+    if (locationTarget === "source") {
+      setSource({
         latitude: region.latitude,
         longitude: region.longitude,
       });
     }
-    if (page.page === "dest") {
-      setDest({
+    if (locationTarget === "destination") {
+      setDestination({
         latitude: region.latitude,
         longitude: region.longitude,
       });
@@ -61,17 +67,16 @@ const SetLocation = () => {
     <View className="relative flex h-full flex-col items-center justify-center">
       <View className="h-1/6 w-full flex-row items-center bg-amber-400 pb-2 pt-12 shadow-sm shadow-gray-400">
         <View className="w-1/8 mb-1 ml-6 mr-2 h-full items-center justify-around">
-          <Link href="/search">
-            <FontAwesome
-              name="angle-left"
-              size={32}
-              backgroundColor="#FBBF24"
-              color="#000000"
-            />
-          </Link>
+          <FontAwesome
+            name="angle-left"
+            size={32}
+            backgroundColor="#FBBF24"
+            color="#000000"
+            onPress={() => router.back()}
+          />
         </View>
         <View className="w-1/8 ml-4 mr-4 h-full items-center justify-around">
-          <MaterialCommunityIcon
+          <MaterialCommunityIcons
             name="target"
             size={26}
             backgroundColor="#FBBF24"
@@ -121,4 +126,4 @@ const SetLocation = () => {
   );
 };
 
-export default SetLocation;
+export default SetLocationPage;

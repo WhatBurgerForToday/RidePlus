@@ -7,12 +7,13 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateFastifyContextOptions } from "@trpc/server/adapters/fastify";
+import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { getAuth, type AuthObject } from "@rideplus/auth";
 import { prisma } from "@rideplus/db";
+import * as RidePlus from "@rideplus/internal";
 
 /**
  * 1. CONTEXT
@@ -25,6 +26,13 @@ import { prisma } from "@rideplus/db";
  */
 type CreateContextOptions = {
   auth: AuthObject;
+  locationRepository: RidePlus.LocationRepository;
+  driverRideRepository: RidePlus.DriverRideRepository;
+  passengerRideRepository: RidePlus.PassengerRideRepository;
+  driverRepository: RidePlus.DriverRepository;
+  userRepository: RidePlus.UserRepository;
+  passengerRepository: RidePlus.PassengerRepository;
+  reviewRepository: RidePlus.ReviewRepository;
 };
 
 /**
@@ -37,9 +45,29 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  const driverService = RidePlus.createDriverService({
+    driverRides: opts.driverRideRepository,
+    drivers: opts.driverRepository,
+    passengerRides: opts.passengerRideRepository,
+    locations: opts.locationRepository,
+    reviews: opts.reviewRepository,
+    users: opts.userRepository,
+  });
+
+  const passengerService = RidePlus.createPassengerService({
+    driverRides: opts.driverRideRepository,
+    drivers: opts.driverRepository,
+    passengerRides: opts.passengerRideRepository,
+    locations: opts.locationRepository,
+    users: opts.userRepository,
+    passengers: opts.passengerRepository,
+    reviews: opts.reviewRepository,
+  });
+
   return {
     auth: opts.auth,
-    prisma,
+    driverService,
+    passengerService,
   };
 };
 
@@ -48,11 +76,28 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateFastifyContextOptions) => {
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
   // get the user session from the request
   const auth = getAuth(opts.req);
+
+  const locationRepository = RidePlus.createPrismaLocationRepo(prisma);
+  const driverRideRepository = RidePlus.createPrismaDriverRideRepo(prisma);
+  const passengerRideRepository =
+    RidePlus.createPrismaPassengerRideRepo(prisma);
+  const driverRepository = RidePlus.createPrismaDriverRepo(prisma);
+  const passengerRepository = RidePlus.createPrismaPassengerRepo(prisma);
+  const userRepository = RidePlus.createClerkUserRepo();
+  const reviewRepository = RidePlus.createPrismaReviewRepo(prisma);
+
   return createInnerTRPCContext({
     auth,
+    locationRepository,
+    driverRideRepository,
+    passengerRideRepository,
+    driverRepository,
+    userRepository,
+    passengerRepository,
+    reviewRepository,
   });
 };
 
@@ -124,17 +169,3 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
-
-const enforceIsDriver = t.middleware(({ ctx, next }) => {
-  if (false) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
-
-  return next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  });
-});
-
-export const driverProcedure = t.procedure.use(enforceIsDriver);

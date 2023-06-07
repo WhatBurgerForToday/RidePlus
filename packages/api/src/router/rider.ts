@@ -1,115 +1,139 @@
+import { TRPCError } from "@trpc/server";
+import { match } from "ts-pattern";
 import { z } from "zod";
+
+import { PassengerServiceErrors } from "@rideplus/internal";
 
 import { location } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const riderRouter = createTRPCRouter({
-  profile: protectedProcedure.query(() => {
+  profile: protectedProcedure.query(async ({ ctx }) => {
+    const passengerProfile = await ctx.passengerService.getProfile(
+      ctx.auth.userId,
+    );
+
+    const result = match(passengerProfile)
+      .with({ success: true }, ({ data }) => data)
+      .with({ error: PassengerServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Provider user not found",
+        });
+      })
+      .exhaustive();
+
     return {
-      name: "Simon",
-      avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      totalPaid: 120,
+      ...result,
+      totalPaid: 100,
     };
   }),
 
-  rideHistory: protectedProcedure.query(() => {
-    return [
-      {
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-        driver: {
-          id: "1",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
+  rideHistory: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
+    )
+    .query(async ({ input, ctx }) => {
+      const rideHistory = await ctx.passengerService.getRideHistory(
+        ctx.auth.userId,
+        input.limit,
+      );
+
+      const rider = await ctx.passengerService.getProfile(ctx.auth.userId);
+
+      const result = match(rider)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Provider user not found",
+          });
+        })
+        .exhaustive();
+
+      return rideHistory.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.driverRideId,
+          source: source!,
+          destination: destination!,
+          price: 100,
+          driver: {
+            id: ride.driverId,
+            avatarUrl: result.avatarUrl,
+          },
+          departAt: ride.driverRide.departAt,
+        };
+      });
+    }),
+
+  favoriteRide: protectedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().optional().default(2),
+        })
+        .optional()
+        .default({ limit: 2 }),
+    )
+    .query(async ({ ctx, input }) => {
+      const favoriteRides = await ctx.passengerService.getFavoriteRides(
+        ctx.auth.userId,
+        input.limit,
+      );
+      return favoriteRides.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.driverRideId,
+          departAt: ride.driverRide.departAt,
+          source: source!,
+          destination: destination!,
+          price: 100,
+        };
+      });
+    }),
+
+  approvedRide: protectedProcedure.query(async ({ ctx }) => {
+    const approvedRides = await ctx.passengerService.getApprovedPassengerRides(
+      ctx.auth.userId,
+    );
+    return approvedRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
   }),
 
-  recentRide: protectedProcedure.query(() => {
-    // give back at most 2 recent rides.
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
-
-  favoriteRide: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-      },
-    ];
-  }),
-
-  approvedRide: protectedProcedure.query(() => {
-    return [
-      {
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
-        driver: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
-  }),
-
-  pendingRide: protectedProcedure.query(() => {
-    return [
-      {
-        departAt: new Date(),
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        desiredDestination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        price: 120,
-        driver: {
-          id: "1",
-          name: "Simon",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
+  pendingRide: protectedProcedure.query(async ({ ctx }) => {
+    const pendingRides = await ctx.passengerService.getPendingPassengerRides(
+      ctx.auth.userId,
+    );
+    return pendingRides.map((ride) => {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      const [source, destination] = ride.locations;
+      return {
+        id: ride.driverRideId,
+        departAt: ride.driverRide.departAt,
+        source: source!,
+        desiredDestination: destination!,
+        price: 100,
+        driver: ride.driver!,
+      };
+    });
   }),
 
   searchRides: protectedProcedure
@@ -117,31 +141,35 @@ export const riderRouter = createTRPCRouter({
       z.object({
         source: location(),
         destination: location(),
-        departAt: z.date(),
+        departAfter: z.date(),
         limit: z.number().optional().default(10),
       }),
     )
-    .query(() => {
-      return [
-        {
-          id: "1",
-          stars: 4,
-          source: {
-            latitude: 23,
-            longitude: 123,
-          },
-          desiredDestination: {
-            latitude: 23,
-            longitude: 123,
-          },
-          price: 120,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-          },
-        },
-      ];
+    .query(async ({ ctx, input }) => {
+      const rides = await ctx.passengerService.searchNearbyRides({
+        source: input.source,
+        destination: input.destination,
+        departAfter: input.departAfter,
+        limit: input.limit,
+      });
+
+      return rides.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.id,
+          stars: ride.driver.receivedReview.reduce(
+            (acc, review) => acc + review.stars,
+            0,
+          ),
+          source: source!,
+          desiredDestination: destination!,
+          price: 100,
+          driver: ride.driver,
+          departAt: ride.departAt,
+          passengers: ride.passengers,
+        };
+      });
     }),
 
   editProfile: protectedProcedure
@@ -150,8 +178,12 @@ export const riderRouter = createTRPCRouter({
         bio: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const passenger = await ctx.passengerService.editProfile({
+        passengerId: ctx.auth.userId,
+        bio: input.bio,
+      });
+      return passenger;
     }),
 
   addToFavorite: protectedProcedure
@@ -160,19 +192,150 @@ export const riderRouter = createTRPCRouter({
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.passengerService.addRideToFavorites(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(ride)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Ride not found",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
-  manageRegistration: protectedProcedure
+  removeFromFavorite: protectedProcedure
     .input(
       z.object({
-        action: z.enum(["apply", "leave", "cancel"]),
         rideId: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.passengerService.removeRideFromFavorites(
+        ctx.auth.userId,
+        input.rideId,
+      );
+
+      const result = match(ride)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Ride not found",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
+    }),
+
+  applyRide: protectedProcedure
+    .input(
+      z.object({
+        rideId: z.string(),
+        source: location(),
+        destination: location(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const passengerRide = await ctx.passengerService.applyRide({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        source: input.source,
+        destination: input.destination,
+      });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.DRIVER_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Driver not found",
+          });
+        })
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_ALREADY_APPLIED },
+          () => {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Already applied",
+            });
+          },
+        )
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_FULL }, () => {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ride full",
+          });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN }, () => {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Ride not open",
+          });
+        })
+        .with({ error: PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Ride not found",
+          });
+        })
+        .exhaustive();
+
+      return result;
+    }),
+
+  leaveRide: protectedProcedure
+    .input(
+      z.object({
+        rideId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const passengerRide = await ctx.passengerService.leaveRide({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+      });
+
+      const result = match(passengerRide)
+        .with({ success: true }, ({ data }) => data)
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Passenger not applied to the ride",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
   rateRide: protectedProcedure
@@ -180,13 +343,44 @@ export const riderRouter = createTRPCRouter({
       z.object({
         rideId: z.string(),
         stars: z.number().min(1).max(5),
+        comment: z.string(),
       }),
     )
-    .mutation(() => {
-      return {};
+    .mutation(async ({ ctx, input }) => {
+      const newRating = await ctx.passengerService.rateRide({
+        passengerId: ctx.auth.userId,
+        driverRideId: input.rideId,
+        stars: input.stars,
+        comment: input.comment,
+      });
+
+      const result = match(newRating)
+        .with({ success: true }, ({ data }) => data)
+        .with(
+          { error: PassengerServiceErrors.PASSENGER_RIDE_NOT_FOUND },
+          () => {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Passenger not applied to the ride",
+            });
+          },
+        )
+        .exhaustive();
+
+      return result;
     }),
 
-  becomeDriver: protectedProcedure.mutation(() => {
-    return {};
-  }),
+  becomeDriver: protectedProcedure
+    .input(
+      z.object({
+        capacity: z.number().min(1).max(10),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const driver = await ctx.driverService.register(
+        ctx.auth.userId,
+        input.capacity,
+      );
+      return driver;
+    }),
 });
