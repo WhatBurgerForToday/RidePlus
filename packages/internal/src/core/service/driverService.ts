@@ -36,19 +36,20 @@ type CreateDriverRideInput = {
 type ManagePassengerInput = {
   driverId: string;
   passengerId: string;
-  driverRideId: string;
+  passengerRideId: string;
   status: PassengerRideStatus;
 };
 
 export const DriverServiceErrors = {
   PROVIDER_USER_NOT_FOUND: "provider user not found",
   NOT_A_DRIVER: "not a driver",
+  NOT_OWNED_RIDE: "not owned ride",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
+  PASSANGER_RIDE_NOT_FOUND: "passenger ride not found",
 } as const;
 
 export const createDriverService = (deps: DriverServiceDeps) => {
-  const { driverRides, drivers, passengerRides, locations, users, reviews } =
-    deps;
+  const { driverRides, drivers, passengerRides, users, reviews } = deps;
 
   return {
     getProfile: async (driverId: string) => {
@@ -111,21 +112,20 @@ export const createDriverService = (deps: DriverServiceDeps) => {
         return error(DriverServiceErrors.NOT_A_DRIVER);
       }
 
-      const driverRide = await passengerRides.findByDriverRideId(
-        input.driverRideId,
-        input.passengerId,
+      const passengerRide = await passengerRides.findById(
+        input.passengerRideId,
       );
-      if (driverRide == null) {
-        return error(DriverServiceErrors.DRIVER_RIDE_NOT_FOUND);
+      if (passengerRide == null) {
+        return error(DriverServiceErrors.PASSANGER_RIDE_NOT_FOUND);
       }
 
       const newPassengerRide = await passengerRides.save({
-        id: driverRide.id,
+        id: passengerRide.id,
         status: input.status,
-        locations: driverRide.locations,
-        driverId: driverRide.driverId,
-        passengerId: driverRide.passengerId,
-        driverRideId: driverRide.driverRideId,
+        locations: passengerRide.locations,
+        driverId: passengerRide.driverId,
+        passengerId: passengerRide.passengerId,
+        driverRideId: passengerRide.driverRideId,
       });
 
       return success(newPassengerRide);
@@ -229,15 +229,24 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       return success(pendingPassengersInfo);
     },
 
-    finishRide: async (driverId: string, driverRideId: string) => {
+    finishRide: async (driverId: string, passengerRideId: string) => {
       const driver = await drivers.findById(driverId);
       if (driver == null) {
         return error(DriverServiceErrors.NOT_A_DRIVER);
       }
 
-      const driverRide = await driverRides.findById(driverRideId);
+      const passengerRide = await passengerRides.findById(passengerRideId);
+      if (passengerRide == null) {
+        return error(DriverServiceErrors.PASSANGER_RIDE_NOT_FOUND);
+      }
+
+      const driverRide = await driverRides.findById(passengerRide.driverRideId);
       if (driverRide == null) {
         return error(DriverServiceErrors.DRIVER_RIDE_NOT_FOUND);
+      }
+
+      if (driverRide.driverId !== driverId) {
+        return error(DriverServiceErrors.NOT_OWNED_RIDE);
       }
 
       const finishedDriverRide = await driverRides.save({

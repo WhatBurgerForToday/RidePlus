@@ -1,6 +1,6 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { Image, Modal, Text, TouchableOpacity, View } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
   AntDesign,
   EvilIcons,
@@ -82,12 +82,15 @@ export const SearchModal = (props: SearchModalProps) => {
                   className="h-96 w-96"
                   showsUserLocation
                   initialRegion={{
-                    latitude: 24.8148,
-                    longitude: 120.9675,
+                    latitude: props.travel.source.latitude,
+                    longitude: props.travel.source.longitude,
                     latitudeDelta: 0.09,
                     longitudeDelta: 0.09,
                   }}
-                ></MapView>
+                >
+                  <Marker coordinate={props.travel.source}></Marker>
+                  <Marker coordinate={props.travel.desiredDestination}></Marker>
+                </MapView>
               </View>
 
               <View className="items-end py-1">
@@ -96,8 +99,8 @@ export const SearchModal = (props: SearchModalProps) => {
                     onPress={() => {
                       applyRideMutation.mutate({
                         rideId: travel.id,
-                        source,
-                        destination,
+                        sourceId: travel.source.id,
+                        destinationId: travel.desiredDestination.id,
                       });
                       setModalVisible(!modalVisible);
                     }}

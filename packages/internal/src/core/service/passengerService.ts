@@ -28,8 +28,8 @@ type EditProfileInput = {
 type ApplyRideInput = {
   driverRideId: string;
   passengerId: string;
-  source: Location;
-  destination: Location;
+  sourceId: string;
+  destinationId: string;
 };
 
 type LeaveRideInput = {
@@ -121,8 +121,8 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       }
 
       const namedLocations = await locations.findName([
-        input.source,
-        input.destination,
+        input.sourceId,
+        input.destinationId,
       ]);
 
       try {
@@ -289,6 +289,8 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
 
     searchNearbyRides: async (input: SearchNearbyRidesInput) => {
       const rides = await driverRides.findByNearbyLocations(input);
+
+      console.log(rides);
 
       const driverIds = rides.map((ride) => ride.driverId);
       const passengerIds = rides.flatMap((ride) =>

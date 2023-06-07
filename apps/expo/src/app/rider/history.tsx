@@ -8,7 +8,7 @@ import { api } from "~/utils/api";
 import { HistoryItem } from "~/components/HistoryItem";
 
 const HistoryPage = () => {
-  const historyQuery = api.rider.rideHistory.useQuery();
+  const historyQuery = api.rider.rideHistory.useQuery({ limit: 10 });
   const router = useRouter();
 
   return (

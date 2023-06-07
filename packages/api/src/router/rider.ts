@@ -258,16 +258,16 @@ export const riderRouter = createTRPCRouter({
     .input(
       z.object({
         rideId: z.string(),
-        source: location(),
-        destination: location(),
+        sourceId: z.string(),
+        destinationId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const passengerRide = await ctx.passengerService.applyRide({
         passengerId: ctx.auth.userId,
         driverRideId: input.rideId,
-        source: input.source,
-        destination: input.destination,
+        sourceId: input.sourceId,
+        destinationId: input.destinationId,
       });
 
       const result = match(passengerRide)
