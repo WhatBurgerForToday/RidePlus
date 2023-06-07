@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Link } from "expo-router";
 import {
   Feather,
   FontAwesome5,
@@ -15,26 +16,44 @@ import { DriverNavbar } from "~/components/Navbar/DriverNavbar";
 import { RatingStars } from "~/components/RatingStars";
 import { useObjectState } from "~/hooks/useObjectState";
 import SignOut from "~/screens/auth/SignOut";
+import BecomeDriver from "./become-driver";
 
 type ModalTypes = "Bio" | "Rules" | "Capacity" | "none";
 
-const DriverProfile = () => {
+const ProfilePage = () => {
   const [visibleModal, setVisibleModal] = useState<ModalTypes>("none");
   const [profile, updateProfile] = useObjectState({
     bio: "",
     rules: "",
     capacity: "",
   });
-  const router = useRouter();
 
   const profileQuery = api.driver.profile.useQuery(undefined, {
     onSuccess: (data) => {
       updateProfile({ ...data, capacity: data.capacity.toString() });
     },
+    onError: (err) => {
+      console.log("here is an error", err);
+    },
+    retry(failureCount, error) {
+      if (error.data?.code === "UNAUTHORIZED") return false;
+      return failureCount < 2;
+    },
   });
 
+  if (profileQuery.isLoading) {
+    return (
+      <SafeAreaView className="h-full items-center justify-center">
+        <Image
+          source={{ uri: "https://hackmd.io/_uploads/H1uca9p8h.gif" }}
+          style={{ width: 400, height: 300 }}
+        />
+      </SafeAreaView>
+    );
+  }
+
   if (profileQuery.data == null) {
-    router.push("/driver/become-driver");
+    return <BecomeDriver />;
   }
 
   return (
@@ -158,4 +177,4 @@ const DriverProfile = () => {
   );
 };
 
-export default DriverProfile;
+export default ProfilePage;
