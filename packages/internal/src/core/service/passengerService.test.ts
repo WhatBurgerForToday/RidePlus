@@ -78,4 +78,91 @@ describe("passengerService", () => {
       );
     });
   });
+
+  describe("applyRide", () => {
+    it("should get driver ride not found error", async () => {
+      mockDriverRidesRepo.findById.mockResolvedValueOnce(null);
+      const result = await service.applyRide({
+        driverRideId: "not-existing-id",
+        passengerId: "passenger-id",
+        source: {
+          latitude: 0,
+          longitude: 0,
+        },
+        destination: {
+          latitude: 0,
+          longitude: 0,
+        },
+      });
+
+      expect(result).toEqual(
+        error(PassengerServiceErrors.DRIVER_RIDE_NOT_FOUND),
+      );
+    });
+
+    const date = new Date();
+    it("should get driver ride not open error", async () => {
+      mockDriverRepo.findById.mockResolvedValueOnce({
+        id: "driver-id",
+        capacity: 4,
+        bio: "bio",
+        rides: [
+          {
+            id: "driver-ride-id",
+            driverId: "driver-id",
+            status: "CLOSED",
+            departAt: date,
+            locations: [
+              {
+                latitude: 0,
+                longitude: 0,
+                name: "source",
+              },
+              {
+                latitude: 0,
+                longitude: 0.1,
+                name: "destination",
+              },
+            ],
+          },
+        ],
+        rules: "rules",
+      });
+      mockDriverRidesRepo.findById.mockResolvedValueOnce({
+        id: "driver-ride-id",
+        driverId: "driver-id",
+        status: "CLOSED",
+        departAt: date,
+        locations: [
+          {
+            latitude: 0,
+            longitude: 0,
+            name: "source",
+          },
+          {
+            latitude: 0,
+            longitude: 0.1,
+            name: "destination",
+          },
+        ],
+      });
+
+      const result = await service.applyRide({
+        driverRideId: "driver-ride-id",
+        passengerId: "passenger-id",
+        source: {
+          latitude: 0,
+          longitude: 0,
+        },
+        destination: {
+          latitude: 0,
+          longitude: 0.1,
+        },
+      });
+
+      expect(result).toEqual(
+        error(PassengerServiceErrors.DRIVER_RIDE_NOT_OPEN),
+      );
+    });
+  });
 });
