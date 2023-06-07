@@ -173,87 +173,35 @@ export const riderRouter = createTRPCRouter({
       z.object({
         source: location(),
         destination: location(),
-        departAt: z.date(),
+        departAfter: z.date(),
         limit: z.number().optional().default(10),
       }),
     )
-    .query(({ input }) => {
-      return [
-        {
-          id: "1",
-          stars: 4,
-          source: {
-            name: "TSMC",
-            latitude: 23,
-            longitude: 123,
-          },
-          desiredDestination: {
-            name: "NYCU",
-            latitude: 23,
-            longitude: 123,
-          },
-          price: 120,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 4,
-          },
-          departAt: input.departAt,
-          passengers: [],
-        },
-        {
-          id: "2",
-          stars: 4.3,
-          source: {
-            name: "TSMC ABC",
-            latitude: 23,
-            longitude: 123,
-          },
-          desiredDestination: {
-            name: "NYCU ABC",
-            latitude: 23,
-            longitude: 123,
-          },
-          price: 250,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 5,
-          },
-          departAt: input.departAt,
-          passengers: [
-            {
-              id: "3",
-              name: "Alan",
-            },
-          ],
-        },
-        {
-          id: "3",
-          stars: 3.3,
-          source: {
-            name: "TSMC",
-            latitude: 23,
-            longitude: 123,
-          },
-          desiredDestination: {
-            name: "NYCU",
-            latitude: 23,
-            longitude: 123,
-          },
-          price: 120,
-          driver: {
-            id: "1",
-            name: "Simon",
-            avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-            capacity: 4,
-          },
-          departAt: input.departAt,
-          passengers: [],
-        },
-      ];
+    .query(async ({ ctx, input }) => {
+      const rides = await ctx.passengerService.searchNearbyRides({
+        source: input.source,
+        destination: input.destination,
+        departAfter: input.departAfter,
+        limit: input.limit,
+      });
+
+      return rides.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.id,
+          stars: ride.driver.receivedReview.reduce(
+            (acc, review) => acc + review.stars,
+            0,
+          ),
+          source: source!,
+          desiredDestination: destination!,
+          price: 100,
+          driver: ride.driver,
+          departAt: ride.departAt,
+          passengers: ride.passengers,
+        };
+      });
     }),
 
   editProfile: protectedProcedure

@@ -37,14 +37,19 @@ model Passenger {
 }
 
 model Location {
-    id            String          @id @default(cuid())
-    latitude      Float
-    longitude     Float
-    name          String
-    driverRide    DriverRide[]
+    id           String @id @default(cuid())
+    name         String
+    latitude     Float
+    longitude    Float
+    serialNumber Int
+
+    driverRide   DriverRide @relation(fields: [driverRideId], references: [id])
+    driverRideId String
+
     passengerRide PassengerRide[]
 
-    @@unique([latitude, longitude])
+    @@unique([driverRideId, latitude, longitude])
+    @@index([driverRideId])
 }
 
 model DriverRide {
