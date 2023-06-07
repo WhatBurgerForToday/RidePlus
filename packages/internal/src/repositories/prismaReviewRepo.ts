@@ -36,6 +36,26 @@ export const createPrismaReviewRepo = (
     },
 
     save: async (review) => {
+      if (review.id == null) {
+        const newRide = await prisma.rideReview.create({
+          data: {
+            driverId: review.driverId,
+            passengerId: review.passengerId,
+            stars: review.stars,
+            comment: review.comment,
+            driverRideId: review.rideId,
+          },
+        });
+
+        return {
+          id: newRide.id,
+          driverId: newRide.driverId,
+          passengerId: newRide.passengerId,
+          stars: newRide.stars,
+          comment: newRide.comment,
+          rideId: newRide.driverRideId,
+        };
+      }
       const newReview = await prisma.rideReview.upsert({
         where: {
           id: review.id,

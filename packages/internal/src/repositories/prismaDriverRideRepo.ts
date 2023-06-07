@@ -23,6 +23,26 @@ export const createPrismaDriverRideRepo = (
 ): DriverRideRepository => {
   return {
     save: async (input) => {
+      if (input.id == null) {
+        return prisma.driverRide.create({
+          data: {
+            driverId: input.driverId,
+            locations: {
+              createMany: {
+                data: input.locations.map((location, index) => ({
+                  ...location,
+                  serialNumber: index,
+                })),
+              },
+            },
+            departAt: input.departAt,
+          },
+          include: {
+            locations: true,
+          },
+        });
+      }
+
       const ride = await prisma.driverRide.upsert({
         where: {
           id: input.id,
