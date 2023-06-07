@@ -29,44 +29,7 @@ export const riderRouter = createTRPCRouter({
     };
   }),
 
-  rideHistory: protectedProcedure.query(() => {
-    return [
-      {
-        id: "1",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-        driver: {
-          id: "1",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-      {
-        id: "2",
-        source: {
-          latitude: 23,
-          longitude: 123,
-        },
-        destination: {
-          latitude: 23,
-          longitude: 123,
-        },
-        departAt: new Date(),
-        driver: {
-          id: "1",
-          avatarUrl: "https://hackmd.io/_uploads/Byne59oS2.png",
-        },
-      },
-    ];
-  }),
-
-  recentRide: protectedProcedure
+  rideHistory: protectedProcedure
     .input(
       z
         .object({
@@ -75,34 +38,39 @@ export const riderRouter = createTRPCRouter({
         .optional()
         .default({ limit: 2 }),
     )
-    .query(() => {
-      // give back at most 2 recent rides.
-      return [
-        {
-          id: "1",
-          source: {
-            latitude: 23,
-            longitude: 123,
+    .query(async ({ input, ctx }) => {
+      const rideHistory = await ctx.passengerService.getRideHistory(
+        ctx.auth.userId,
+        input.limit,
+      );
+
+      const rider = await ctx.passengerService.getProfile(ctx.auth.userId);
+
+      const result = match(rider)
+        .with({ success: true }, ({ data }) => data)
+        .with({ error: PassengerServiceErrors.PROVIDER_USER_NOT_FOUND }, () => {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Provider user not found",
+          });
+        })
+        .exhaustive();
+
+      return rideHistory.map((ride) => {
+        /* eslint-disable @typescript-eslint/no-non-null-assertion */
+        const [source, destination] = ride.locations;
+        return {
+          id: ride.driverRideId,
+          source: source!,
+          destination: destination!,
+          price: 100,
+          driver: {
+            id: ride.driverId,
+            avatarUrl: result.avatarUrl,
           },
-          destination: {
-            latitude: 23,
-            longitude: 123,
-          },
-          departAt: new Date(),
-        },
-        {
-          id: "2",
-          source: {
-            latitude: 23,
-            longitude: 123,
-          },
-          destination: {
-            latitude: 23,
-            longitude: 123,
-          },
-          departAt: new Date(),
-        },
-      ];
+          departAt: ride.driverRide.departAt,
+        };
+      });
     }),
 
   favoriteRide: protectedProcedure

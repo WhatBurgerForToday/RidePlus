@@ -253,6 +253,20 @@ export const createPassengerService = (deps: PassengerServiceDeps) => {
       return success(favoriteRide);
     },
 
+    getRideHistory: async (passengerId: string, limit: number) => {
+      const rideHistory = await passengerRides.findByPassengerIdWithStatus(
+        passengerId,
+        "COMPLETED",
+      );
+
+      rideHistory.sort((a, b) => {
+        return (
+          b.driverRide.departAt.getTime() - a.driverRide.departAt.getTime()
+        );
+      });
+
+      return rideHistory.slice(0, limit);
+    },
     rateRide: async (input: RateRideInput) => {
       const passengerRide = await passengerRides.findByDriverRideId(
         input.driverRideId,
