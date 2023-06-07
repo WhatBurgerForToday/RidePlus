@@ -15,6 +15,28 @@ export const createPrismaPassengerRideRepo = (
 ): PassengerRideRepository => {
   return {
     save: async (input) => {
+      if (input.id == null) {
+        return prisma.passengerRide.create({
+          data: {
+            driverId: input.driverId,
+            locations: {
+              connect: input.locations.map((location) => ({
+                driverRideId_latitude_longitude: {
+                  driverRideId: input.driverRideId,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                },
+              })),
+            },
+            passengerId: input.passengerId,
+            driverRideId: input.driverRideId,
+          },
+          include: {
+            locations: true,
+          },
+        });
+      }
+
       const ride = await prisma.passengerRide.upsert({
         where: {
           id: input.id,

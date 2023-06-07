@@ -18,7 +18,7 @@ import { destinationAtom, sourceAtom } from "~/atoms/locationAtom";
 import { dataAtom } from "./search";
 
 const HomePage = () => {
-  const recentQuery = api.rider.recentRide.useQuery();
+  const recentQuery = api.rider.rideHistory.useQuery();
   const favoriteQuery = api.rider.favoriteRide.useQuery();
   const router = useRouter();
   const setSrcAtom = useSetAtom(sourceAtom);
