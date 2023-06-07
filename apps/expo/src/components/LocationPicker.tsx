@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import MapView, {
   Marker,
   PROVIDER_GOOGLE,
   type Region,
 } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   getCurrentPositionAsync,
   requestForegroundPermissionsAsync,
@@ -51,35 +52,36 @@ export const LocationPicker = ({
 
   if (!region) {
     return (
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        className="h-5/6 w-full items-center justify-center"
-      >
-        <Text className="w-1/2 bg-white text-center text-lg">
-          Refreshing...
-        </Text>
-      </MapView>
+      <SafeAreaView className="h-full items-center justify-center">
+        <Image
+          source={{ uri: "https://hackmd.io/_uploads/H1uca9p8h.gif" }}
+          style={{ width: 400, height: 300 }}
+          className="bg-amber-400"
+        />
+      </SafeAreaView>
     );
   }
 
   return (
-    <View className="relative flex h-full flex-col items-center justify-center">
-      <View className="h-1/6 w-full flex-row items-center bg-amber-400 pb-2 pt-12 shadow-sm shadow-gray-400">
-        <View className="w-1/8 mb-1 ml-6 mr-2 h-full items-center justify-around">
+    <SafeAreaView className="flex-auto justify-center bg-amber-400">
+      <View className="h-14 w-full flex-row items-center bg-amber-400 pb-2">
+        <TouchableOpacity
+          className="ml-4 h-14 w-14 items-center justify-around rounded-full"
+          onPress={() => router.back()}
+        >
           <FontAwesome
             name="angle-left"
             size={32}
             backgroundColor="#FBBF24"
             color="#000000"
-            onPress={() => router.back()}
           />
-        </View>
+        </TouchableOpacity>
       </View>
 
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
-        className="h-5/6 w-full"
+        className="w-full flex-auto"
         showsUserLocation
         initialRegion={region}
         onRegionChangeComplete={(newRegion) => setRegion(newRegion)}
@@ -98,6 +100,6 @@ export const LocationPicker = ({
           onPress={() => handleClick({ region })}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
