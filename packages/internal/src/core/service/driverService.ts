@@ -1,6 +1,6 @@
 import { type PassengerRideStatus } from "@prisma/client";
 
-import { type Location } from "../../core/domain/location";
+import { type Location, type NamedLocation } from "../../core/domain/location";
 import { error, success } from "../../types/result";
 import {
   type DriverRepository,
@@ -30,7 +30,7 @@ type EditProfileInput = {
 type CreateDriverRideInput = {
   driverId: string;
   departAt: Date;
-  locations: Location[];
+  locations: NamedLocation[];
 };
 
 type ManagePassengerInput = {
@@ -44,6 +44,11 @@ export const DriverServiceErrors = {
   PROVIDER_USER_NOT_FOUND: "provider user not found",
   NOT_A_DRIVER: "not a driver",
   DRIVER_RIDE_NOT_FOUND: "driver ride not found",
+} as const;
+
+export const LocationServiceErrors = {
+  LOCATION_NOT_FOUND: "location not found",
+  LOCATION_NOT_PROVIDED: "location not provided",
 } as const;
 
 export const createDriverService = (deps: DriverServiceDeps) => {
@@ -93,9 +98,13 @@ export const createDriverService = (deps: DriverServiceDeps) => {
     },
 
     createDriverRide: async (input: CreateDriverRideInput) => {
-      const driver = drivers.findById(input.driverId);
+      const driver = await drivers.findById(input.driverId);
       if (driver == null) {
         return error(DriverServiceErrors.NOT_A_DRIVER);
+      }
+
+      if (input.locations.length < 2) {
+        return error(LocationServiceErrors.LOCATION_NOT_PROVIDED);
       }
 
       const namedLocation = await locations.findName(input.locations);
