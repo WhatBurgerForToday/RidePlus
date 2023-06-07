@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { DriverServiceErrors } from "@rideplus/internal";
 
-import { location } from "../schema/location";
+import { namedLocation } from "../schema/location";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const driverRouter = createTRPCRouter({
@@ -145,7 +145,7 @@ export const driverRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        locations: z.array(location()),
+        locations: z.array(namedLocation()),
         departAt: z.date(),
       }),
     )

@@ -1,6 +1,6 @@
 import { type PassengerRideStatus } from "@prisma/client";
 
-import { type Location } from "../../core/domain/location";
+import { type NamedLocation } from "../../core/domain/location";
 import { error, success } from "../../types/result";
 import {
   type DriverRepository,
@@ -30,7 +30,7 @@ type EditProfileInput = {
 type CreateDriverRideInput = {
   driverId: string;
   departAt: Date;
-  locations: Location[];
+  locations: NamedLocation[];
 };
 
 type ManagePassengerInput = {
@@ -97,12 +97,10 @@ export const createDriverService = (deps: DriverServiceDeps) => {
       if (driver == null) {
         return error(DriverServiceErrors.NOT_A_DRIVER);
       }
-
-      const namedLocation = await locations.findName(input.locations);
       const newDriverRide = await driverRides.save({
         driverId: input.driverId,
         departAt: input.departAt,
-        locations: namedLocation,
+        locations: input.locations,
       });
       return success(newDriverRide);
     },
