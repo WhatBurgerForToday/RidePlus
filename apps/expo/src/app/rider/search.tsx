@@ -121,7 +121,7 @@ const SearchPage = () => {
   const router = useRouter();
 
   const searchQuery = api.rider.searchRides.useQuery({
-    departAt: date,
+    departAfter: date,
     source: source,
     destination: destination,
     limit: 5,
