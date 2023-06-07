@@ -135,26 +135,6 @@ export const RideModal = (props: RideModalProps) => {
                     >
                       <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
                         <View className="pr-4">
-                          <MaterialCommunityIcons
-                            name="close-circle"
-                            size={24}
-                            color="red"
-                          />
-                        </View>
-                        <Text className="font-bold">Cancel</Text>
-                      </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      onPress={() => {
-                        finishRide.mutate({
-                          rideId: id,
-                        });
-                        setModalVisible(!modalVisible);
-                      }}
-                    >
-                      <View className="flex-row items-center rounded-lg bg-white px-6 py-2">
-                        <View className="pr-4">
                           <AntDesign
                             name="checkcircle"
                             size={24}
