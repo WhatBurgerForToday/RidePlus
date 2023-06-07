@@ -8,6 +8,7 @@ import {
 import { type Region } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { atom, useAtom } from "jotai";
 
@@ -115,22 +116,35 @@ const HomePage = () => {
           <ScrollView className="">
             <View className="items-center gap-2 py-4">
               {locations.map((location, id) => (
-                <View
-                  key={location.name}
-                  className="w-56 flex-row rounded-lg bg-white p-2"
-                >
-                  <View className="px-1">
-                    <Text className="text-lg">{id + 1}.</Text>
+                <View className="flex-row items-center gap-2">
+                  <View
+                    key={location.name}
+                    className="w-56 flex-row rounded-lg bg-white p-2"
+                  >
+                    <View className="px-1">
+                      <Text className="text-lg">{id + 1}.</Text>
+                    </View>
+                    <View>
+                      <Text className="text-lg font-semibold">
+                        {location.name}
+                      </Text>
+                      <Text className="text-base">
+                        ({location.latitude.toFixed(4)},{" "}
+                        {location.longitude.toFixed(4)})
+                      </Text>
+                    </View>
                   </View>
-                  <View>
-                    <Text className="text-lg font-semibold">
-                      {location.name}
-                    </Text>
-                    <Text className="text-base">
-                      ({location.latitude.toFixed(4)},{" "}
-                      {location.longitude.toFixed(4)})
-                    </Text>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      setLocations((prev) => {
+                        const newLocations = [...prev];
+                        newLocations.splice(id, 1);
+                        return newLocations;
+                      })
+                    }
+                  >
+                    <Feather name="minus-circle" size={24} color="black" />
+                  </TouchableOpacity>
                 </View>
               ))}
             </View>
