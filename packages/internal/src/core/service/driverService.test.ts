@@ -9,7 +9,11 @@ import {
   mockUserRepo,
 } from "../../repositories/mockRepositories";
 import { error, success } from "../../types/result";
-import { DriverServiceErrors, createDriverService } from "./driverService";
+import {
+  DriverServiceErrors,
+  LocationServiceErrors,
+  createDriverService,
+} from "./driverService";
 
 const service = createDriverService({
   drivers: mockDriverRepo,
@@ -91,6 +95,138 @@ describe("driverService", () => {
           stars: 4,
         }),
       );
+    });
+  });
+
+  describe("createDriverRide", () => {
+    it("should get not a driver error", async () => {
+      mockDriverRepo.findById.mockResolvedValueOnce(null);
+
+      const ride = await service.createDriverRide({
+        driverId: "not-driver-id",
+        locations: [
+          {
+            name: "source",
+            latitude: 0,
+            longitude: 0,
+          },
+          {
+            name: "destination",
+            latitude: 0.001,
+            longitude: 0.001,
+          },
+        ],
+        departAt: new Date(),
+      });
+
+      expect(ride).toEqual(error(DriverServiceErrors.NOT_A_DRIVER));
+    });
+
+    it("should get location not provided error", async () => {
+      mockDriverRepo.findById.mockResolvedValueOnce({
+        id: "driver-id",
+        capacity: 4,
+        bio: "bio",
+        rules: "rules",
+        rides: [],
+      });
+      const ride = await service.createDriverRide({
+        driverId: "driver-id",
+        locations: [],
+        departAt: new Date(),
+      });
+
+      expect(ride).toEqual(error(LocationServiceErrors.LOCATION_NOT_PROVIDED));
+    });
+
+    const date = new Date();
+
+    it("should create driver ride", async () => {
+      mockDriverRepo.findById.mockResolvedValueOnce({
+        id: "driver-id",
+        capacity: 4,
+        bio: "bio",
+        rules: "rules",
+        rides: [],
+      });
+      mockDriverRidesRepo.save.mockResolvedValueOnce({
+        id: "driver-ride-id",
+        driverId: "driver-id",
+        departAt: date,
+        status: "OPEN",
+        locations: [
+          {
+            name: "source",
+            latitude: 0,
+            longitude: 0,
+          },
+          {
+            name: "destination",
+            latitude: 0.001,
+            longitude: 0.001,
+          },
+        ],
+      });
+
+      const ride = await service.createDriverRide({
+        driverId: "driver-id",
+        locations: [
+          {
+            name: "source",
+            latitude: 0,
+            longitude: 0,
+          },
+          {
+            name: "destination",
+            latitude: 0.001,
+            longitude: 0.001,
+          },
+        ],
+        departAt: date,
+      });
+
+      expect(ride).toEqual(
+        success({
+          id: "driver-ride-id",
+          driverId: "driver-id",
+          departAt: date,
+          status: "OPEN",
+          locations: [
+            {
+              name: "source",
+              latitude: 0,
+              longitude: 0,
+            },
+            {
+              name: "destination",
+              latitude: 0.001,
+              longitude: 0.001,
+            },
+          ],
+        }),
+      );
+    });
+  });
+  describe("register", () => {
+    it("should able to become a driver", async () => {
+      mockDriverRepo.findById.mockResolvedValueOnce(null);
+      mockDriverRepo.save.mockResolvedValueOnce({
+        id: "driver-id",
+        capacity: 4,
+        bio: "",
+        rules: "",
+        rides: [],
+      });
+
+      const ride = await service.register("driver-id", 4);
+
+      expect(ride).toEqual({
+        id: "driver-id",
+        capacity: 4,
+        bio: "",
+        rules: "",
+        rides: [],
+      });
     });
   });
 });

@@ -23,6 +23,7 @@ export const mockPassengerRepo = {
 export const mockDriverRidesRepo = {
   findById: vi.fn(),
   save: vi.fn(),
+  findByNearbyLocations: vi.fn(),
 } satisfies DriverRideRepository;
 
 export const mockPassengerRideRepo = {
@@ -36,6 +37,7 @@ export const mockPassengerRideRepo = {
 
 export const mockLocationRepo = {
   findName: vi.fn(),
+  findNearby: vi.fn(),
 } satisfies LocationRepository;
 
 export const mockUserRepo = {
