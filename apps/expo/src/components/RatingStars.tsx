@@ -10,6 +10,7 @@ export const RatingStars = ({ stars }: RatingStarsProps) => {
     <View className="mt-1 flex-row">
       {new Array(5).fill(null).map((_, i) => (
         <AntDesign
+          key={i}
           name="star"
           size={16}
           backgroundColor="#FFFFFF"

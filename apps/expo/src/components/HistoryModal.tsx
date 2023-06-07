@@ -58,6 +58,7 @@ export const HistoryModal = (props: HistoryModalProps) => {
             <View className="flex-row py-4">
               {new Array(5).fill(null).map((_, i) => (
                 <ReviewStar
+                  key={i}
                   starNum={starNum}
                   setStarNum={setStarNum}
                   starIdx={i}
@@ -71,7 +72,7 @@ export const HistoryModal = (props: HistoryModalProps) => {
               numberOfLines={10}
               onChangeText={setCommentInput}
               value={commentInput}
-              className="text-md mx-2 rounded-lg bg-white px-5"
+              className="text-md mx-2 w-full rounded-lg bg-gray-200 px-5"
               placeholder={commentInput}
             />
           </View>
